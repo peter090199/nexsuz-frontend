@@ -1,38 +1,81 @@
-<button mat-icon-button class="close-button" [mat-dialog-close]="true">
-    <mat-icon class="close-icon" color="warn">close</mat-icon>
-</button>
-<h2 mat-dialog-title>Resume Viewer</h2>
+<div class="dialog-header">
+    <h2 mat-dialog-title>Resume Viewer</h2>
+    <button mat-icon-button class="close-button" mat-dialog-close>
+        <mat-icon color="warn">close</mat-icon>
+    </button>
+</div>
 <mat-divider></mat-divider>
 
-<mat-dialog-content class="container">
-    <div class="preview-container" *ngIf="selectedResume">
-        <img *ngIf="isImage(selectedResume.url)" [src]="domain + selectedResume.url" class="preview-img">
-        <iframe *ngIf="isPDF(selectedResume.url)" [src]="selectedResume.safeUrl" class="preview-pdf">
-        </iframe>
-    </div>
-    <div class="gallery" *ngIf="gallery.length > 0">
-        <div class="thumb" *ngFor="let item of gallery" (click)="setSelected(item)"
-            [class.active]="selectedResume && item.url === selectedResume.url">
+<mat-dialog-content class="main-container">
+    <div class="content-layout">
 
-            <img *ngIf="isImage(item.url)" [src]="domain + item.url">
-        </div>
-        <!-- User / Job Info -->
-        <div class="user-info" *ngIf="user">
-            <h3>{{ user.fullname }}</h3>
-            <p><strong>Job:</strong> {{ user.job_name }}</p>
-            <p><strong>Email:</strong> {{ user.email }}</p>
-            <p><strong>Phone:</strong> +{{ user.country_code }} {{ user.phone_number }}</p>
-            <p>
-                <strong>Status:</strong>
-                <span [ngClass]="getStatusClass(user.applied_status)">
-                    {{ user.applied_status | titlecase }}
-                </span>
-            </p>
+        <div class="preview-section">
+            <div class="preview-window" *ngIf="selectedResume">
+                <img *ngIf="isImage(selectedResume.url)" [src]="selectedResume.url" class="img-fluid" />
+                <iframe *ngIf="selectedResume" [src]="selectedResume.safeUrl" width="100%" height="600px">
+                </iframe>
+            </div>
+<!-- 
+            <div class="gallery-strip" *ngIf="gallery.length > 0">
+                <div class="thumb" *ngFor="let item of gallery" (click)="setSelected(item)"
+                    [class.active]="selectedResume?.url === item.url">
+                    <img *ngIf="isImage(item.url)" [src]="item.url" />
+                    <mat-icon *ngIf="isPDF(item.url)">picture_as_pdf</mat-icon>
+                </div>
+            </div> -->
+
+            <div *ngIf="!gallery.length" class="empty-state">
+                <mat-icon>find_in_page</mat-icon>
+                <p>No resumes available</p>
+            </div>
         </div>
 
-    </div>
-    <div *ngIf="!gallery || gallery.length === 0" class="text-center">
-        No resumes available
-    </div>
+        <div class="info-section">
+            <div class="user-card" *ngIf="user">
+                <h3>{{ user.fullname }}</h3>
+                <p><strong>Job:</strong> {{ user.job_name }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Status:</strong>
+                    <span class="status-badge" [ngClass]="getStatusClass(user.applied_status)">
+                        {{ user.applied_status | titlecase }}
+                    </span>
+                </p>
+            </div>
 
+            <div class="score-wrapper" *ngIf="totalQuestions >= 0">
+                <div class="circle-container">
+                    <svg viewBox="0 0 130 130">
+                        <circle class="bg" r="45" cx="65" cy="65"></circle>
+                        <circle class="progress" r="45" cx="65" cy="65" [style.strokeDasharray]="circumference"
+                            [style.strokeDashoffset]="strokeDashoffset">
+                        </circle>
+                    </svg>
+                    <div class="score-text">
+                        {{ score }}/{{ totalQuestions }}
+                        <small>{{ percentage }}%</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="qa-container">
+                <h4>Screening Answers</h4>
+
+                <div *ngFor="let item of data?.answers" class="qa-item">
+                    <div class="question-info">
+                        <p class="q-text">{{ item.question_text }}</p>
+                        <small class="text-muted">Points: {{ item.numeric_score }}</small>
+                    </div>
+
+                    <span class="answer-badge" [ngClass]="{
+                            'badge-yes': item.numeric_score === 1,
+                            'badge-general': item.numeric_score === 0.5,
+                            'badge-no': item.numeric_score === 0
+                        }">
+                        {{ item.answer_text || 'GENERAL' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </mat-dialog-content>

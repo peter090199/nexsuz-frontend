@@ -110,7 +110,7 @@ const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['DEF-ADMIN'] },
     children: [
-       { path: 'admin-dashboard', component: AdminDashboardComponent },
+      { path: 'admin-dashboard', component: AdminDashboardComponent },
       { path: 'home', component: HomeUIComponent },
       { path: 'message', component: MessagesComponent },
       { path: 'settings', component: SettingsComponent },
@@ -150,9 +150,11 @@ const routes: Routes = [
       { path: 'client_profile/recommended-jobs/:transNo', component: JobsProfileComponent },
       { path: 'apply-job/:transNo', component: ApplyJobComponent },
       { path: 'applied-jobs', component: ListAppliedJobsComponent },
-
+      { path: 'recommended-jobs/:transNo', component: JobsProfileComponent },
       { path: 'candidates', component: CandidatesComponent },
       { path: 'interviews', component: InterviewsComponent },
+
+      { path: 'client-dashboard', component: ClientDashboardComponent },
     ]
   },
   {

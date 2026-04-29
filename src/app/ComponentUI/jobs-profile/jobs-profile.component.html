@@ -1,9 +1,9 @@
 <div class="jobs-container">
   <mat-card class="sidebar">
-    <h3>Top job picks for you</h3>
+    <h3>Jobs for you</h3>
     <ng-container *ngIf="isLoading; else jobsList">
       <mat-list>
-      <div mat-subheader>Hiring Jobs</div>
+        <div mat-subheader>Hiring Jobs</div>
         <mat-list-item *ngFor="let _ of skeletonRows">
           <div class="skeleton skeleton-avatar" matListAvatar aria-hidden="true"></div>
           <div class="job-details w-full">
@@ -34,7 +34,7 @@
     </ng-template>
 
 
-    <ng-container *ngIf="isLoading; else saveJobList">
+    <!-- <ng-container *ngIf="isLoading; else saveJobList">
       <mat-list>
         <div mat-subheader>Saved Jobs</div>
         <mat-list-item *ngFor="let _ of skeletonRows">
@@ -48,27 +48,27 @@
           </button>
         </mat-list-item>
       </mat-list>
-    </ng-container>
+    </ng-container> -->
 
-    <ng-template #saveJobList>
-      <div class="jobs-list">
-        <div mat-subheader>Saved Jobs</div>
-       <mat-divider></mat-divider>
-        <div class="job-item" *ngFor="let job of jobs" (click)="selectJob(job)">
+    <!-- <ng-template #saveJobList>
+        <div class="jobs-list">
+          <div mat-subheader>Saved Jobs</div>
+        <mat-divider></mat-divider>
+          <div class="job-item" *ngFor="let job of jobs" (click)="selectJob(job)">
 
-          <img [src]="job.job_image" alt="Company Logo" class="job-logo" />
+            <img [src]="job.job_image" alt="Company Logo" class="job-logo" />
 
-          <div class="job-details">
-            <span class="job-name">{{ job.job_name }}</span>
-            <small>{{ job.comp_name }} · {{ job.work_type }}</small>
+            <div class="job-details">
+              <span class="job-name">{{ job.job_name }}</span>
+              <small>{{ job.comp_name }} · {{ job.work_type }}</small>
+            </div>
           </div>
         </div>
-      </div>
-    </ng-template>
+      </ng-template> -->
 
   </mat-card>
 
-<div class="sidebar-overlay" [class.active]="selectedJob" (click)="closeSidebar()"></div>
+  <div class="sidebar-overlay" [class.active]="selectedJob" (click)="closeSidebar()"></div>
   <mat-card class="leftsidebar" [class.active]="selectedJob">
     <button class="responsive-back-btn" mat-button [routerLink]="['/jobs']">
       <mat-icon>arrow_back</mat-icon>
@@ -151,8 +151,15 @@
   </mat-card>
 
   <!-- RIGHT SAVE SIDEBAR -->
-  <mat-card class="savesidebar">
+  <!-- <mat-card class="savesidebar">
     <app-save-jobs></app-save-jobs>
+  </mat-card> -->
+
+
+  <mat-card class="sidebar">
+    <div mat-subheader>Saved Jobs</div>
+    <mat-divider></mat-divider>
   </mat-card>
+
 
 </div>

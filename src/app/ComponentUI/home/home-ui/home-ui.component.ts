@@ -504,12 +504,12 @@ export class HomeUIComponent implements OnInit, AfterViewInit, OnDestroy {
             this.posts.forEach(post => {
               if (post.images && post.images.length > 0) {
                 post.images.forEach((image: { path_url: string; }) => {
-                  image.path_url = 'https://exploredition.com/' + (image.path_url || '').replace(/\\/g, '');
+                  image.path_url = 'https://api.nexsuz.com/' + (image.path_url || '').replace(/\\/g, '');
                 });
               }
               if (post.videos && post.videos.length > 0) {
                 post.videos.forEach((video: { path_url: string; }) => {
-                  video.path_url = 'https://exploredition.com/' + (video.path_url || '').replace(/\\/g, '');
+                  video.path_url = 'https://api.nexsuz.com/' + (video.path_url || '').replace(/\\/g, '');
                 });
               }
             });
@@ -873,7 +873,7 @@ export class HomeUIComponent implements OnInit, AfterViewInit, OnDestroy {
       next: (res: any) => {
         if (res?.success && Array.isArray(res.data)) {
           const normalizeUrl = (path: string) =>
-            `https://exploredition.com/${(path || '').replace(/\\/g, '')}`;
+            `https://api.nexsuz.com/${(path || '').replace(/\\/g, '')}`;
           const formattedPosts = res.data.map((post: any) => {
             const images = Array.isArray(post.images)
               ? post.images.map((img: any) => ({

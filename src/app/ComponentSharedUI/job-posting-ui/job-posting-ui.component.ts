@@ -79,11 +79,17 @@ export class JobPostingUIComponent implements OnInit {
     this.appliedQuestionForm = this.fb.group({
       questions: this.fb.array([])
     });
+
   }
 
   /** FormArray getter */
   get questions(): FormArray {
     return this.appliedQuestionForm.get('questions') as FormArray;
+  }
+
+
+  trackByIndex(index: number) {
+    return index;
   }
 
   /** Display data for editing */
@@ -115,17 +121,20 @@ export class JobPostingUIComponent implements OnInit {
     });
 
     // Patch questions
-    const questionsArray = this.fb.array([]);
     if (this.data.questions?.length > 0) {
-      this.data.questions.forEach((q: any) => {
-        questionsArray.push(
+      const questionsArray = this.fb.array(
+        this.data.questions.map((q: any) =>
           this.fb.group({
-            question_text: [q.question_text, Validators.required]
+            question_text: [q.question_text || '', Validators.required],
+            answer_type: [q.answer_type || 'yes'],
+            //  correct_answer: [q.correct_answer || ''],
+            //  user_answer: [q.user_answer || '']
           })
-        );
-      });
+        )
+      );
+
+      this.appliedQuestionForm.setControl('questions', questionsArray);
     }
-    this.appliedQuestionForm.setControl('questions', questionsArray);
   }
 
   /** Stepper helpers */
@@ -174,7 +183,33 @@ export class JobPostingUIComponent implements OnInit {
   }
 
   /** Add dynamic question */
-  addQuestion(): void {
+  addQuestion() {
+    if (!this.appliedQuestionForm) return;
+
+    this.questions.push(
+      this.fb.group({
+        question_text: [''],
+        answer_type: ['yes'],
+        correct_answer: [''],
+        user_answer: ['']
+      })
+    );
+  }
+
+  // Optional: check all answers
+  checkAnswers() {
+    this.questions.controls.forEach((q: any) => {
+      const user = q.get('user_answer')?.value;
+      const correct = q.get('correct_answer')?.value;
+
+      q.patchValue({
+        is_correct: user === correct
+      });
+    });
+  }
+
+
+  addQuestionxx(): void {
     this.questions.push(
       this.fb.group({
         question_text: ['', Validators.required]
@@ -187,7 +222,87 @@ export class JobPostingUIComponent implements OnInit {
     this.questions.removeAt(index);
   }
   /** Submit form */
+
   onSubmit(): void {
+
+    if (this.jobForm.invalid || this.companyForm.invalid || this.appliedQuestionForm.invalid) {
+      this.notificationService.toastrError("Please complete all required fields.");
+      return;
+    }
+
+    this.loading = true;
+
+    const formData = new FormData();
+
+    // =========================
+    // IMAGE
+    // =========================
+    if (this.selectedFile) {
+      formData.append("job_image", this.selectedFile);
+    }
+
+    // =========================
+    // MERGED FIELDS (SAFE)
+    // =========================
+    const payload = {
+      ...this.jobForm.value,
+      ...this.companyForm.value,
+      ...this.appliedQuestionForm.value
+    };
+
+    Object.keys(payload).forEach((key) => {
+      const value = payload[key];
+      if (value !== null && value !== undefined) {
+        formData.append(key, String(value));
+      }
+    });
+
+    // =========================
+    // QUESTIONS (FIXED FORMAT)
+    // =========================
+    const questions = this.appliedQuestionForm.value.questions || [];
+
+    questions.forEach((q: any, index: number) => {
+      formData.append(`question_text[${index}]`, q.question_text);
+      formData.append(`answer_type[${index}]`, q.answer_type);
+    });
+
+    // =========================
+    // DEBUG (IMPORTANT)
+    // =========================
+    // console.log("===== FORM DATA =====");
+    // for (let pair of formData.entries()) {
+    //   console.log(pair[0], pair[1]);
+    // }
+
+    // =========================
+    // API CALL (CREATE / UPDATE)
+    // =========================
+    const request$ =
+      this.btnSave.toLowerCase() === "update"
+        ? this.jobServices.updateJobPosting(formData, this.transNo)
+        : this.jobServices.saveJobPosting(formData);
+
+    request$.subscribe({
+      next: (res) => {
+        this.loading = false;
+
+        if (res.success) {
+          this.notificationService.toastrSuccess(res.message);
+          this.dialogRef.close(true);
+        } else {
+          this.notificationService.toastrError(res.message);
+        }
+      },
+      error: (err) => {
+        this.loading = false;
+        console.error(err);
+        this.notificationService.toastrError("Server error occurred!");
+      }
+    });
+  }
+
+  onSubmitxxx(): void {
     // Validate forms
     if (this.jobForm.invalid || this.companyForm.invalid || this.appliedQuestionForm.invalid) {
       this.notificationService.toastrError("Please complete all required fields.");

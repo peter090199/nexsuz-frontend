@@ -1,202 +1,118 @@
-<!-- 
+<mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+<div class="app-shell">
+  <mat-toolbar color="primary" class="header">
+    <div class="mobile-header" *ngIf="isMobile">
+      <div class="logo">
+        <img src="assets/images/logo.png" />
+      </div>
 
-<div class="menu-bar">
-  <button
-    mat-button
-    *ngFor="let menu of nav_module"
-    (click)="refreshMenu(menu.icon)"
-  >
-    <mat-spinner 
-      *ngIf="menu.icon === 'home' && refreshingIcon === menu.icon" 
-      diameter="20">
-    </mat-spinner>
-    
-    <mat-icon *ngIf="!(menu.icon === 'home' && refreshingIcon === menu.icon)">
-      {{ menu.icon }}
-    </mat-icon>
-  </button>
-</div>
+      <div class="space-gap">
+        <ng-container *ngFor="let link of nav_module">
 
-
- -->
-
-
-
-<mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="primary"></mat-progress-bar>
-<div class="app-container">
-  <mat-toolbar class="header">
-
-    <!-- MOBILE -->
-    <div *ngIf="isMobile" class="logo">
-      <img src="assets/images/logo.png" alt="logo" style="height:24px;">
-    </div>
-
-    <div *ngIf="isMobile" class="space-gap">
-
-      <!-- Navigation Links -->
-      <div *ngFor="let link of nav_module" [ngClass]="{'dropdown': link.submenus && link.submenus.length > 0}">
-
-        <!-- Dropdown Menu -->
-        <div *ngIf="link.submenus && link.submenus.length > 0; else regularLink">
-          <button mat-icon-button [matMenuTriggerFor]="menu" style="color: #fff;">
-            <i class="{{ link.icon }}"></i>
-          </button>
-
-          <mat-menu #menu="matMenu">
-            <button mat-menu-item *ngFor="let submenu of link.submenus" [routerLink]="[submenu.route]">
-              {{ submenu.description }}
+          <!-- Dropdown -->
+          <ng-container *ngIf="link.submenus?.length; else normalMobile">
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+              <i class="{{ link.icon }}"></i>
             </button>
-          </mat-menu>
-        </div>
 
-        <!-- Regular Link -->
-        <ng-template #regularLink>
-          <button mat-icon-button [routerLink]="[link.route]"
-            *ngIf="link.description !== 'Notifications' && link.description !== 'Messaging' && link.description !== 'Profile'">
-            <i class="{{ link.icon }}"></i>
-          </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item *ngFor="let sub of link.submenus" [routerLink]="[sub.route]">
+                {{ sub.description }}
+              </button>
+            </mat-menu>
+          </ng-container>
 
-          <!-- Messaging -->
-          <button mat-icon-button *ngIf="link.description === 'Messaging'" [routerLink]="[link.route]"
-            matBadge="{{ unreadCount }}" matBadgeColor="warn" [matBadgeHidden]="unreadCount === 0">
-            <i class="{{ link.icon }}"></i>
-          </button>
+          <!-- Normal -->
+          <ng-template #normalMobile>
+            <button mat-icon-button [routerLink]="[link.route]">
+              <i class="{{ link.icon }}"></i>
+            </button>
+          </ng-template>
 
-          <!-- Notifications -->
-          <button mat-icon-button *ngIf="link.description === 'Notifications'" matTooltip="View Notification"
-            (click)="openNotifications()" [matBadge]="unreadCount" [matBadgeHidden]="unreadCount === 0"
-            matBadgeColor="warn">
-            <mat-icon>notifications</mat-icon>
-          </button>
-        </ng-template>
-      </div>
+        </ng-container>
 
-      <!-- Search -->
-      <button mat-icon-button class="search-icon-btn" (click)="toggleSearch()" *ngIf="!isSearchOpen">
-        <mat-icon>search</mat-icon>
-      </button>
-
-      <div *ngIf="isSearchOpen" class="search-overlay">
-        <div *ngIf="isMobile">
-          <!-- <app-search></app-search> -->
-        </div>
-        <button mat-icon-button class="close-btn" (click)="toggleSearch()">
-          <mat-icon>close</mat-icon>
+        <!-- Search -->
+        <button mat-icon-button (click)="toggleSearch()">
+          <mat-icon>search</mat-icon>
         </button>
-      </div>
 
-      <!-- Sidebar Toggle -->
-      <button class="navbar-toggler" type="button" (click)="toggleSidebar()" aria-label="Toggle navigation"
-        *ngIf="isMobile">
-        <mat-icon>{{ isSidebarOpen ? 'close' : 'menu' }}</mat-icon>
-      </button>
+        <!-- Menu -->
+        <button mat-icon-button (click)="toggleSidebar()">
+          <mat-icon>{{ isSidebarOpen ? 'close' : 'menu' }}</mat-icon>
+        </button>
+
+      </div>
     </div>
 
     <!-- DESKTOP -->
-    <div class="logo" *ngIf="!isMobile">
-      <img src="assets/images/logo.png" alt="logo" style="height:24px;"> exsuz
-    </div>
+    <div class="desktop-header" *ngIf="!isMobile">
 
-    <nav *ngIf="!isMobile" class="nav">
-      <div class="fb-header-left">
-        <app-search></app-search>
+      <div class="logo">
+        <img src="assets/images/logo.png" />
       </div>
 
-      <div *ngFor="let link of nav_module" [ngClass]="{'dropdown': link.submenus && link.submenus.length > 0}">
-        <div *ngIf="link.submenus && link.submenus.length > 0; else regularLinkDesktop">
-          <button mat-button [matMenuTriggerFor]="menu" style="color:#fff;">
-            <i class="{{ link.icon }}"></i> {{ link.description }}
-          </button>
-
-          <mat-menu #menu="matMenu">
-            <button mat-menu-item *ngFor="let submenu of link.submenus" [routerLink]="[submenu.route]">
-              {{ submenu.description }}
-            </button>
-          </mat-menu>
+      <div class="nav">
+        <div class="nav-left">
+          <app-search></app-search>
         </div>
 
-        <ng-template #regularLinkDesktop>
-          <button mat-button [routerLink]="[link.route]"
-            *ngIf="link.description !== 'Notifications' && link.description !== 'Messaging'">
-            <i class="{{ link.icon }}"></i> {{ link.description }}
-          </button>
+        <div class="nav-center"></div>
+        <div class="nav-right"></div>
+        <ng-container *ngFor="let link of nav_module">
 
-          <button mat-icon-button *ngIf="link.description === 'Messaging'" [routerLink]="[link.route]"
-            matBadge="{{ unreadCount }}" matBadgeColor="warn" [matBadgeHidden]="unreadCount === 0">
-            <i class="{{ link.icon }}"></i>
-          </button>
+          <ng-container *ngIf="link.submenus?.length; else normalDesktop">
+            <button mat-button [matMenuTriggerFor]="menu">
+              <i class="{{ link.icon }}"></i> {{ link.description }}
+            </button>
 
-          <button mat-icon-button *ngIf="link.description === 'Notifications'" matTooltip="View Notification"
-            (click)="openNotifications()" [matBadge]="unreadCount" [matBadgeHidden]="unreadCount === 0"
-            matBadgeColor="warn">
-            <mat-icon>notifications</mat-icon>
-          </button>
-        </ng-template>
-      </div>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item *ngFor="let sub of link.submenus" [routerLink]="[sub.route]">
+                {{ sub.description }}
+              </button>
+            </mat-menu>
+          </ng-container>
 
-      <!-- Profile Menu -->
-      <div class="profile-section" *ngIf="user">
-        <button mat-button [matMenuTriggerFor]="profileMenu">
-          <mat-icon>account_circle</mat-icon>
-          <span class="profile-name">{{ user.fullname }}</span>
-        </button>
+          <ng-template #normalDesktop>
+            <button mat-button [routerLink]="[link.route]">
+              <i class="{{ link.icon }}"></i> {{ link.description }}
+            </button>
+          </ng-template>
 
-        <mat-menu #profileMenu="matMenu">
-          <button mat-menu-item *ngIf="user.role_code === 'DEF-USERS'" [routerLink]="['/profile', user.code]">
-            <mat-icon>person</mat-icon>
-            My Profile
-          </button>
-          <!-- <button mat-menu-item *ngIf="user.role_code === 'DEF-CLIENT'" [routerLink]="['/company_profile', user.code]">
-            <mat-icon>person</mat-icon>
-            Client Profile
-          </button> -->
-          <button mat-menu-item [routerLink]="['/settings']">
-            <mat-icon>settings</mat-icon>
-            Settings
-          </button>
-          <button mat-menu-item (click)="onLogout()">
-            <mat-icon>logout</mat-icon>
-            Logout
-          </button>
-        </mat-menu>
-      </div>
-    </nav>
-  </mat-toolbar>
+        </ng-container>
 
-  <!-- Sidebar for mobile -->
-  <div class="sidebar" [ngClass]="{'active': isSidebarOpen}">
-    <div class="sidebar-header">
-      <div class="logo">
-        <img src="assets/images/logo.png" alt="logo" style="height:20px;"> exsuz
       </div>
     </div>
 
-    <ul class="list-unstyled" *ngFor="let link of nav_module" class="nav-item"
-      [ngClass]="{'dropdown': link.submenus && link.submenus.length > 0}">
-      <div *ngIf="link.submenus && link.submenus.length > 0; else regularLinkSidebar">
-        <button mat-button [matMenuTriggerFor]="menu" class="nav-link">{{ link.description }}</button>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item *ngFor="let submenu of link.submenus" [routerLink]="[submenu.route]">
-            {{ submenu.description }}
-          </button>
-        </mat-menu>
-      </div>
-      <ng-template #regularLinkSidebar>
-        <button mat-button class="nav-link" [routerLink]="[link.route]">
-          <i class="{{ link.icon }}"></i> {{ link.description }}
-        </button>
-      </ng-template>
-    </ul>
+  </mat-toolbar>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" [class.active]="isSidebarOpen">
+
+    <div class="side-header">
+      <h3 class="side-title">Nexsuz</h3>
+    </div>
+
+    <div class="side-menu">
+      <a class="menu-item" *ngFor="let link of nav_module" [routerLink]="[link.route]" routerLinkActive="active">
+        <!-- <mat-icon class="menu-icon">{{ link.icon }}</mat-icon> -->
+        <span class="menu-text">{{ link.description }}</span>
+      </a>
+
+    </div>
+
   </div>
 
-  <!-- Main Content -->
-  <!-- <div class="load-post-container">
-    <button mat-raised-button class="facebook-load-btn" [disabled]="isLoading">
-      <mat-spinner *ngIf="isLoading" diameter="20" color="accent"></mat-spinner>
-      <span *ngIf="!isLoading">Load New Post</span>
+  <!-- OVERLAY SEARCH -->
+  <div class="search-overlay" *ngIf="isSearchOpen">
+    <app-search></app-search>
+    <button mat-icon-button (click)="toggleSearch()">
+      <mat-icon>close</mat-icon>
     </button>
-  </div> -->
-  <div class="app-container">
-    <router-outlet></router-outlet>
   </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+
 </div>

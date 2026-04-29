@@ -309,7 +309,7 @@ export class ListAppliedJobsComponent implements OnInit, AfterViewInit {
   /** VIEW RESUME FUNCTION */
   openResumeDialog(resume: any): void {
     const dialogRef = this.dialog.open(UserResumeUIComponent, {
-      width: '1200px',
+      width: '2000px',
       data: resume
     });
 

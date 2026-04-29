@@ -117,9 +117,135 @@
         </div>
       </form>
     </mat-step>
-
     <!-- Step 4: Applied Questions -->
     <mat-step [stepControl]="appliedQuestionForm">
+
+      <!-- SAFE FORM CHECK -->
+      <form *ngIf="appliedQuestionForm" [formGroup]="appliedQuestionForm">
+
+        <ng-template matStepLabel>Applied Questions</ng-template>
+
+        <!-- ADD QUESTION -->
+        <button mat-button color="primary" type="button" (click)="addQuestion()">
+          Add Question and Answer
+        </button>
+        <mat-divider></mat-divider>
+        <br />
+
+        <!-- FORM ARRAY -->
+        <div formArrayName="questions">
+
+          <!-- EMPTY STATE -->
+          <div *ngIf="!questions || questions.length === 0">
+            No questions added yet.
+          </div>
+
+          <!-- LOOP QUESTIONS (SAFE) -->
+          <div *ngFor="let question of questions.controls || []; let i = index; trackBy: trackByIndex"
+            [formGroupName]="i" class="question-item">
+
+            <!-- WRAP SAFE CONTEXT -->
+            <ng-container *ngIf="question">
+
+              <!-- QUESTION TEXT -->
+              <mat-form-field appearance="standard" class="form-field2">
+                <mat-label>Question {{ i + 1 }}</mat-label>
+                <input matInput formControlName="question_text" />
+              </mat-form-field>
+
+              <!-- ANSWER TYPE -->
+              <mat-form-field appearance="standard" class="w-20">
+                <mat-label>Answer Type</mat-label>
+                <mat-select formControlName="answer_type">
+                  <mat-option value="yes">Yes</mat-option>
+                  <mat-option value="no">No</mat-option>
+                  <mat-option value="general">General</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <!-- ========================= -->
+              <!-- CORRECT ANSWER -->
+              <!-- ========================= -->
+
+              <!-- <ng-container
+                *ngIf="question.get('answer_type')?.value === 'yes' || question.get('answer_type')?.value === 'no'">
+                <mat-form-field appearance="fill">
+                  <mat-label>Correct Answer</mat-label>
+                  <mat-select formControlName="correct_answer">
+                    <mat-option value="yes">Yes</mat-option>
+                    <mat-option value="no">No</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </ng-container> -->
+
+              <!-- <ng-container *ngIf="question.get('answer_type')?.value === 'general'">
+                <mat-form-field appearance="fill">
+                  <mat-label>Correct Answer</mat-label>
+                  <input matInput formControlName="correct_answer" />
+                </mat-form-field>
+              </ng-container> -->
+
+              <!-- ========================= -->
+              <!-- USER ANSWER -->
+              <!-- ========================= -->
+
+              <!-- <ng-container
+                *ngIf="question.get('answer_type')?.value === 'yes' || question.get('answer_type')?.value === 'no'">
+                <mat-form-field appearance="outline">
+                  <mat-label>User Answer</mat-label>
+                  <mat-select formControlName="user_answer">
+                    <mat-option value="yes">Yes</mat-option>
+                    <mat-option value="no">No</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </ng-container> -->
+
+              <!-- <ng-container *ngIf="question.get('answer_type')?.value === 'general'">
+                <mat-form-field appearance="outline">
+                  <mat-label>User Answer</mat-label>
+                  <input matInput formControlName="user_answer" />
+                </mat-form-field>
+              </ng-container> -->
+
+              <!-- RESULT -->
+              <div class="result" *ngIf="question.value?.user_answer && question.value?.correct_answer">
+                <span [ngClass]="{
+                correct: question.value.user_answer === question.value.correct_answer,
+                wrong: question.value.user_answer !== question.value.correct_answer
+              }">
+                  {{
+                  question.value.user_answer === question.value.correct_answer
+                  ? 'Correct'
+                  : 'Wrong'
+                  }}
+                </span>
+              </div>
+
+              <!-- DELETE -->
+              <button mat-icon-button color="warn" type="button" (click)="removeQuestion(i)">
+                <mat-icon>delete</mat-icon>
+              </button>
+
+              <mat-divider></mat-divider>
+              <br />
+
+            </ng-container>
+
+          </div>
+        </div>
+
+      </form>
+
+      <!-- SUBMIT -->
+      <div class="button-end">
+        <button mat-raised-button color="primary" (click)="onSubmit()">
+          Submit
+        </button>
+      </div>
+
+    </mat-step>
+
+    <!-- <mat-step [stepControl]="appliedQuestionForm">
       <form [formGroup]="appliedQuestionForm">
         <ng-template matStepLabel>Applied Questions</ng-template>
 
@@ -151,6 +277,6 @@
           {{ btnSave }}
         </button>
       </div>
-    </mat-step>
+    </mat-step> -->
   </mat-horizontal-stepper>
 </div>

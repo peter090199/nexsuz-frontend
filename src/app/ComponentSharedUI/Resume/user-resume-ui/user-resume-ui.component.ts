@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
+import { SharedService } from 'src/app/services/SharedServices/shared.service';
 
 @Component({
   selector: 'app-user-resume-ui',
@@ -11,37 +12,120 @@ export class UserResumeUIComponent implements OnInit {
 
   gallery: any[] = [];
   selectedResume: any = null;
-  domain = 'https://exploredition.com';
-  user:any;
-
+  user: any;
+  radius = 45;
+  // ✅ SCORE VARIABLES
+  score = 0;
+  totalQuestions = 0;
+  percentage = 0;
+  strokeDashoffset = 0;
+  circumference = 2 * Math.PI * this.radius;
+  transNo: any;
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<UserResumeUIComponent>,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private sharedService: SharedService
   ) { }
 
   ngOnInit(): void {
-    // Map resumes and fix path
-    this.gallery = (this.data?.resumes || []).map((r: { url: string }) => ({
-      ...r,
-      url: r.url.replace('/storage/app/public', '/storage'),
-      safeUrl: this.sanitizer.bypassSecurityTrustResourceUrl(this.domain + r.url)
-    }));
+    this.transNo = this.data.transNo;
+    this. loadApplicationScore();
 
-    if (this.gallery.length > 0) {
-      this.selectedResume = this.gallery[0];
+    // this.sharedService.getApplicationScore(this.transNo).subscribe({
+    //   next: (res: any) => {
+    //     // Map the user info
+    //     this.user = { ...this.data, ...res.user };
+
+    //     // Map the answers (ensure numeric_score is handled)
+    //     this.data.answers = res.answers;
+
+    //     // Handle Resumes if returned by API, otherwise fallback to injected data
+    //     const resumes = res.resumes || this.data?.resumes || [];
+    //     this.gallery = resumes.map((r: any) => {
+    //       const url = this.sharedService.cleanImageUrl(r.url);
+    //       return {
+    //         ...r,
+    //         url,
+    //         safeUrl: this.sanitizer.bypassSecurityTrustResourceUrl(url)
+    //       };
+    //     });
+    //     this.selectedResume = this.gallery.length ? this.gallery[0] : null;
+
+    //     // 3. Perform Scoring Calculations
+    //     this.totalQuestions = res.summary.total_possible;
+    //     this.score = res.summary.total_score;
+
+    //     this.calculateScore();
+    //   },
+    //   error: (err) => {
+    //     console.error('Error fetching score data:', err);
+    //   }
+    // });
+  }
+
+  loadApplicationScore(): void {
+    this.sharedService.getApplicationScore(this.transNo).subscribe({
+      next: (res: any) => {
+
+        // Map user info
+        this.user = { ...this.data, ...res.user };
+
+        // Map answers
+        this.data.answers = res.answers;
+
+        // Handle resumes (API or fallback)
+        const resumes = res.resumes || this.data?.resumes || [];
+
+        this.gallery = resumes.map((r: any) => {
+          const url = this.sharedService.cleanImageUrl(r.url);
+          return {
+            ...r,
+            url,
+            safeUrl: this.sanitizer.bypassSecurityTrustResourceUrl(url)
+          };
+        });
+
+        this.selectedResume = this.gallery.length ? this.gallery[0] : null;
+
+        // Scoring
+        this.totalQuestions = res.summary?.total_possible || 0;
+        this.score = res.summary?.total_score || 0;
+
+        this.calculateScore();
+      },
+      error: (err) => {
+        console.error('Error fetching score data:', err);
+      }
+    });
+  }
+
+
+  // ✅ SCORE CIRCLE CALCULATION
+  calculateScore(): void {
+    if (!this.totalQuestions) return;
+
+    // Calculate percentage based on the numeric sum
+    this.percentage = Math.round((this.score / this.totalQuestions) * 100);
+
+    const progress = this.percentage / 100;
+    this.strokeDashoffset = this.circumference - this.circumference * progress;
+  }
+
+
+  getStatusClass(status: string): string {
+    switch (status) {
+      case 'review':
+        return 'status-review';
+      case 'applied_active':
+        return 'status-active';
+      case 'rejected':
+        return 'status-rejected';
+      default:
+        return '';
     }
-    this.user = this.data;
   }
 
-  getStatusClass(status: string) {
-  switch (status) {
-    case 'review': return 'status-review';
-    case 'applied_active': return 'status-active';
-    case 'rejected': return 'status-rejected';
-    default: return '';
-  }
-}
   isImage(url: string): boolean {
     return /\.(jpg|jpeg|png|gif)$/i.test(url);
   }
@@ -50,19 +134,22 @@ export class UserResumeUIComponent implements OnInit {
     return /\.pdf$/i.test(url);
   }
 
-  setSelected(item: any) {
+  setSelected(item: any): void {
     this.selectedResume = item;
   }
 
-  close() {
+  close(): void {
     this.dialogRef.close();
   }
 
-  downloadPDF(url: string) {
+  downloadPDF(url: string): void {
+    const fileName = url.split('/').pop() || 'resume.pdf';
+
     const link = document.createElement('a');
     link.href = url;
-    link.download = url.split('/').pop() || 'resume.pdf';
+    link.download = fileName;
     link.target = '_blank';
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

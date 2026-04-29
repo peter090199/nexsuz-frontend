@@ -6,6 +6,7 @@ import { JobListService } from 'src/app/services/Jobs/job-list.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { AppliedStatusDialogComponent } from '../jobs/applied-status-dialog/applied-status-dialog.component';
 import { NotificationsService } from 'src/app/services/Global/notifications.service';
+import { SharedService } from 'src/app/services/SharedServices/shared.service';
 
 @Component({
   selector: 'app-jobs-profile',
@@ -37,7 +38,8 @@ export class JobsProfileComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
-    private dialog: MatDialog,private alert:NotificationsService
+    private dialog: MatDialog, private alert: NotificationsService,
+    private sharedService:SharedService
   ) { }
 
   /* ==============================
@@ -82,17 +84,17 @@ export class JobsProfileComponent implements OnInit {
   async getJobPosting(): Promise<void> {
     try {
       this.isLoading = true;
+
       const res = await firstValueFrom(this.jobListServices.getActiveJobs());
 
       if (res?.success) {
         this.jobs = res.data.map((job: any) => ({
           ...job,
           applied_status: 'default',
-          job_image: job.job_image
-            ? `https://exploredition.com${job.job_image}`
-            : null
+          job_image: this.sharedService.cleanImageUrl(job.job_image)
         }));
       }
+
     } catch (error) {
       console.error('Error fetching jobs:', error);
     } finally {

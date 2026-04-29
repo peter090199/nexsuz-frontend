@@ -1,12 +1,13 @@
-<div class="container">
+<section class="container">
     <div class="page-header">
         <button mat-button color="primary" [routerLink]="['/recommended-jobs', transNo]">
-              <mat-icon>arrow_back</mat-icon> Back 
+            <mat-icon>arrow_back</mat-icon> Back
         </button>
-        <h2> Apply Job</h2>
+        <h2>Apply Job</h2>
     </div>
 
     <mat-divider></mat-divider>
+
 
     <!-- Progress Bar -->
     <mat-progress-bar color="accent" [mode]="loading ? 'indeterminate' : 'determinate'"
@@ -65,7 +66,7 @@
 
                 <!-- Country + Phone -->
                 <div class="form-row">
-                    <mat-form-field appearance="standard" class="half-width" *ngIf="countryCodes.length">
+                    <mat-form-field appearance="standard" class="form-field" *ngIf="countryCodes.length">
                         <mat-label>Country Code</mat-label>
                         <input type="text" matInput [formControl]="countryControl" [matAutocomplete]="autoCountry"
                             placeholder="Select or search country code" />
@@ -78,7 +79,7 @@
                         </mat-autocomplete>
                     </mat-form-field>
 
-                    <mat-form-field appearance="standard" class="form-field">
+                    <mat-form-field appearance="standard" class="form-field" >
                         <mat-label>Mobile Phone Number</mat-label>
                         <input matInput type="tel" formControlName="phone_number" required />
                     </mat-form-field>
@@ -100,16 +101,34 @@
             <ng-template matStepLabel>Questions</ng-template>
 
             <div *ngFor="let q of questions; let i = index" class="form-row">
-                <mat-form-field appearance="standard" class="form-field">
-                    <mat-label>{{ q.question_text }}</mat-label>
-                    <textarea matInput rows="3" [(ngModel)]="q.answer" required></textarea>
-                </mat-form-field>
+
+                <!-- YES / NO TYPE -->
+                <ng-container *ngIf="q.answer_type === 'yes' || q.answer_type === 'no'">
+                    <mat-form-field appearance="standard" class="form-field">
+                        <mat-label>{{ q.question_text }}</mat-label>
+                        <mat-select [(ngModel)]="q.answer" name="answer{{i}}">
+                            <mat-option value="yes">Yes</mat-option>
+                            <mat-option value="no">No</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </ng-container>
+
+                <!-- GENERAL TYPE -->
+                <ng-container *ngIf="q.answer_type === 'general'">
+                    <mat-form-field appearance="standard" class="form-field">
+                        <mat-label>{{ q.question_text }}</mat-label>
+                        <textarea matInput rows="3" [(ngModel)]="q.answer" name="answer{{i}}">
+                        </textarea>
+                    </mat-form-field>
+                </ng-container>
+
             </div>
 
             <div class="button-end">
                 <button mat-raised-button color="warn" (click)="previousStep(stepper)">
                     Previous
                 </button>
+
                 <button mat-raised-button color="accent" (click)="onSubmit()" [disabled]="!areAllQuestionsAnswered()">
                     {{ btnSave }}
                 </button>
@@ -163,4 +182,4 @@
 </form>
 </mat-step> -->
     </mat-horizontal-stepper>
-</div>
+</section>

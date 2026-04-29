@@ -1,30 +1,90 @@
-.page-header h2{
-    text-align: center;
-    margin: 10px;
+/* =========================
+   GLOBAL FIX (VERY IMPORTANT)
+========================= */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* 🔥 prevents horizontal scroll */
 }
 
+/* =========================
+   CONTAINER
+========================= */
 
-/* Default margins for desktop */
-.container {
-  margin: auto;
-  padding: 10px;
-  max-width: 800px;
-}
 
-/* For tablets */
+/* Tablet */
 @media (max-width: 992px) {
   .container {
     max-width: 90%;
   }
 }
 
-/* For mobile */
+/* Mobile */
 @media (max-width: 600px) {
   .container {
     max-width: 100%;
+    padding: 8px;
   }
 }
-/* File Upload Input */
+
+/* =========================
+   HEADER
+========================= */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap; /* 🔥 prevent overflow */
+}
+
+.page-header h2 {
+  flex: 1;
+  text-align: center;
+  margin: 10px 0;
+}
+
+/* =========================
+   FORM LAYOUT FIX
+========================= */
+.form-row {
+  display: flex;
+  flex-wrap: wrap; /* 🔥 critical */
+  gap: 10px;
+  width: 100%;
+}
+
+.form-field,
+.half-width {
+  flex: 1 1 100%;
+  min-width: 0; /* 🔥 prevents overflow */
+}
+
+/* Tablet split */
+@media (min-width: 768px) {
+  .half-width {
+    flex: 1 1 48%;
+  }
+}
+
+/* =========================
+   MATERIAL FIX (IMPORTANT)
+========================= */
+::ng-deep .mat-form-field {
+  width: 100%;
+  min-width: 0;
+}
+
+::ng-deep .mat-form-field-infix {
+  width: 100%;
+}
+
+::ng-deep .mat-horizontal-stepper-header-container {
+  overflow-x: auto; /* 🔥 prevents header overflow */
+}
+
+/* =========================
+   FILE UPLOAD
+========================= */
 #fileUpload {
   display: block;
   margin: 15px 0;
@@ -33,31 +93,39 @@
   border-radius: 8px;
   background-color: #fafafa;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   cursor: pointer;
   transition: border-color 0.3s ease, background-color 0.3s ease;
 }
 
 #fileUpload:hover {
-  border-color: #3f51b5; /* Material Indigo */
+  border-color: #3f51b5;
   background-color: #f0f4ff;
 }
 
-/* Error Message */
+/* =========================
+   ERROR TEXT
+========================= */
 .text-red-500 {
   margin-top: 5px;
   font-size: 13px;
-  color: #d32f2f; /* Material red */
+  color: #d32f2f;
 }
 
-/* Image Preview */
+/* =========================
+   IMAGE PREVIEW
+========================= */
 .image-preview-container {
   display: flex;
   justify-content: center;
   margin-top: 15px;
+  width: 100%;
 }
 
 .preview-img {
   max-width: 250px;
+  width: 100%;
   max-height: 250px;
   border-radius: 8px;
   object-fit: cover;
@@ -65,26 +133,140 @@
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Button Row */
+/* =========================
+   BUTTONS
+========================= */
 .button-end {
   display: flex;
   justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap; /* 🔥 prevent overflow */
   margin-top: 20px;
 }
 
-/* --- Responsive Design --- */
-@media (max-width: 768px) {
-  #fileUpload {
-    font-size: 14px;
-    padding: 8px;
-  }
-
-  .preview-img {
-    max-width: 100%;
-    max-height: 200px;
-  }
-
+/* Mobile buttons full width */
+@media (max-width: 600px) {
   .button-end {
     justify-content: center;
   }
+
+  .button-end button {
+    width: 100%;
+  }
+}
+
+/* =========================
+   TEXTAREA FIX
+========================= */
+textarea {
+  width: 100%;
+  resize: vertical;
+}
+
+/* Prevent long text breaking layout */
+mat-label {
+  white-space: normal !important;
+  word-break: break-word;
+}
+
+/* =========================
+   GLOBAL OVERFLOW FIX
+========================= */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* 🔥 prevents horizontal scroll */
+}
+
+/* =========================
+   MAIN CONTAINER
+========================= */
+.container {
+  margin: auto;
+  padding: 10px;
+  max-width: 800px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/* =========================
+   STEP WRAPPER (IMPORTANT)
+========================= */
+.stepper-wrapper {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* =========================
+   STEPPER FIX
+========================= */
+.custom-stepper {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* prevent header overflow */
+::ng-deep .mat-horizontal-stepper-header-container {
+  overflow-x: auto;
+}
+
+/* =========================
+   FORM ROW FIX
+========================= */
+.form-row {
+  display: flex;
+  flex-wrap: wrap; /* 🔥 important */
+  gap: 10px;
+  width: 100%;
+}
+
+/* prevent field overflow */
+.form-field,
+.half-width {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+/* =========================
+   MOBILE FIX
+========================= */
+@media (max-width: 768px) {
+  .container {
+    padding: 8px;
+  }
+
+  .form-field,
+  .half-width {
+    flex: 1 1 100%;
+  }
+}
+
+/* =========================
+   BUTTON FIX
+========================= */
+.button-end {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+@media (max-width: 600px) {
+  .button-end button {
+    width: 100%;
+  }
+}
+
+/* =========================
+   TEXT FIX
+========================= */
+mat-label {
+  white-space: normal !important;
+  word-break: break-word;
+}
+
+textarea {
+  width: 100%;
+  resize: vertical;
 }

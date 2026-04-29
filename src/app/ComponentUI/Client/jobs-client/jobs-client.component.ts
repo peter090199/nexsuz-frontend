@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { JobListService } from 'src/app/services/Jobs/job-list.service';
+import { SharedService } from 'src/app/services/SharedServices/shared.service';
 import { environment } from 'src/environments/environment';
 
 interface Job {
@@ -38,15 +39,15 @@ export class JobsClientComponent implements OnInit {
   jobs: Job[] = [];
   isLoading: boolean = false;
   selectedTabIndex: number = 2;
-  code:any;
-  currentUserCode:any;
+  code: any;
+  currentUserCode: any;
 
 
 
-  constructor(private jobService: JobListService,private route: ActivatedRoute,
-     private authServiceCode: AuthService,
+  constructor(private jobService: JobListService, private route: ActivatedRoute,
+    private authServiceCode: AuthService,private sharedService:SharedService
   ) { }
-  
+
   getJobImageUrl(imagePath?: string): string {
     if (!imagePath) return 'assets/images/default-job.png';
     const publicPath = imagePath.replace(/^\/storage\/app\/public/, '/storage');
@@ -56,10 +57,10 @@ export class JobsClientComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUserCode = this.authServiceCode.getAuthCode();
-    console.log( this.currentUserCode)
+    console.log(this.currentUserCode)
     this.code = this.route.snapshot.paramMap.get('code') || window.location.href.split('/').pop() || '';
     this.loadTabData(this.selectedTabIndex);
-    
+
   }
 
   private loadTabData(index: number): void {
@@ -70,22 +71,19 @@ export class JobsClientComponent implements OnInit {
 
 
 
-
   async getActiveJobsByCode(): Promise<void> {
     try {
       this.isLoading = true;
-      const res = await firstValueFrom(this.jobService.getActiveJobsByCode(this.code));
-      if (res.success) {
-        this.isLoading = false;
+
+      const res = await firstValueFrom(
+        this.jobService.getActiveJobsByCode(this.code)
+      );
+
+      if (res?.success) {
         this.jobs = res.data.map((job: any) => ({
           ...job,
-          job_image: job.job_image
-            ? `https://exploredition.com${job.job_image}`
-            : null
+          job_image: this.sharedService.cleanImageUrl(job.job_image)
         }));
-
-      } else {
-        this.isLoading = false;
       }
 
     } catch (error) {
@@ -94,7 +92,6 @@ export class JobsClientComponent implements OnInit {
       this.isLoading = false;
     }
   }
-
 
   openJobApply(job: Job): void {
     if (job.work_type && job.work_type.toLowerCase() === 'remote') {

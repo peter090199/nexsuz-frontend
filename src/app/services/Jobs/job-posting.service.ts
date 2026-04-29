@@ -56,12 +56,13 @@ export class JobPostingService {
     return this.http.post<any>(`${_url}job-posting`, payload, { headers });
   }
 
-  /** Update existing job posting by transNo */
   updateJobPosting(payload: FormData, transNo: string): Observable<any> {
     const headers = this.createHeaders();
-    return this.http.put<any>(`${_url}job-posting/${transNo}`, payload, { headers });
+    return this.http.post<any>(
+      `${_url}job-posting/${transNo}?_method=PUT`,
+      payload, { headers }
+    );
   }
-
 
   getJobPosting(): Observable<any> {
     const headers = this.createHeaders();

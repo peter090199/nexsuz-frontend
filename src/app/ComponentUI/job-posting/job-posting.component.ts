@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 import { JobViewDetailsComponent } from './job-view-details/job-view-details.component';
 import { PostingJobComponent } from 'src/app/ComponentSharedUI/posting-job/posting-job.component';
 import { ListAppliedJobsComponent } from '../jobs/list-applied-jobs/list-applied-jobs.component';
+import { SharedService } from 'src/app/services/SharedServices/shared.service';
 
 @Component({
   selector: 'app-job-posting',
@@ -64,7 +65,8 @@ export class JobPostingComponent implements OnInit {
   constructor(
     private jobServices: JobPostingService, private router: Router,
     public dialog: MatDialog,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
+    private sharedService: SharedService
   ) { }
 
   ngOnInit(): void {
@@ -111,20 +113,24 @@ export class JobPostingComponent implements OnInit {
   async getJobPosting(): Promise<void> {
     try {
       this.isLoading = true;
+
       const res = await firstValueFrom(this.jobServices.getJobPosting());
 
       if (res.success) {
         this.success = true;
+
         this.jobPosting = res.jobs.map((job: any) => {
-          const relatedQuestions = res.questions.filter((q: any) => q.transNo === job.transNo);
+          const relatedQuestions = res.questions.filter(
+            (q: any) => q.transNo === job.transNo
+          );
+
           return {
             ...job,
-            job_image: job.job_image
-              ? `https://exploredition.com${job.job_image}`
-              : null,
+            job_image: this.sharedService.cleanImageUrl(job.job_image),
             questions: relatedQuestions
-          };
+          };  
         });
+
         this.dataSource.data = this.jobPosting;
       } else {
         this.success = false;
@@ -132,6 +138,7 @@ export class JobPostingComponent implements OnInit {
 
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+
     } catch (error) {
       console.error('Error fetching jobs:', error);
     } finally {
@@ -139,6 +146,7 @@ export class JobPostingComponent implements OnInit {
     }
   }
 
+  
   viewCandidates(user: any) {
 
   }
@@ -194,7 +202,7 @@ export class JobPostingComponent implements OnInit {
 
   edit(job: any): void {
     const dialogRef = this.dialog.open(JobPostingUIComponent, {
-      width: '800px',
+      width: '1000px',
       data: job
     });
 

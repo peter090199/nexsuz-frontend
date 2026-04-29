@@ -131,3 +131,168 @@
     font-size: 12px;
   }
 }
+
+
+.score-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+}
+
+/* OUTER CIRCLE */
+.circle {
+  position: relative;
+  width: 130px;
+  height: 130px;
+}
+
+/* SVG ROTATION */
+svg {
+  width: 130px;
+  height: 130px;
+  transform: rotate(-90deg);
+}
+
+/* BASE CIRCLE + PROGRESS */
+circle {
+  fill: none;
+  stroke-width: 10;
+  r: 45;
+  cx: 65;
+  cy: 65;
+}
+
+/* BACKGROUND CIRCLE */
+circle.bg {
+  stroke: #e6e6e6;
+}
+
+/* PROGRESS CIRCLE */
+circle.progress {
+  stroke: #4caf50;
+  stroke-linecap: round;
+
+  stroke-dasharray: 282.6;
+  stroke-dashoffset: 282.6;
+
+  transition: stroke-dashoffset 0.6s ease-in-out;
+}
+
+/* CENTER TEXT */
+.score-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  text-align: center;
+  font-weight: 700;
+  color: #333;
+}
+
+/* SCORE NUMBER */
+.score-text {
+  font-size: 18px;
+}
+
+/* PERCENTAGE */
+.score-text small {
+  display: block;
+  font-size: 12px;
+  color: #777;
+  margin-top: 2px;
+}
+
+/* OPTIONAL PASS STATE */
+.score-wrapper.pass circle.progress {
+  stroke: #4caf50;
+}
+
+/* OPTIONAL FAIL STATE */
+.score-wrapper.fail circle.progress {
+  stroke: #f44336;
+}
+
+
+
+
+
+
+
+
+
+
+/* Layout Strategy */
+.content-layout {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    height: 100%;
+}
+
+.preview-section { flex: 2; min-width: 0; }
+.info-section { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 15px; }
+
+/* Responsive Switch */
+@media (max-width: 900px) {
+    .content-layout { flex-direction: column; }
+    .info-section { min-width: 100%; }
+}
+
+/* Header Fix */
+.dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+}
+
+/* Circular Progress */
+.circle-container {
+    position: relative;
+    width: 150px;
+    margin: 0 auto;
+}
+
+svg { transform: rotate(-90deg); }
+.bg { fill: none; stroke: #eee; stroke-width: 10; }
+.progress {
+    fill: none;
+    stroke: #4caf50;
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+.score-text {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.score-text small { display: block; font-size: 0.8rem; color: #666; }
+
+/* Badges */
+.status-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 500; }
+.badge-yes { color: #2e7d32; background: #e8f5e9; border: 1px solid; }
+.badge-general { color: #ef6c00; background: #fff3e0; border: 1px solid; }
+.badge-no { color: #c62828; background: #ffebee; border: 1px solid; }
+
+/* QA List */
+.qa-container {
+    max-height: 300px;
+    overflow-y: auto;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+
+.qa-item { margin-bottom: 12px; font-size: 0.9rem; }
+.q-text { margin-bottom: 4px; color: #444; }
+
+/* Preview Frames */
+.pdf-frame { width: 100%; height: 500px; border: none; }
+.img-fluid { max-width: 100%; height: auto; border-radius: 8px; }
