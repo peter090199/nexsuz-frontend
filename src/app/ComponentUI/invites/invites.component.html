@@ -1,54 +1,93 @@
-<!-- Skeleton Loader -->
-<div *ngIf="isLoading; else invites" class="grid-container">
-    <div class="suggestion-card" *ngFor="let _ of skeletonRows; let i = index">
-        <div class="skeleton skeleton-img" [attr.data-id]="i"></div>
-        <div class="skeleton skeleton-text" [attr.data-id]="i"></div>
-        <div class="skeleton skeleton-subtext" [attr.data-id]="i"></div>
-        <div class="skeleton skeleton-button" [attr.data-id]="i"></div>
-    </div>
-</div>
-
-<!-- Invites List -->
-<ng-template #invites>
-    <p class="no-data" *ngIf="!peopleInvites || peopleInvites.length === 0">
-        No data found
-    </p>
-
-    <div class="grid-container" (scroll)="onScroll($event)">
-        <mat-card class="suggestion-card" *ngFor="let person of peopleInvites">
-            <button mat-icon-button class="close-button">
-                <mat-icon>close</mat-icon>
-            </button>
-
-            <!-- Profile Image -->
+<section class="section">
+    <div *ngIf="isLoading; else invitesTemplate" class="grid-container">
+        <div class="suggestion-card" *ngFor="let _ of skeletonRows; let i = index">
             <div class="profile-image-container">
-                <a [routerLink]="['/profile', person.follower_code]" class="profile-link">
-                    <img *ngIf="person.photo_pic" [src]="person.photo_pic" alt="" />
-                    <div *ngIf="!person.photo_pic || person.photo_pic === ''" class="avatar-letter">
-                        {{ person.fullname?.charAt(0) | uppercase }}
-                    </div>
-                    <mat-icon class="status-dot" matTooltip="{{ person.is_online == 1 ? 'Active now' : 'Offline' }}"
-                        [ngClass]="person.is_online == 1 ? 'online' : 'offline'">
-                        circle
-                    </mat-icon>
-                </a>
+                <div class="skeleton skeleton-img" [attr.data-id]="i"></div>
             </div>
-            <ng-container *ngIf="person.role_code === 'DEF-USERS'; else companyLink">
-                <a [routerLink]="['/profile', person.follower_code]" class="custom-title">{{ person.fullname }}</a>
-            </ng-container>
-            <ng-template #companyLink>
-                <a [routerLink]="['/client_profile', person.follower_code]" class="custom-title">{{ person.fullname }}</a>
-            </ng-template>
-            <mat-card-subtitle>{{ person.profession || '--' }}</mat-card-subtitle>
-            <div class="client-action" *ngIf="currentUserCode !== person.follower_code">
-                <div *ngIf="currentUserCode !== person.follower_code && person.follow_status === 'pending'">
-                    <button mat-raised-button color="primary"
+            <div class="skeleton skeleton-text" [attr.data-id]="i"></div>
+            <div class="skeleton skeleton-subtext" [attr.data-id]="i"></div>
+            <div class="skeleton skeleton-button" [attr.data-id]="i"></div>
+        </div>
+    </div>
+
+    <!-- =========================
+     INVITES LIST
+========================= -->
+    <ng-template #invitesTemplate>
+        <!-- NO DATA -->
+        <p class="no-data" *ngIf="!peopleInvites || peopleInvites.length === 0">
+            No data found
+        </p>
+        <!-- INVITES GRID -->
+        <div class="grid-container" *ngIf="peopleInvites && peopleInvites.length > 0" (scroll)="onScroll($event)">
+
+            <mat-card class="suggestion-card" *ngFor="let person of peopleInvites">
+
+                <!-- CLOSE BUTTON -->
+                <button mat-icon-button class="close-button" type="button">
+                    <mat-icon>close</mat-icon>
+                </button>
+
+                <!-- PROFILE IMAGE -->
+                <div class="profile-image-container">
+
+                    <!-- USER PROFILE -->
+                    <a *ngIf="person.role_code === 'DEF-USERS'; else companyProfile"
+                        [routerLink]="['/' + sharedRoutines.getRole() + '/profile', person.follower_code]"
+                        class="profile-link">
+                        <img *ngIf="person.photo_pic && person.photo_pic !== ''" [src]="person.photo_pic"/>
+                        <div *ngIf="!person.photo_pic || person.photo_pic === ''" class="avatar-letter">
+                            {{ person.fullname?.charAt(0) | uppercase }}
+                        </div>
+                        <mat-icon class="status-dot" [matTooltip]="person.is_online == 1 ? 'Active now' : 'Offline'"
+                            [ngClass]="person.is_online == 1 ? 'online' : 'offline'">
+                            circle
+                        </mat-icon>
+                    </a>
+                    <!-- COMPANY PROFILE -->
+                    <ng-template #companyProfile>
+                        <a [routerLink]="['/' + sharedRoutines.getRole() + '/client_profile', person.follower_code]"
+                            class="profile-link">
+
+                            <img *ngIf="person.photo_pic && person.photo_pic !== ''" [src]="person.photo_pic"/>
+
+                            <div *ngIf="!person.photo_pic || person.photo_pic === ''" class="avatar-letter">
+                                {{ person.fullname?.charAt(0) | uppercase }}
+                            </div>
+
+                            <mat-icon class="status-dot" [matTooltip]="person.is_online == 1 ? 'Active now' : 'Offline'"
+                                [ngClass]="person.is_online == 1 ? 'online' : 'offline'">
+                                circle
+                            </mat-icon>
+                        </a>
+                    </ng-template>
+                </div>
+                <!-- NAME -->
+                <a *ngIf="person.role_code === 'DEF-USERS'; else companyName"
+                    [routerLink]="['/' + sharedRoutines.getRole() + '/profile', person.follower_code]"
+                    class="custom-title">
+                    {{ person.fullname }}
+                </a>
+                <ng-template #companyName>
+                    <a [routerLink]="['/' + sharedRoutines.getRole() + '/client_profile', person.follower_code]"
+                        class="custom-title">
+                        {{ person.fullname }}
+                    </a>
+                </ng-template>
+                <!-- PROFESSION -->
+                <mat-card-subtitle>
+                    {{ person.profession || '--' }}
+                </mat-card-subtitle>
+                <!-- ACTION BUTTON -->
+                <div class="client-action" *ngIf="currentUserCode !== person.follower_code">
+                    <button *ngIf="person.follow_status === 'pending'" mat-raised-button color="primary" type="button"
                         (click)="ConnectInvites(person.follower_code, person.fullname)">
-                        <mat-icon>check</mat-icon> Accept
+                        <mat-icon>check</mat-icon>
+                        Accept
                     </button>
                 </div>
-            </div>
-            
-        </mat-card>
-    </div>
-</ng-template>
+            </mat-card>
+        </div>
+    </ng-template>
+
+</section>

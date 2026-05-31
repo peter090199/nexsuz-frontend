@@ -7,14 +7,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SearchHistoryService } from 'src/app/services/Search/search-history.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { NotificationsService } from 'src/app/services/Global/notifications.service';
-
-interface User {
-  code: number;
-  status: string;
-  fullname: string;
-  skills: string;
-  photo_pic: string;
-}
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
 
 @Component({
   selector: 'app-search',
@@ -22,233 +16,168 @@ interface User {
   styleUrls: ['./search.component.css']
 })
 export class SearchComponent implements OnInit {
-  users: User[] = [];
+
+  // ================= DATA =================
+  users: any[] = [];
+  searchHistory: any[] = [];
+
   searchQuery: string = '';
+  isLoading: boolean = false;
+
+  currentUserCode: any;
+
   dataSource = new MatTableDataSource<any>([]);
-  showOverlay: boolean = false;
-  code:any;
-  onlineUsers:any=[];
-  offlineUsers:any=[];
-  searchHistory: any = [];
+
+  // ================= RXJS =================
+  private searchSubject = new Subject<string>();
 
   constructor(
     private userService: SearchService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
-    private searchService: SearchHistoryService,
-    private authServiceCode: AuthService,
-    private notificationsService:NotificationsService
-  ) {}
+    private searchHistoryService: SearchHistoryService,
+    private authService: AuthService,
+    private notificationsService: NotificationsService,
+    public sharedService: SharedRoutinesService
+  ) { }
 
-  currentUserCode:any;
+  // ================= INIT =================
   ngOnInit(): void {
-   this.currentUserCode = this.authServiceCode.getAuthCode();
+
+    this.currentUserCode = this.authService.getAuthCode();
+
     this.loadHistory();
 
+    // URL sync
     this.route.queryParams.subscribe(params => {
       this.searchQuery = params['search'] || '';
-      console.log('Search Query:', this.searchQuery);
-     
-      this.fetchUsers(); // Fetch users when query changes
+      this.searchSubject.next(this.searchQuery);
     });
- 
-  }
 
-  loadHistory(): void {
-    this.searchService.getSearchHistory().subscribe(history => {
-      this.searchHistory = history.data;
+    // debounce search
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(query => {
+      this.fetchUsers(query);
     });
   }
 
-  usersRecent = [
-  {
-    fullname: 'Pedro Yorpo',
-    photo_pic: 'assets/images/pedro.png'
-  },
-  {
-    fullname: 'iGotSolutions Rea',
-    photo_pic: 'assets/images/igotsolutions.png'
-  },
-  {
-    fullname: 'LanceSoft, Inc.',
-    photo_pic: 'assets/images/lancesoft.png'
-  },
-  {
-    fullname: 'Harold Archival',
-    photo_pic: ''
-  }
-];
+  // ================= SEARCH INPUT =================
+  onSearch(): void {
+    const query = this.searchQuery.trim();
 
-
-  applyFilter(){
-    this.dataSource.filter = this.searchQuery.trim().toLocaleLowerCase();
-  }
-
-  fetchUsers(): void {
-    if (this.searchQuery.trim()) {
-      this.userService.searchUsers(this.searchQuery).subscribe({
-        next: (response) => {
-          console.log('✅ API Response:', response);
-            
-          if (response && ('online' in response) && ('offline' in response)) {
-            this.users = [...response.online, ...response.offline]; // Merge both lists
-          } else {
-            console.error('⚠️ Unexpected API response format:', response);
-            this.users = [];
-          }
-        },
-        error: (error) => {
-          console.error('❌ Error fetching users:', error);
-          this.users = [];
-        }
-      });
-    } else {
-      this.users = []; // Clear when search is empty
-    }
-  }
-  
-  fetchUsersxc(): void {
-    const query = this.searchQuery?.trim();
-  
     if (!query) {
-      console.warn('Search query is empty.');
+      this.users = [];
+      this.loadHistory();
       return;
     }
-  
-    this.userService.searchUsers(query).subscribe({
-      next: (response) => {
-        console.log('✅ API Response:', response); // More noticeable debugging output
-  
-        if (response && typeof response === 'object' && 'online' in response && 'offline' in response) {
-          this.onlineUsers = Array.isArray(response.online) ? response.online : [];
-          this.offlineUsers = Array.isArray(response.offline) ? response.offline : [];
-  
-          console.log(`🔹 Found ${this.onlineUsers.length} online users`);
-          console.log(`🔹 Found ${this.offlineUsers.length} offline users`);
-        } else {
-          console.error('⚠️ Unexpected API response format:', response);
-          this.onlineUsers = [];
-          this.offlineUsers = [];
-        }
-      },
-      error: (error) => {
-        console.error('❌ Error fetching users:', error);
-        this.onlineUsers = [];
-        this.offlineUsers = [];
-      }
-    });
+
+    this.searchSubject.next(query);
   }
-  
-  fetchUsersxx(): void {
-    if (!this.searchQuery.trim()) {
+
+  // ================= API SEARCH =================
+  fetchUsers(query: string): void {
+
+    if (!query) {
       this.users = [];
       return;
     }
 
-    this.userService.getSearch(this.searchQuery).subscribe(
-      (response: User[]) => {
-        this.users = response;
+    this.userService.searchUsers(query).subscribe({
+      next: (res: any) => {
+
+        this.users = [
+          ...(Array.isArray(res?.online) ? res.online : []),
+          ...(Array.isArray(res?.offline) ? res.offline : [])
+        ];
+
       },
-      (error) => {
-        console.error('Error fetching users:', error);
+      error: () => {
+        this.users = [];
       }
-    );
+    });
   }
 
-  openUserModal(user: User): void {
+  // ================= HISTORY =================
+  loadHistory(): void {
+    this.searchHistoryService.getSearchHistory().subscribe({
+      next: (res: any) => {
+        this.searchHistory = Array.isArray(res?.data) ? res.data : [];
+      },
+      error: () => {
+        this.searchHistory = [];
+      }
+    });
+  }
+
+  // ================= CLEAR SEARCH =================
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.users = [];
+
+    this.router.navigate([], {
+      queryParams: { search: null },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  // ================= HISTORY CLICK =================
+  searchFromHistory(query: string): void {
+    this.searchQuery = query;
+    this.onSearch();
+  }
+
+  // ================= VIEW USER =================
+  onViewUser(user: any): void {
+
+    const payload = {
+      viewer_code: this.currentUserCode,
+      viewed_code: user.code,
+      activity_type: 'view'
+    };
+
+    this.searchHistoryService.saveSearch(payload).subscribe({
+      next: () => this.loadHistory(),
+      error: (err) => console.error('View log error:', err)
+    });
+  }
+
+  // ================= MODAL =================
+  openUserModal(user: any): void {
     this.dialog.open(SearchModalComponent, {
       width: '900px',
       data: user
     });
   }
 
-  isActive(name: string): boolean {
-    return this.route.snapshot.queryParams['search'] === name;
-  }
+  // ================= CLEAR HISTORY =================
+  clearHistory(): void {
 
-  onSearch(): void {
-      this.showOverlay = !!this.searchQuery;
-    if (!this.searchQuery.trim()) {
-      this.clearSearch();
-      this.loadHistory();
-    }
-    this.fetchUsers();
-  }
+    const msg =
+      'Your search history is private. Are you sure you want to clear it?';
 
-  selectItem(name: string): void {
-    this.searchQuery = ''; // Clear input to close dropdown
-    this.clearSearch();
-    
-  }
+    this.notificationsService.popupWarning('', msg).then((res: any) => {
 
-  
+      if (res?.value) {
 
-  isLoading:boolean = false;
-    clearSearch() {
-    this.searchQuery = ""; // Reset search query
-    this.users = [];
-    this.router.navigate(['/search'], { queryParams: { search: null }, queryParamsHandling: 'merge' });
-    this.showOverlay = false;
-    }
+        this.isLoading = true;
 
-  clearHistory() {
-    //this.showOverlay = false;
-    const confirmMessage = 'Your search history is only visible to you, and it helps us to show you better results. Are you sure you want to clear it?';
-
-    this.notificationsService.popupWarning("", confirmMessage).then((result) => {
-      if (result.value) 
-      {
-        this.searchService.clearHistory().subscribe({
-            next:(res)=>{
-                this.notificationsService.toastrSuccess(res.message);
-                this.loadHistory(); 
-            },
-            error:(error)=>{
-              this.notificationsService.toastrError(error.error);
-              this.isLoading = false;
-            }
-
+        this.searchHistoryService.clearHistory().subscribe({
+          next: (r: any) => {
+            this.notificationsService.toastrSuccess(r?.message || 'Cleared');
+            this.searchHistory = [];
+            this.isLoading = false;
+          },
+          error: (err: any) => {
+            this.notificationsService.toastrError('Failed to clear history');
+            this.isLoading = false;
+          }
         });
-      }
 
+      }
 
     });
   }
-
-  
-
- searchFromHistory(query: string): void {
-    this.searchQuery = query;
-    this.onSearch();
-  }
-
-
-  hideOverlay() {
-    setTimeout(() => {
-      if (!this.searchQuery) {
-        this.showOverlay = false;
-      }
-    }, 200);
-  }
-
-
-
-onViewUser(user: any): void {
-  const data = {
-    viewer_code: this.currentUserCode,
-    viewed_code: user.code,
-    activity_type: 'view'
-  };
-
-  this.searchService.saveSearch(data).subscribe({
-    next: () => {
-      console.log('✅ Activity logged');
-      this.loadHistory();
-    },
-    error: (err) => console.error('❌ Logging failed:', err)
-  });
-}
-
-
 }

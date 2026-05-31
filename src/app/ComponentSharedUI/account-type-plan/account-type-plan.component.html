@@ -1,0 +1,301 @@
+<div class="plan-card" *ngIf="sharedRoutinesService.getRole() === 'DEF-CLIENT' || 
+  sharedRoutinesService.getRole() === 'DEF-ADMIN' || sharedRoutinesService.getRole() === 'DEF-MASTERADMIN'">>
+  <div class="plan-header">
+    <h1>Nexsuz Recruiter Plans</h1>
+    <p class="sub-text">
+      Grow your professional network, hire smarter, and unlock powerful recruiting tools.
+    </p>
+  </div>
+
+  <!-- PLAN GRID -->
+  <div class="plan-grid">
+
+    <!-- ================= FREE PLAN ================= -->
+    <div class="plan-box free-plan" [ngClass]="users?.account_type === 'FREE' ? 'active' : ''">
+
+      <div class="plan-badge">Starter</div>
+
+      <h2>Free</h2>
+      <p class="plan-desc">
+        Best for beginners and job seekers starting their journey.
+      </p>
+
+      <div class="price">
+        ₱0 <span>/ forever</span>
+      </div>
+
+      <ul>
+
+        <li>✔ View Public Profiles</li>
+        <li>✔ Apply to Jobs</li>
+        <li>✔ Basic Resume Upload</li>
+        <li>✔ Create Professional Profile</li>
+        <li>✔ Follow Companies</li>
+        <li>✔ Receive Job Alerts</li>
+
+        <li class="highlight">15 Connections Limit</li>
+        <li class="highlight">Restricted Search Access</li>
+        <li class="highlight">Limited Messaging</li>
+
+      </ul>
+
+      <button mat-stroked-button color="primary" (click)="selectPlan('FREE')">
+        Current Plan
+        <!-- {{ users?.account_type === 'FREE'
+        ? 'Current Plan'
+        : 'Get Started' }} -->
+
+      </button>
+
+    </div>
+
+    <!-- ================= BASIC PLAN ================= -->
+    <div class="plan-box basic-plan" [ngClass]="users?.account_type === 'BASIC' ? 'active' : ''">
+      <div class="plan-badge popular">
+        MOST POPULAR
+      </div>
+      <h2>Basic</h2>
+      <p class="plan-desc">
+        Perfect for active professionals building stronger connections.
+      </p>
+      <div class="price">
+        ₱299 <span>/ month</span>
+      </div>
+      <ul>
+        <li>✔ Everything in Free</li>
+
+        <li>✔ 100 Connections Limit</li>
+        <li>✔ Unlimited Job Applications</li>
+        <li>✔ Smart Search Filters</li>
+        <li>✔ Direct Messaging</li>
+        <li>✔ Profile Insights</li>
+        <li>✔ Who Viewed Your Profile</li>
+        <li>✔ Featured Profile Badge</li>
+        <li>✔ Priority Support</li>
+        <li>✔ AI Recommended Connections</li>
+
+      </ul>
+      <button mat-raised-button color="primary" (click)="selectPlan('BASIC')">
+        Upgrade Now
+      </button>
+    </div>
+
+    <!-- ================= PREMIUM PLAN ================= -->
+    <div class="plan-box premium-plan" [ngClass]="users?.account_type === 'PREMIUM' ? 'active' : ''">
+      <div class="plan-badge premium-badge">
+        PREMIUM
+      </div>
+      <h2>Premium</h2>
+      <p class="plan-desc">
+        Advanced growth tools for recruiters, influencers, and top professionals.
+      </p>
+      <div class="price">
+        ₱799 <span>/ month</span>
+      </div>
+      <ul>
+        <li>✔ Everything in Basic</li>
+
+        <li>✔ Unlimited Connections</li>
+        <li>✔ Unlimited Messaging</li>
+        <li>✔ Advanced Recruiter Search</li>
+        <li>✔ AI Candidate Matching</li>
+        <li>✔ Profile Boosting</li>
+        <li>✔ Top Search Placement</li>
+        <li>✔ Full Analytics Dashboard</li>
+        <li>✔ Verified Premium Badge</li>
+        <li>✔ 1-Day Boost per 200 Ads</li>
+        <li>✔ Access to Premium Events</li>
+        <li>✔ Priority Candidate Recommendations</li>
+
+      </ul>
+
+      <button mat-raised-button color="warn" (click)="selectPlan('PREMIUM')">
+        Go Premium
+      </button>
+
+    </div>
+
+    <!-- ================= BUSINESS PLAN ================= -->
+    <div class="plan-box business-plan" [ngClass]="users?.account_type === 'BUSINESS' ? 'active' : ''">
+      <div class="plan-badge business-badge">
+        BUSINESS
+      </div>
+      <h2>Business</h2>
+      <p class="plan-desc">
+        Complete hiring and branding solution for companies and agencies.
+      </p>
+      <div class="price">
+        ₱1,499 <span>/ month</span>
+      </div>
+
+      <ul>
+
+        <li>✔ Everything in Premium</li>
+
+        <li>✔ Unlimited Job Posting</li>
+        <li>✔ Manage Applicants</li>
+        <li>✔ Company Verification Badge</li>
+        <li>✔ Company Branding Page</li>
+        <li>✔ Recruiter Team Access</li>
+        <li>✔ Applicant Tracking System</li>
+        <li>✔ Schedule Interviews</li>
+        <li>✔ Talent Database Access</li>
+        <li>✔ Sponsored Job Ads</li>
+        <li>✔ Candidate Analytics</li>
+        <li>✔ AI Talent Recommendations</li>
+        <li>✔ Dedicated Account Manager</li>
+
+      </ul>
+
+      <button mat-raised-button color="accent" (click)="selectPlan('BUSINESS')">
+        Upgrade Business
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+<div class="plan-card" *ngIf="this.sharedRoutinesService.getRole() === 'DEF-USERS'">
+
+  <!-- HEADER -->
+  <div class="plan-header">
+    <h1>Nexsuz Job Seeker Plans</h1>
+    <p class="sub-text">
+      Unlock more opportunities, grow your network, and get hired faster.
+    </p>
+  </div>
+
+  <!-- PLAN GRID -->
+  <div class="plan-grid">
+
+    <!-- ================= FREE PLAN ================= -->
+    <div class="plan-box free-plan" [ngClass]="users?.account_type === 'FREE' ? 'active' : ''">
+
+      <div class="plan-badge">
+        STARTER
+      </div>
+
+      <h2>Free</h2>
+
+      <p class="plan-desc">
+        Perfect for new users exploring jobs and networking opportunities.
+      </p>
+
+      <div class="price">
+        ₱0 <span>/ forever</span>
+      </div>
+
+      <ul>
+
+        <li>✔ Create Profile</li>
+        <li>✔ Upload Resume</li>
+        <li>✔ Apply to Jobs</li>
+        <li>✔ Follow Companies</li>
+        <li>✔ Join Networking Feed</li>
+        <li>✔ Receive Job Alerts</li>
+
+        <li class="highlight">15 Connections Limit</li>
+        <li class="highlight">Restricted Search Access</li>
+        <li class="highlight">Limited Messaging</li>
+
+      </ul>
+
+      <button mat-stroked-button color="primary" (click)="selectPlan('FREE')">
+
+        {{ users?.account_type === 'FREE'
+        ? 'Current Plan'
+        : 'Get Started' }}
+
+      </button>
+
+    </div>
+
+    <!-- ================= BASIC PLAN ================= -->
+    <div class="plan-box basic-plan" [ngClass]="users?.account_type === 'BASIC' ? 'active' : ''">
+
+      <div class="plan-badge popular">
+        MOST POPULAR
+      </div>
+
+      <h2>Basic</h2>
+
+      <p class="plan-desc">
+        Ideal for professionals actively growing their career and connections.
+      </p>
+
+      <div class="price">
+        ₱199 <span>/ month</span>
+      </div>
+
+      <ul>
+
+        <li>✔ Everything in Free</li>
+
+        <li>✔ 100 Connections Limit</li>
+        <li>✔ Unlimited Job Applications</li>
+        <li>✔ Advanced Job Search Filters</li>
+        <li>✔ Unlimited Messaging</li>
+        <li>✔ Profile Insights</li>
+        <li>✔ See Who Viewed Your Profile</li>
+        <li>✔ AI Job Recommendations</li>
+        <li>✔ Featured Applicant Badge</li>
+        <li>✔ Priority Application Queue</li>
+
+      </ul>
+
+      <button mat-raised-button color="primary" (click)="selectPlan('BASIC')">
+
+        Upgrade Basic
+
+      </button>
+
+    </div>
+
+    <!-- ================= PREMIUM PLAN ================= -->
+    <div class="plan-box premium-plan" [ngClass]="users?.account_type === 'PREMIUM' ? 'active' : ''">
+
+      <div class="plan-badge premium-badge">
+        PREMIUM
+      </div>
+
+      <h2>Premium</h2>
+
+      <p class="plan-desc">
+        Premium career tools for serious professionals and top candidates.
+      </p>
+
+      <div class="price">
+        ₱499 <span>/ month</span>
+      </div>
+
+      <ul>
+
+        <li>✔ Everything in Basic</li>
+
+        <li>✔ Unlimited Connections</li>
+        <li>✔ Profile Boosting</li>
+        <li>✔ Top Applicant Placement</li>
+        <li>✔ Verified Premium Badge</li>
+        <li>✔ AI Resume Optimization</li>
+        <li>✔ AI Interview Preparation</li>
+        <li>✔ Career Analytics Dashboard</li>
+        <li>✔ Access to Premium Networking Events</li>
+        <li>✔ Recruiter Direct Access</li>
+        <li>✔ Early Access to New Jobs</li>
+        <li>✔ 1-Day Profile Boost per Month</li>
+
+      </ul>
+
+      <button mat-raised-button color="warn" (click)="selectPlan('PREMIUM')">
+
+        Go Premium
+
+      </button>
+
+    </div>
+
+  </div>
+</div>

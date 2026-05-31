@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
+import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
 import { NotificationsService } from 'src/app/services/Global/notifications.service';
 import { ClientsService } from 'src/app/services/Networking/clients.service';
 import { ProfileService } from 'src/app/services/Profile/profile.service';
@@ -11,175 +12,123 @@ import { ProfileService } from 'src/app/services/Profile/profile.service';
 })
 export class BaseOnRecenActivityComponent implements OnInit {
 
-  constructor(private clientsService: ClientsService,
-    private authService: AuthService,
-    private alert: NotificationsService,
-    private profile: ProfileService) { }
-
   peopleRecentActivity: any[] = [];
 
   isLoading = false;
   skeletonRows: number[] = [];
-  hasMoreData = true;
-  currentUserCode: string = '';
+
+  currentUserCode = '';
+
   page = 1;
   limit = 10;
-  people: any[] = [];
-  selectedTabIndex: number = 0;
+  hasMoreData = true;
+
+  constructor(
+    private clientsService: ClientsService,
+    private authService: AuthService,
+    private alert: NotificationsService,
+    private profile: ProfileService,
+    public sharedRoutines: SharedRoutinesService
+  ) {}
 
   ngOnInit(): void {
-    this.loadTabData(this.selectedTabIndex);
+    this.getPeopleRecentActivity();
   }
 
-  private loadTabData(index: number): void {
-    if (index === 0) {
-      this.getPeopleRecentActivity();
-     
-    }
-  }
-  // onScroll(event: any): void {
-  //   const { scrollTop, scrollHeight, clientHeight } = event.target;
-  //   if (scrollTop + clientHeight >= scrollHeight - 100 && !this.isLoading && this.hasMoreData) {
-  //     this.getPeopleRecentActivity();
-  //     this.getPendingFollowRequests();
-  //   }
-  // }
-
-
-
-// Fetch pending follow requests
-// peopleInvites: any = [];
-// followerCode: any;
-// isLoading2:boolean = false;
-// getPendingFollowRequests(): void {
-//   if (this.isLoading2) return;
-//   this.isLoading2 = true;
-
-//   this.clientsService.getPendingFollowRequests().subscribe({
-//     next: (res) => {
-
-//       if (!res.data || res.data.length === 0) {
-//         this.hasMoreData = false;
-//       }
-
-//       // Append data
-//       this.peopleInvites = [
-//         ...this.peopleInvites,
-//         ...res.data.map((item: any) => ({
-//           ...item,
-//           follower_code: item.follower_code ?? null   // ensure always exists
-//         }))
-//       ];
-
-//       // Check if any follower_code exists in all loaded items
-//       this.followerCode = this.peopleInvites.some(
-//         (p: any) => p.follower_code !== null && p.follower_code !== ''
-//       );
-
-//       console.log("Follower Code Exists:", this.followerCode);
-
-//       this.isLoading2 = false;
-//     },
-
-//     error: (err) => {
-//       console.error('Error loading pending follow requests:', err);
-//       this.isLoading2 = false;
-//     }
-//   });
-// }
-
-
+  /* =========================
+     LOAD RECENT ACTIVITY
+  ========================= */
   getPeopleRecentActivity(): void {
     if (this.isLoading || !this.hasMoreData) return;
 
     this.isLoading = true;
     this.currentUserCode = this.authService.getAuthCode();
-    this.skeletonRows = Array.from({ length: this.limit }, (_, i) => i);
+    this.skeletonRows = Array.from({ length: this.limit });
 
     this.clientsService.getPeopleRecentActivity().subscribe({
       next: (res) => {
-        this.skeletonRows = [];
+
         const newData = (res.data || []).map((person: any) => ({
           ...person,
-          follow_status: person.follow_status,
-          follow_id: person.id,
-          role_code: person.role_code
+          follow_status: person.follow_status || 'not_following'
         }));
 
-        this.peopleRecentActivity.push(...newData);
+        if (newData.length < this.limit) {
+          this.hasMoreData = false;
+        }
+
+        this.peopleRecentActivity = [
+          ...this.peopleRecentActivity,
+          ...newData
+        ];
+
         this.page++;
-        this.hasMoreData = newData.length === this.limit;
         this.isLoading = false;
+        this.skeletonRows = [];
       },
+
       error: (err) => {
-        console.error('Error loading recent activity:', err);
-        this.alert.toastrError('❌ Failed to load recent activity.');
+        console.error(err);
+        this.alert.toastrError('Failed to load recent activity');
         this.isLoading = false;
+        this.skeletonRows = [];
       }
     });
   }
 
+  /* =========================
+     CONNECT ACTION
+  ========================= */
+  AddConnect(code: string, fullName: string, status: string, id: number): void {
 
-  /** Follow / Unfollow / Cancel Request */
-  AddConnect(code: string, fullName: string, follow_status: string, id: number): void {
     if (!code) {
-      this.alert.toastrWarning('⚠️ No user code provided.');
+      this.alert.toastrWarning('No user code provided');
       return;
     }
 
     let confirmMessage = '';
-    let successAction = '';
-    switch (follow_status) {
-      case 'not_following':
-        confirmMessage = 'Send a follow request to this user?';
-        successAction = 'Follow request sent.';
-        break;
-      case 'pending':
-        confirmMessage = 'Cancel your pending follow request?';
-        successAction = 'Follow request canceled.';
-        break;
-      case 'accepted':
-        confirmMessage = 'Unfollow this user?';
-        successAction = 'Unfollowed successfully.';
-        break;
+
+    if (status === 'not_following') {
+      confirmMessage = 'Send follow request?';
+    } else if (status === 'pending') {
+      confirmMessage = 'Cancel request?';
+    } else {
+      confirmMessage = 'Unfollow user?';
     }
 
-    this.alert.popupWarning(fullName, confirmMessage).then((result) => {
-      if (result.value) {
-        const action$ =
-          follow_status === 'accepted'
-            ? this.profile.Unfollow(id)
-            : this.profile.AddFollow(code);
-        this.getPeopleRecentActivity();
-        action$.subscribe({
-          next: (res) => {
-            if (res.status === true || res.success === true) {
-              this.alert.toastrSuccess(res.message);
+    this.alert.popupWarning(fullName, confirmMessage).then(result => {
 
-              // ✅ Update UI without reloading
-              this.peopleRecentActivity = this.peopleRecentActivity.map(p =>
-                p.code === code ? { ...p, follow_status: res.follow_status } : p
-              );
-              this.people = this.people.map(p =>
-                p.code === code ? { ...p, follow_status: res.follow_status } : p
-              );
+      if (!result.value) return;
 
-            } else {
-              this.alert.toastrError(res.message || 'Action failed.');
-            }
-          },
-          error: (err) => {
-            this.alert.toastrError(err.error?.message || 'Something went wrong.');
-            console.error(err);
+      const request$ =
+        status === 'accepted'
+          ? this.profile.Unfollow(id)
+          : this.profile.AddFollow(code);
+
+      request$.subscribe({
+        next: (res) => {
+
+          if (!res?.success && !res?.status) {
+            this.alert.toastrError(res.message || 'Failed');
+            return;
           }
-        });
 
+          this.alert.toastrSuccess(res.message);
 
-      }
+          // ✅ update UI instantly (NO reload)
+          this.peopleRecentActivity = this.peopleRecentActivity.map(p =>
+            p.code === code
+              ? { ...p, follow_status: res.follow_status }
+              : p
+          );
+        },
+
+        error: (err) => {
+          console.error(err);
+          this.alert.toastrError('Something went wrong');
+        }
+      });
+
     });
   }
-
-
-
-
 }

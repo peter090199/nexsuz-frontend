@@ -1,3 +1,7 @@
+<button mat-icon-button class="close-button" [mat-dialog-close]="true">
+  <mat-icon class="close-icon" color="warn">close</mat-icon>
+</button>
+
 <section class="section">
   <div class="search-div">
     <mat-form-field class="w-90" appearance="standard">
@@ -10,7 +14,7 @@
 
     <button mat-raised-button color="primary" (click)="getJobPosting()">View</button>
   </div>
-  <mat-divider></mat-divider>
+
   <mat-tab-group>
 
     <!-- ===================== TAB 1: APPLIED ===================== -->
@@ -26,12 +30,12 @@
 
               <!-- Job Name -->
               <ng-container *ngSwitchCase="'job_name'">
-                <a [routerLink]="['/recommended-jobs', job.transNo]">{{ job.job_name }}</a>
+                {{ job.job_name }}
               </ng-container>
 
               <!-- Fullname -->
               <ng-container *ngSwitchCase="'fullname'">
-                <a [routerLink]="['/profile', job.code]">{{ job.fullname }}</a>
+                <a [routerLink]="sharedService.getProfileRoute(job.code)">{{ job.fullname }}</a>
               </ng-container>
 
               <!-- Default Column -->
@@ -90,11 +94,11 @@
 
               <ng-container *ngSwitchCase="'job_name'">
                 <ng-container *ngIf="job.role_code === 'DEF-USERS';  else companyLink">
-                  <a [routerLink]="['/profile/recommended-jobs', job.transNo]" class="custom-title">{{ job.job_name
-                    }}</a>
+                  {{ job.job_name}}
                 </ng-container>
                 <ng-template #companyLink>
-                  <a [routerLink]="['/client_profile', job.role_code]" class="custom-title">{{ job.fullname }}</a>
+                  <a [routerLink]="sharedService.getClientProfileRoute(job.code)" class="custom-title">{{
+                    job.fullname}}</a>
                 </ng-template>
               </ng-container>
               <!-- <ng-container *ngSwitchCase="'job_name'">
@@ -102,25 +106,23 @@
               </ng-container> -->
 
               <ng-container *ngSwitchCase="'fullname'">
-                <a [routerLink]="['/profile', job.code]">{{ job.fullname }}</a>
+                <a [routerLink]="sharedService.getProfileRoute(job.code)">{{ job.fullname }}</a>
               </ng-container>
 
               <ng-container *ngSwitchDefault>
                 {{ col.cell(job) }}
               </ng-container>
-
             </ng-container>
-
             <!-- ACTIONS -->
             <ng-container *ngIf="col.columnDef === 'actions'">
-
               <!-- Mark as Approved -->
               <button mat-icon-button color="accent" matTooltip="Mark as Approved"
                 (click)="markStatus(job, 'approved')">
                 <mat-icon>check_circle</mat-icon>
               </button>
               <!-- Interview -->
-              <button mat-icon-button color="accent" (click)="markStatusInterview(job,'interview')" matTooltip="Interview">
+              <button mat-icon-button color="accent" (click)="markStatusInterview(job,'interview')"
+                matTooltip="Interview">
                 <mat-icon>record_voice_over</mat-icon>
               </button>
 
@@ -167,11 +169,11 @@
             <ng-container [ngSwitch]="col.columnDef">
 
               <ng-container *ngSwitchCase="'job_name'">
-                <a [routerLink]="['/recommended-jobs', job.transNo]">{{ job.job_name }}</a>
+                <a>{{ job.job_name }}</a>
               </ng-container>
 
               <ng-container *ngSwitchCase="'fullname'">
-                <a [routerLink]="getJobProfileLink(job, job.role_code)">
+                <a [routerLink]="sharedService.getProfileRoute(job.code)">
                   {{ job.fullname }}
                 </a>
 
@@ -225,11 +227,11 @@
             <ng-container [ngSwitch]="col.columnDef">
 
               <ng-container *ngSwitchCase="'job_name'">
-                <a [routerLink]="['/recommended-jobs', job.transNo]">{{ job.job_name }}</a>
+                {{ job.job_name }}
               </ng-container>
 
               <ng-container *ngSwitchCase="'fullname'">
-                <a [routerLink]="getJobProfileLink(job, job.role_code)">
+                <a [routerLink]="sharedService.getProfileRoute(job.code)">
                   {{ job.fullname }}
                 </a>
 
@@ -284,11 +286,11 @@
             <ng-container [ngSwitch]="col.columnDef">
 
               <ng-container *ngSwitchCase="'job_name'">
-                <a [routerLink]="['/recommended-jobs', job.transNo]">{{ job.job_name }}</a>
+                {{ job.job_name }}
               </ng-container>
 
               <ng-container *ngSwitchCase="'fullname'">
-                <a [routerLink]="['/profile', job.code]">{{ job.fullname }}</a>
+                <a [routerLink]="sharedService.getProfileRoute(job.code)">{{ job.fullname }}</a>
               </ng-container>
 
               <ng-container *ngSwitchDefault>{{ col.cell(job) }}</ng-container>

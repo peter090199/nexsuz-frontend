@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ProfileService } from 'src/app/services/Profile/profile.service';
-import { UploadProfileComponent } from '../../Individual/upload-profile/upload-profile.component';
-import { UserCVComponent } from '../../Individual/user-cv/user-cv.component';
-import { UserProfileUiComponent } from '../../Individual/user-profile-ui/user-profile-ui.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthGuard } from 'src/app/AuthGuard/auth.guard';
+
+import { ProfileService } from 'src/app/services/Profile/profile.service';
 import { PostUploadImagesService } from 'src/app/services/post-upload-images.service';
 import { CommentService } from 'src/app/services/comment/comment.service';
 import { NotificationsService } from 'src/app/services/Global/notifications.service';
-import { ImageModalComponent } from 'src/app/ComponentUI/Modal/image-modal/image-modal.component';
+import { AuthGuard } from 'src/app/AuthGuard/auth.guard';
 import { AuthService } from 'src/app/services/auth.service';
 import { ClientsService } from 'src/app/services/Networking/clients.service';
+
+import { UploadProfileComponent } from '../../Individual/upload-profile/upload-profile.component';
+import { ImageModalComponent } from 'src/app/ComponentUI/Modal/image-modal/image-modal.component';
+
 @Component({
   selector: 'app-profile-ui',
   templateUrl: './profile-ui.component.html',
@@ -19,127 +20,30 @@ import { ClientsService } from 'src/app/services/Networking/clients.service';
 })
 export class ProfileUIComponent implements OnInit {
 
+  // =========================
+  // STATE
+  // =========================
   error: any;
   profiles: any;
   users: any;
-  btnCurriculum: boolean = false;
-  isUserOnline: boolean = false;
-  code: any;
   posts: any[] = [];
-  followers: any;
-  activeHours: any;
 
-  modalOpen = false;
+  code: string | null = null;
+  currentUserCode: any;
+
+  isloading = false;
+
+  followStatus: string = 'none';
+  followId: number = 0;
+
+  // pagination
   currentPage = 0;
   pageSize = 6;
-  newComment = '';
-  currentIndex = 0;
-  maxImages: number = 3;
 
-
-
-  constructor(
-    private profile: ProfileService, public dialog: MatDialog,
-    private route: ActivatedRoute, private authService: AuthGuard, private authServiceCode: AuthService,
-    private postDataservices: PostUploadImagesService, private comment: CommentService,
-    private alert: NotificationsService, private clientServices: ClientsService, private router: Router
-
-  ) { }
-
-
-  get pagedImages() {
-    const start = this.currentPage * this.pageSize;
-    return this.posts.slice(start, start + this.pageSize);
-  }
-
-  get totalPages() {
-    return Math.ceil(this.posts.length / this.pageSize);
-  }
-
-  openModal(image: any): void {
-    const dialogRef = this.dialog.open(ImageModalComponent, {
-      data: image,
-      minWidth: '70%',
-      maxWidth: '90%',
-      maxHeight: '90vh'
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) this.loadUserPost();
-    });
-
-  }
-
-
-  closeModal(): void {
-    this.modalOpen = false;
-  }
-
-  changeSlide(direction: number): void {
-    const total = this.posts.length;
-    this.currentIndex = (this.currentIndex + direction + total) % total;
-  }
-
-  goToSlide(index: number): void {
-    this.currentIndex = index;
-  }
-
-  nextPage(): void {
-    if (this.currentPage < this.totalPages - 1) this.currentPage++;
-  }
-
-  prevPage(): void {
-    if (this.currentPage > 0) this.currentPage--;
-  }
-
-  getCaption(index: number): string {
-    const caption = this.posts[index]?.caption || ''; // Use an empty string if undefined or null
-    return caption.split(' ').slice(0, 10).join(' ') + (caption.split(' ').length > 10 ? '...' : '');
-  }
-
-  currentUserCode: any;
-  isloading: boolean = false;
-  coverSkeleton = Array(3);
-  profileSkeleton = Array(1);
-  coverphoto: any;
-
-  ngOnInit(): void {
-    this.currentUserCode = this.authServiceCode.getAuthCode();
-
-    const url = window.location.href;
-    const codesplit = url.split('/').pop();
-    this.code = codesplit;
-
-    this.loadUserPost();
-    this.loadUserData();
-    this.loadProfileCV();
-    this.loadProfileCoverPhoto();
-
-    this.checkFollowStatus(this.code);
-  }
-
-
-  followId: number = 0;
-  checkFollowStatus(code:any) {
-    this.clientServices.getPendingFollowStatus(code).subscribe((res: any) => {
-    
-      this.followStatus = res.follow_status || 'none';
-
-      if (res.data && res.data.length > 0) {
-        const followRecord = res.data[0]; // get the first match
-        this.followId = followRecord.id;  // 👈 store the follow ID (e.g., 142)
-      } else {
-        this.followId = 0;
-      }
-
-    });
-  }
-
-  //react emoji
+  // reactions
   showReactions = false;
-  selectedReaction: any = null;
+  selectedReactions: { [postId: string]: any } = {};
   hoveredReaction: any = null;
-
 
   reactions = [
     { name: 'Like', emoji: '👍' },
@@ -150,456 +54,273 @@ export class ProfileUIComponent implements OnInit {
     { name: 'Angry', emoji: '😡' }
   ];
 
+  constructor(
+    private profile: ProfileService,
+    private postDataservices: PostUploadImagesService,
+    private comment: CommentService,
+    private alert: NotificationsService,
+    private clientServices: ClientsService,
+    private authGuard: AuthGuard,
+    private authService: AuthService,
+    private route: ActivatedRoute,
+    private router: Router,
+    public dialog: MatDialog
+  ) { }
 
-  selectedReactions: { [postId: string]: any } = {};
+  // =========================
+  // INIT
+  // =========================
+  ngOnInit(): void {
+    this.currentUserCode = this.authService.getAuthCode?.();
 
+    this.route.paramMap.subscribe(params => {
+      this.code = params.get('code');
+      const role = params.get('role');
 
-  onReactionHover(post: any, reaction: any) {
-    this.hoveredReaction = reaction;
-    this.selectedReactions[post.id] = reaction;
-    this.sendReactionToServer(post.id, reaction);
+      console.log('ROLE:', role);
+      console.log('CODE:', this.code);
 
-    // optional: hide popup automatically
-    setTimeout(() => this.showReactions = false, 300);
-  }
-  sendReactionToServer(postId: string, reaction: any) {
-    console.log(`✅ Sent reaction '${reaction.name}' for post ID: ${postId}`);
-    // TODO: Use HttpClient or service here
-    // this.api.sendReaction(postId, reaction).subscribe(...)
-  }
-
-
-
-  // Function to calculate active hours
-  getActiveHours(lastActive: string): string {
-    if (!lastActive) return 'unknown';
-
-    const lastActiveDate = new Date(lastActive);
-    const now = new Date();
-    const diffInHours = Math.floor((now.getTime() - lastActiveDate.getTime()) / (1000 * 60 * 60));
-
-    if (diffInHours < 1) return 'Just now';
-    if (diffInHours === 1) return '1 hour ago';
-    return `${diffInHours} hours ago`;
-  }
-
-  loadUserPost(): void {
-    this.isloading = true; // start skeleton
-
-    this.postDataservices.getDataPost(this.code).subscribe({
-      next: (res) => {
-        if (res && res.success && Array.isArray(res.data)) {
-          this.posts = res.data.map((post: any) => {
-            // ✅ Fix image URLs
-            const images = (post.images || []).map((img: any) => ({
-              ...img,
-              path_url: 'https://lightgreen-pigeon-122992.hostingersite.com/' +
-                img.path_url.replace(/\\/g, '')
-            }));
-
-            // ✅ Fix video URLs
-            const videos = (post.videos || []).map((vid: any) => ({
-              ...vid,
-              path_url: 'https://lightgreen-pigeon-122992.hostingersite.com/' +
-                vid.path_url.replace(/\\/g, '')
-            }));
-
-            // ✅ Fix comments & replies
-            const comments = (post.comments || []).map((comment: any) => ({
-              ...comment,
-              profile_pic: comment.profile_pic
-                ? comment.profile_pic.replace(/\\/g, '')
-                : 'https://lightgreen-pigeon-122992.hostingersite.com/storage/app/public/uploads/DEFAULTPROFILE/DEFAULTPROFILE.png',
-              replies: (comment.replies || []).map((reply: any) => ({
-                ...reply,
-                profile_pic: reply.profile_pic
-                  ? reply.profile_pic.replace(/\\/g, '')
-                  : 'https://lightgreen-pigeon-122992.hostingersite.com/storage/app/public/uploads/DEFAULTPROFILE/DEFAULTPROFILE.png'
-              }))
-            }));
-
-            return {
-              ...post,
-              fullname: post.fullname || post.Fullname || "Unknown User",
-              profile_pic: post.profile_pic
-                ? post.profile_pic.replace(/\\/g, '')
-                : 'https://lightgreen-pigeon-122992.hostingersite.com/storage/app/public/uploads/DEFAULTPROFILE/DEFAULTPROFILE.png',
-              images,
-              videos,
-              comments,
-              activeHours: this.getActiveHours(post.lastActive), // if backend sends lastActive
-              followers: post.followers || 0,
-              visibleComments: 3
-            };
-          });
-        }
-        this.isloading = false; // ✅ stop skeleton after success
-      },
-      error: (err) => {
-        console.error('Error fetching posts:', err);
-        this.isloading = false; // ✅ stop skeleton on error too
+      if (this.code) {
+        this.initData();
       }
-    });
-  }
-
-
-
-  // loadUserPost(): void {
-  //   this.postDataservices.getDataPost(this.code).subscribe(
-  //     (data) => {
-  //       if (data && Array.isArray(data)) {
-  //         this.posts = data.map(post => ({
-  //           ...post,
-  //           activeHours: this.getActiveHours(post.lastActive),
-  //           followers: post.followers || 0,
-  //           visibleComments: 3, 
-  //         }));
-  //            this.posts.forEach(post => {
-  //           if (post.path_url && post.path_url.length > 0) {
-  //             post.path_url.forEach((image: { path_url: string; }) => {
-  //               image.path_url = 'https://lightgreen-pigeon-122992.hostingersite.com/' + image.path_url.replace(/\\/g, '');
-  //             });
-  //           }
-  //         });
-
-
-  //       }
-
-  //     },
-  //     (error) => console.error('Error fetching posts:', error)
-  //   );
-  // }
-
-  likeComment(comment: any) {
-    comment.likes = (comment.likes || 0) + 1;
-  }
-
-  //reply comment
-  addReply(comment: any): void {
-    const replyText = comment.newReply?.trim();
-    if (!replyText) return;
-
-    comment.isSubmitting = true;
-
-    const payload = {
-      comment: replyText
-    };
-
-    console.log(payload);
-
-    this.comment.postCommentByReply(comment.comment_uuid, payload).subscribe({
-      next: () => {
-        comment.replies = comment.replies || []; // ensure it exists
-        comment.replies.push({
-          user: 'Current User', // Replace with actual user data
-          comment: replyText,
-          profile_pic: '',
-          likes: 0,
-          replies: []
-        });
-        comment.newReply = '';
-        comment.isSubmitting = false;
-      },
-      error: (err) => {
-        comment.isSubmitting = false;
-        this.alert.toastPopUpError("Comment failed");
-      }
-    });
-  }
-  loadMoreComments(post: any): void {
-    post.visibleComments += 3;
-  }
-
-  loadProfileCoverPhoto() {
-    this.profile.getCompanyProfile(this.code).subscribe({
-      next: (res) => {
-        if (res.success == true) {
-          this.coverphoto = res.message;
-
-        } else {
-          this.error = 'Failed to load profile data';
-        }
-      },
-      error: (err) => {
-        this.error = err.message || 'An error occurred while fetching profile data';
-      },
-    });
-  }
-
-  loadProfileCV() {
-    this.profile.getProfileByUser(this.code).subscribe({
-      next: (response) => {
-        if (response.success == true) {
-          this.profiles = response.message;
-
-        } else {
-          this.error = 'Failed to load profile data';
-        }
-      },
-      error: (err) => {
-        this.error = err.message || 'An error occurred while fetching profile data';
-      },
     });
   }
 
   UserCV() {
-    this.router.navigateByUrl("/user-cv")
+    this.router.navigateByUrl("/DEF-USERS/user-cv")
+  }
+  // =========================
+  // INIT LOAD
+  // =========================
+  initData(): void {
+    this.loadUserPost();
+    this.loadUserData();
+    this.loadProfileCV();
+    this.loadProfileCoverPhoto();
+    this.checkFollowStatus(this.code!);
   }
 
-  // UserCV() {
-  //   const dialogConfig = new MatDialogConfig();
-  //   dialogConfig.disableClose = true;
-  //   dialogConfig.autoFocus = true;
-  //   dialogConfig.width = '1000px';
-  //   dialogConfig.height = '690px';
-  // //  dialogConfig.data = element || null; // Pass user data
+  // =========================
+  // POSTS
+  // =========================
+  loadUserPost(): void {
+    this.isloading = true;
 
-  //   const dialogRef = this.dialog.open(UserProfileUiComponent, dialogConfig);
+    this.postDataservices.getDataPost(this.code!).subscribe({
+      next: (res) => {
+        if (res?.success && Array.isArray(res.data)) {
 
-  //   dialogRef.afterClosed().subscribe(() => {
+          this.posts = res.data.map((post: any) => ({
+            ...post,
+            fullname: post.fullname || post.Fullname || 'Unknown User',
+            profile_pic: this.fixUrl(post.profile_pic),
+            images: (post.images || []).map((img: any) => ({
+              ...img,
+              path_url: this.fixUrl(img.path_url)
+            })),
+            videos: (post.videos || []).map((vid: any) => ({
+              ...vid,
+              path_url: this.fixUrl(vid.path_url)
+            })),
+            comments: (post.comments || []).map((c: any) => ({
+              ...c,
+              profile_pic: this.fixUrl(c.profile_pic),
+              replies: (c.replies || []).map((r: any) => ({
+                ...r,
+                profile_pic: this.fixUrl(r.profile_pic)
+              }))
+            })),
+            visibleComments: 3,
+            liked: false
+          }));
 
-  //   });
-  // }
-
-  // UserCV() {
-  //   const dialogConfig = new MatDialogConfig();
-  //   dialogConfig.disableClose = true;
-  //   dialogConfig.autoFocus = true;
-  //   dialogConfig.width = '980px';
-  // //  dialogConfig.data = element || null; // Pass user data
-
-  //   const dialogRef = this.dialog.open(UserCVComponent, dialogConfig);
-
-  //   dialogRef.afterClosed().subscribe(() => {
-
-  //   });
-  // }
-
-
-  loadUserData() {
-    this.profile.getProfileByUserOnly().subscribe({
-      next: (response) => {
-        if (response.success == true) {
-          this.users = response.message[0]; // Access the first item in the message array
-        } else {
-          this.error = 'Failed to load profile data';
         }
+
+        this.isloading = false;
       },
       error: (err) => {
-        this.error = err.message || 'An error occurred while fetching profile data';
-      },
-    });
-  }
-
-  uploadPic(): void {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = '400px';
-
-    const dialogRef = this.dialog.open(UploadProfileComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // this.getRoles(); // Refresh the table after dialog closure
+        console.error(err);
+        this.isloading = false;
       }
     });
   }
 
-  toggleComments(post: any): void {
-    post.showComments = !post.showComments;
+  // =========================
+  // PROFILE DATA
+  // =========================
+  loadUserData(): void {
+    this.profile.getProfileByUserOnly().subscribe({
+      next: (res) => this.users = res?.message?.[0],
+      error: (err) => this.error = err.message
+    });
   }
 
+  loadProfileCV(): void {
+    this.profile.getProfileByUser(this.code!).subscribe({
+      next: (res) => this.profiles = res?.message,
+      error: (err) => this.error = err.message
+    });
+  }
 
+  loadProfileCoverPhoto(): void {
+    this.profile.getCompanyProfile(this.code!).subscribe({
+      next: (res) => this.coverphoto = res?.message,
+      error: (err) => this.error = err.message
+    });
+  }
 
+  coverphoto: any;
+
+  // =========================
+  // FOLLOW SYSTEM
+  // =========================
+  checkFollowStatus(code: string): void {
+    this.clientServices.getPendingFollowStatus(code).subscribe({
+      next: (res: any) => {
+        this.followStatus = res.follow_status || 'none';
+
+        const record = res?.data?.[0];
+        this.followId = record?.id || record?.follow_id || 0;
+      }
+    });
+  }
+
+  AddFollow(code: any, status: string, first: string, last: string): void {
+    if (!code) return;
+
+    const fullname = `${first} ${last}`;
+
+    let confirmMessage = '';
+
+    if (status === 'none') confirmMessage = 'Send follow request?';
+    if (status === 'pending') confirmMessage = 'Cancel request?';
+    if (status === 'accepted') confirmMessage = 'Unfollow user?';
+
+    this.alert.popupWarning(fullname, confirmMessage).then(result => {
+      if (!result.value) return;
+
+      const request$ =
+        status === 'accepted'
+          ? this.profile.Unfollow(this.followId)
+          : this.profile.AddFollow(code);
+
+      request$.subscribe({
+        next: (res: any) => {
+          this.followStatus = res.follow_status || 'none';
+          this.alert.toastrSuccess(res.message || 'Success');
+        },
+        error: (err) => {
+          this.alert.toastrError(err.error?.message || 'Error');
+        }
+      });
+    });
+  }
+
+  // =========================
+  // COMMENTS
+  // =========================
   addComment(post: any): void {
-    const commentText = post.newComment?.trim();
-    if (!commentText) return;
+    const text = post.newComment?.trim();
+    if (!text) return;
+
     post.isSubmitting = true;
 
-    const payload = {
-      comment: commentText
-    };
-
-    this.comment.postComment(post.posts_uuid, payload).subscribe({
+    this.comment.postComment(post.posts_uuid, { comment: text }).subscribe({
       next: () => {
         post.comments.push({
-          user: 'Current User',
-          comment: commentText,
-          profile_pic: '',
+          user: 'You',
+          comment: text,
           likes: 0,
           replies: []
         });
+
         post.newComment = '';
         post.isSubmitting = false;
       },
-      error: (err) => {
-        this.alert.toastPopUpError("Comment failed:")
+      error: () => {
+        post.isSubmitting = false;
+        this.alert.toastPopUpError('Comment failed');
       }
     });
   }
 
+  addReply(comment: any): void {
+    const text = comment.newReply?.trim();
+    if (!text) return;
 
-  likePost(post: any): void {
-    if (!post.liked) {
-      post.likes = (post.likes || 0) + 1; // Increment likes
-    } else {
-      post.likes = Math.max((post.likes || 1) - 1, 0); // Decrement likes, but not below zero
-    }
-    post.liked = !post.liked; // Toggle liked state
+    comment.isSubmitting = true;
 
-    // Call API to update like status in the backend
-    this.postDataservices.likePost(post.id, post.liked).subscribe(
-      (response) => {
-        console.log('✅ Like status updated successfully:', response);
-      },
-      (error) => {
-        console.error('❌ Error updating like status:', error);
-      }
-    );
-  }
-
-  followStatus: 'none' | 'pending' | 'accepted' | 'cancelled' = 'none';
-  AddFollow(code: any, status: string, profilename: any, lname: any): void {
-    if (!code) {
-      this.alert.toastrWarning('⚠️ No user code provided.');
-      return;
-    }
-
-    const fullname = profilename + " " + lname;
-
-    let confirmMessage = '';
-    let successAction = '';
-
-    if (status === 'none') {
-      confirmMessage = 'Send a follow request to this user?';
-      successAction = 'Follow request sent.';
-    } else if (status === 'pending') {
-      confirmMessage = 'Cancel your pending follow request?';
-      successAction = 'Follow request canceled.';
-    } else if (status === 'accepted') {
-      confirmMessage = 'Unfollow this user?';
-      successAction = 'Unfollowed successfully.';
-    }
-    console.log(this.followId)
-    this.alert.popupWarning(fullname, confirmMessage).then((result) => {
-      if (result.value) {
-        const request$ =
-          status === 'accepted'
-            ? this.profile.Unfollow(this.followId) // 👈 call different API for unfollow
-            : this.profile.AddFollow(code); // 👈 default follow/cancel
-
-        request$.subscribe({
-          next: (res: any) => {
-            if (res.success === true || res.status === true) {
-              this.alert.toastrSuccess(res.message || successAction);
-              this.followStatus = res.follow_status || 'none';
-              //  this.checkFollowStatus();
-            } else {
-              this.alert.toastrError(res.message || 'Action failed.');
-            }
-          },
-          error: (error: any) => {
-            this.alert.toastrError(error.error?.message || 'Something went wrong.');
-            console.error('❌ Follow error:', error);
-          }
+    this.comment.postCommentByReply(comment.comment_uuid, { comment: text }).subscribe({
+      next: () => {
+        comment.replies.push({
+          user: 'You',
+          comment: text,
+          likes: 0
         });
+
+        comment.newReply = '';
+        comment.isSubmitting = false;
+      },
+      error: () => {
+        comment.isSubmitting = false;
+        this.alert.toastPopUpError('Reply failed');
       }
     });
   }
 
-  // AddFollow(code: any, status: string, profilename:any,lname:any): void {
-  //   if (!code) {
-  //     this.alert.toastrWarning('⚠️ No user code provided.');
-  //     return;
-  //   }
+  // =========================
+  // LIKE POST
+  // =========================
+  likePost(post: any): void {
+    post.liked = !post.liked;
+    post.likes = (post.likes || 0) + (post.liked ? 1 : -1);
 
-  //   let confirmMessage = '';
-  //   let successAction = '';
+    this.postDataservices.likePost(post.posts_uuid, post.liked).subscribe();
+  }
 
-  //   if (status === 'none') {
-  //     confirmMessage = 'Send a follow request to this user?';
-  //     successAction = 'Follow request sent.';
-  //   } else if (status === 'pending') {
-  //     confirmMessage = 'Cancel your pending follow request?';
-  //     successAction = 'Follow request canceled.';
-  //   } else if (status === 'accepted') {
-  //     confirmMessage = 'Unfollow this user?';
-  //     successAction = 'Unfollowed successfully.';
-  //   }
-  //   const fullname = profilename + " " + lname;
-  //   this.alert.popupWarning(fullname, confirmMessage).then((result) => {
-  //     if (result.value) {
-  //       this.profile.AddFollow(code).subscribe({
-  //         next: (res) => {
-  //           if (res.success === true || res.status === true) {
-  //             this.alert.toastrSuccess(res.message || successAction);
+  // =========================
+  // MODAL
+  // =========================
+  openModal(image: any): void {
+    const dialogConfig: MatDialogConfig = {
+      data: image,
+      minWidth: '70%',
+      maxWidth: '90%',
+      maxHeight: '90vh'
+    };
 
-  //             // Update follow status dynamically
-  //             this.followStatus = res.follow_status || 'none';
-  //             this.checkFollowStatus();
-  //           } else {
-  //             this.alert.toastrError(res.message || 'Action failed.');
-  //           }
-  //         //  this.isLoading = false;
-  //         },
-  //         error: (error) => {
-  //           this.alert.toastrError(error.error?.message || 'Something went wrong.');
-  //           console.error('❌ Follow error:', error);
-  //          // this.isLoading = false;
-  //         }
-  //       });
-  //     }
-  //   });
-  // }
+    this.dialog.open(ImageModalComponent, dialogConfig);
+  }
 
-  // AddFollow(code: any): void {
+  uploadPic(): void {
+    this.dialog.open(UploadProfileComponent, {
+      width: '400px',
+      disableClose: true
+    });
+  }
 
-  //     this.alert.popupWarning(code," "+"Are you sure to delete this role?").then((result) => {
-  //       if (result.value) 
-  //       {
-  //         this.profile.AddFollow(code).subscribe({
-  //             next:(res)=>{
-  //               if(res.success === true)
-  //                 {
-  //                   this.alert.toastrSuccess(res.message);
-  //                   this.isLoading = false;
-  //                 }
-  //                 else{
-  //                   this.notificationsService.toastrError(res.message);
-  //                   this.isLoading = false;
-  //                 }
-  //                 this.getRoles();
-  //             },
-  //             error:(error)=>{
-  //               this.notificationsService.toastrError(error.error);
-  //               this.isLoading = false;
-  //             }
+  // =========================
+  // HELPERS
+  // =========================
+  fixUrl(url: string): string {
+    if (!url) return 'assets/default.png';
+    return 'https://lightgreen-pigeon-122992.hostingersite.com/' + url.replace(/\\/g, '');
+  }
 
-  //         });
-  //       }
+  getActiveHours(lastActive: string): string {
+    if (!lastActive) return 'unknown';
 
-  //   if (!code) {
-  //     this.alert.toastrWarning('⚠️ No user code provided for follow request.');
-  //     return;
-  //   }
+    const diff = Math.floor(
+      (Date.now() - new Date(lastActive).getTime()) / 3600000
+    );
 
-  //   this.profile.AddFollow(code).subscribe({
-  //     next: (res) => {
-  //       if(res.status == true)      
-  //         this.alert.toastrSuccess(res.message);
+    if (diff < 1) return 'Just now';
+    if (diff === 1) return '1 hour ago';
+    return `${diff} hours ago`;
+  }
 
-  //         this.followStatus = res.follow_status;
-  //            console.log(this.followStatus)
-  //         this.checkFollowStatus();
-  //     },
-  //     error: (error: any) => {
-  //       this.alert.toastrError('Failed to follow user.');
-  //       console.error('❌ Error updating follow status:', error);
-  //     }
-  //   });
-
-  // }
-
-
+  // =========================
+  // ROUTING
+  // =========================
 
 }

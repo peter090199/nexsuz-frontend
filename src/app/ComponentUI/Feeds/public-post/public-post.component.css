@@ -1,0 +1,530 @@
+/* =========================
+   FEED WRAPPER
+========================= */
+.feed-wrapper {
+  width: 100%;
+  max-width: 900px;   /* Facebook post column width */
+  margin: 0 auto;
+  padding: 12px 10px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+/* New posts button */
+.feed-wrapper button[mat-raised-button] {
+  width: 100%;
+  margin-bottom: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+}
+
+/* =========================
+   POST CARD
+========================= */
+mat-card {
+  width: 100%;
+  margin-bottom: 14px;
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  background: #fff;
+}
+/* =========================
+   HEADER
+========================= */
+.post-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  width: 100%;
+  max-width: 100%;
+
+  gap: 10px;
+  margin-bottom: 10px;
+
+  flex-wrap: wrap; /* important for small screens */
+}
+
+
+/* Emoji stack */
+.emoji-stack {
+  position: relative;
+  height: 22px;
+  display: inline-block;
+}
+
+/* Emoji bubble */
+.emoji-item {
+  position: absolute;
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+/* Hover emoji bounce */
+.emoji-item:hover {
+  transform: scale(1.3) translateY(-2px);
+}
+
+/* Reaction count */
+.reaction-count-text {
+  margin-left: 10px;
+  font-size: 13px;
+  color: #65676b;
+  cursor: default;
+}
+
+.reaction-count-text:hover {
+  text-decoration: none;
+}
+/* =========================
+   POST HEADER (FACEBOOK STYLE)
+========================= */
+.post-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+  padding: 6px 0;
+
+  gap: 10px;
+}
+
+/* LEFT SIDE GROUP */
+.post-header .avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #ddd;
+  flex-shrink: 0;
+}
+
+/* USER INFO */
+.user-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+/* NAME (Facebook style: bold + dark) */
+.user-info .name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #050505;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* TIME / META */
+.user-info .meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #65676b;
+}
+
+/* TIME STYLE */
+.user-info .time {
+  font-size: 12px;
+  color: #65676b;
+}
+
+/* 3 DOT MENU (Facebook style) */
+.more-btn {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  color: #65676b;
+  cursor: pointer;
+
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.more-btn:hover {
+  background: #f0f2f5;
+}
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #ddd;
+}
+
+.post-header h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.post-header small {
+  font-size: 12px;
+  color: #777;
+}
+
+/* =========================
+   CAPTION
+========================= */
+mat-card p,
+.post-caption,
+.caption-text {
+  white-space: pre-wrap;     /* preserve line breaks */
+  word-break: break-word;    /* break long words */
+  overflow-wrap: anywhere;   /* force wrap if too long */
+  line-height: 1.5;
+
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Long links/text */
+mat-card p a {
+  word-break: break-all;
+}
+.post-content,
+.post-body {
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Mobile fix */
+@media (max-width: 768px) {
+  mat-card p,
+  .post-caption,
+  .caption-text {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+}
+
+mat-card img,
+mat-card video {
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 8px;
+  object-fit: cover;
+  cursor: pointer;
+  max-height: 500px;
+}
+
+/* If multiple images */
+mat-card img + img {
+  margin-top: 6px;
+}
+
+/* =========================
+   REACTION SUMMARY
+========================= */
+
+
+/* =========================
+   ACTIONS (LIKE / COMMENT)
+========================= */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  border-top: 1px solid #eee;
+  padding-top: 8px;
+}
+
+
+
+/* buttons */
+.actions button {
+  flex: 1;
+  border-radius: 8px;
+  font-size: 13px;
+  text-transform: none;
+}
+
+/* hover reaction container */
+.actions > div {
+  position: relative;
+}
+/* =========================
+   POST CARD AUTO HEIGHT
+========================= */
+mat-card {
+  width: 100%;
+  margin-bottom: 14px;
+  border-radius: 12px;
+  padding: 14px;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+
+  height: auto;          /* auto expand */
+  overflow: visible;     /* allow content expansion */
+  transition: all 0.2s ease;
+}
+
+/* =========================
+   POST CONTENT
+========================= */
+.post-content,
+.post-body,
+.post-caption,
+.caption-text {
+  width: 100%;
+  max-width: 100%;
+
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+
+  overflow: visible;
+  height: auto;
+}
+
+/* Paragraph */
+mat-card p {
+  width: 100%;
+  margin: 10px 0;
+  line-height: 1.5;
+  font-size: 14px;
+  color: #333;
+
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+
+  overflow: visible;
+  max-height: none; /* remove cut */
+}
+
+/* SEE MORE BUTTON */
+.see-more-btn {
+  color: #65676b;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+.see-more-btn:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   IMAGES / VIDEO
+========================= */
+mat-card img,
+mat-card video {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 10px;
+  margin-top: 8px;
+  object-fit: cover;
+
+  display: block;
+  height: auto;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+
+  .feed-wrapper {
+    padding: 10px;
+  }
+
+  mat-card {
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  mat-card p {
+    font-size: 13px;
+  }
+}
+/* =========================
+   REACTION POPUP (HOVER)
+========================= */
+.actions div div {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  display: flex;
+  gap: 6px;
+  background: #fff;
+  padding: 6px 10px;
+  border-radius: 30px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 10;
+  animation: fadeIn 0.15s ease-in-out;
+}
+
+.actions div div span {
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.actions div div span:hover {
+  transform: scale(1.3);
+}
+
+/* =========================
+   ANIMATION
+========================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .feed-wrapper {
+    padding: 10px;
+  }
+
+  mat-card {
+    border-radius: 10px;
+    padding: 10px;
+  }
+
+  .post-header h4 {
+    font-size: 13px;
+  }
+
+  mat-card p {
+    font-size: 13px;
+  }
+
+  .actions button {
+    font-size: 12px;
+  }
+}
+
+/* =========================
+   REACTION SUMMARY (FACEBOOK STYLE)
+========================= */
+.reaction-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-top: 10px;
+  padding: 4px 2px;
+
+  font-size: 13px;
+  color: #65676b;
+}
+
+/* LEFT SIDE: emojis row */
+.reaction-summary span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* Emoji style (stacked FB-like overlap feel) */
+.reaction-summary span:first-child span {
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-left: -2px; /* creates slight overlap like FB */
+  transition: transform 0.15s ease;
+}
+
+/* Hover emoji pop */
+.reaction-summary span:first-child span:hover {
+  transform: scale(1.3) translateY(-2px);
+  z-index: 2;
+}
+
+/* RIGHT SIDE: count (clickable like FB) */
+.reaction-summary span:last-child {
+  cursor: pointer;
+  font-weight: 500;
+  color: #65676b;
+
+  transition: color 0.2s ease;
+}
+
+/* Hover effect for count */
+.reaction-summary span:last-child:hover {
+  color: #1877f2;
+  text-decoration: underline;
+}
+
+/* =========================
+   MAT-CARD AUTO HEIGHT FIX
+========================= */
+mat-card {
+  width: 100%;
+  height: auto !important;
+  max-height: none !important;
+
+  overflow: visible !important;
+  display: block;
+}
+
+/* =========================
+   CAPTION (FULL EXPAND CONTROL)
+========================= */
+.post-caption {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+
+  font-size: 14px;
+  line-height: 1.5;
+
+  max-height: none;
+  overflow: visible;
+}
+
+/* COLLAPSED MODE (3 LINES ONLY) */
+.post-caption.collapsed {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+}
+
+/* =========================
+   SEE MORE BUTTON
+========================= */
+.see-more-btn {
+  display: inline-block;
+  margin-top: 5px;
+
+  font-size: 13px;
+  font-weight: 600;
+  color: #65676b;
+
+  cursor: pointer;
+}
+
+.see-more-btn:hover {
+  text-decoration: underline;
+}

@@ -63,7 +63,7 @@ const routes: Routes = [
   { path: 'socket', component: ChatUIComponent },
 
   {
-    path: '',
+    path: 'DEF-USERS',
     component: TopNavigationComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['DEF-USERS'] },
@@ -81,11 +81,11 @@ const routes: Routes = [
       { path: 'recommended-jobs/:transNo', component: JobsProfileComponent },
       { path: 'apply-job/:transNo', component: ApplyJobComponent },
       { path: 'applied-jobs', component: ListAppliedJobsComponent },
-
     ]
   },
+
   {
-    path: 'recruiter',
+    path: 'DEF-CLIENT',
     component: SideBarPanelComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['DEF-CLIENT'] },
@@ -96,16 +96,18 @@ const routes: Routes = [
       { path: 'posting-job', component: PostingJobComponent },
       { path: 'message', component: MessagesComponent },
       { path: 'settings', component: SettingsComponent },
-      { path: 'recommended-jobs/:transNo', component: JobsProfileComponent },
-      { path: 'client_profile/:code', component: CompanyProfileUIComponent },
-      { path: 'profile/:code', component: ProfileUIComponent },
       { path: 'network', component: NetworkingComponent },
       { path: 'candidates', component: CandidatesComponent },
       { path: 'interviews', component: InterviewsComponent },
+      { path: 'user-cv', component: UserCVComponent },
+      // ✅ FIXED PROFILE ROUTE
+      { path: 'profile/:code', component: ProfileUIComponent },
+      { path: 'client_profile/:code', component: CompanyProfileUIComponent },
     ]
   },
+
   {
-    path: 'admin',
+    path: 'DEF-ADMIN',
     component: SideBarPanelComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['DEF-ADMIN'] },
@@ -114,30 +116,36 @@ const routes: Routes = [
       { path: 'home', component: HomeUIComponent },
       { path: 'message', component: MessagesComponent },
       { path: 'settings', component: SettingsComponent },
-      { path: 'client_profile/:code', component: CompanyProfileUIComponent },
       { path: 'network', component: NetworkingComponent },
       { path: 'user', component: UsersComponent },
+      // ✅ FIXED
+      { path: 'client_profile/:code', component: CompanyProfileUIComponent },
+      { path: 'profile/:code', component: ProfileUIComponent },
     ]
   },
+
   {
-    path: 'masteradmin',
+    path: 'DEF-MASTERADMIN',
     component: SideBarPanelComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['DEF-MASTERADMIN'] },
     children: [
+
       /* DASHBOARD */
       { path: 'admin-dashboard', component: ClientDashboardComponent },
-      /* CORE PAGES */
+      { path: 'client-dashboard', component: ClientDashboardComponent },
+      /* CORE */
       { path: 'home', component: HomeUIComponent },
       { path: 'message', component: MessagesComponent },
       { path: 'network', component: NetworkingComponent },
       { path: 'settings', component: SettingsComponent },
       { path: 'vacancies', component: JobPostingComponent },
-      /* PROFILE */
+
+      /* ✅ FIXED PROFILE ROUTE */
       { path: 'profile/:code', component: ProfileUIComponent },
       { path: 'client_profile/:code', component: CompanyProfileUIComponent },
 
-      /* ADMIN MANAGEMENT */
+      /* ADMIN */
       { path: 'search', component: UserListComponent },
       { path: 'security', component: SecurityRolesComponent },
       { path: 'user', component: UsersComponent },
@@ -146,17 +154,15 @@ const routes: Routes = [
 
       /* JOBS */
       { path: 'user-cv', component: UserCVComponent },
-      { path: 'profile/recommended-jobs/:transNo', component: JobsProfileComponent },
-      { path: 'client_profile/recommended-jobs/:transNo', component: JobsProfileComponent },
+      { path: 'recommended-jobs/:transNo', component: JobsProfileComponent },
       { path: 'apply-job/:transNo', component: ApplyJobComponent },
       { path: 'applied-jobs', component: ListAppliedJobsComponent },
-      { path: 'recommended-jobs/:transNo', component: JobsProfileComponent },
       { path: 'candidates', component: CandidatesComponent },
       { path: 'interviews', component: InterviewsComponent },
-
-      { path: 'client-dashboard', component: ClientDashboardComponent },
     ]
   },
+
+
   {
     path: 'print', component: PrintComponent,
     children: [

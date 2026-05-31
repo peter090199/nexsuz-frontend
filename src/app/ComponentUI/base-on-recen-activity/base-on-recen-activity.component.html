@@ -1,75 +1,127 @@
 <section class="section">
-    <mat-card class="header-gradient">
-        <div class="gradient-bar"></div>
-        <mat-card-title class="gradient-title">Based on Recent Activity</mat-card-title>
-    </mat-card>
-    <!-- Skeleton Loader -->
-    <div *ngIf="isLoading; else recentActivityList" class="skeleton-list">
-        <mat-card class="suggestion-card" *ngFor="let _ of skeletonRows">
-            <div class="skeleton skeleton-img"></div>
-            <div class="skeleton skeleton-text"></div>
-            <div class="skeleton skeleton-subtext"></div>
-            <div class="skeleton skeleton-button"></div>
-        </mat-card>
-    </div>
 
-    <ng-template #recentActivityList>
-        <p class="no-data" *ngIf="!peopleRecentActivity || peopleRecentActivity.length === 0">
-            No data found
+  <!-- HEADER -->
+  <mat-card class="header-gradient">
+    <div class="gradient-bar"></div>
+    <mat-card-title class="gradient-title">
+      Based on Recent Activity
+    </mat-card-title>
+  </mat-card>
+
+  <!-- ================= SKELETON ================= -->
+  <div *ngIf="isLoading; else recentActivityList" class="skeleton-list">
+    <mat-card class="suggestion-card" *ngFor="let _ of skeletonRows">
+      <div class="skeleton skeleton-img"></div>
+      <div class="skeleton skeleton-text"></div>
+      <div class="skeleton skeleton-subtext"></div>
+      <div class="skeleton skeleton-button"></div>
+    </mat-card>
+  </div>
+
+  <!-- ================= LIST ================= -->
+  <ng-template #recentActivityList>
+
+    <p class="no-data"
+       *ngIf="peopleRecentActivity.length === 0">
+      No data found
+    </p>
+
+    <div class="grid-container">
+
+      <mat-card class="suggestion-card"
+                *ngFor="let person of peopleRecentActivity">
+
+        <!-- CLOSE -->
+        <button mat-icon-button class="close-button">
+          <mat-icon>close</mat-icon>
+        </button>
+
+        <!-- PROFILE IMAGE -->
+        <div class="profile-image-container">
+
+          <a [routerLink]="['/' + sharedRoutines.getRole() + '/profile', person.code]">
+
+            <img *ngIf="person.photo_pic"
+                 [src]="person.photo_pic"
+                 class="profile-image" />
+
+            <div *ngIf="!person.photo_pic"
+                 class="avatar-letter">
+              {{ person.fullname?.charAt(0) | uppercase }}
+            </div>
+
+            <mat-icon class="status-dot"
+                      [matTooltip]="person.is_online == 1 ? 'Active now' : 'Offline'"
+                      [ngClass]="person.is_online == 1 ? 'online' : 'offline'">
+              circle
+            </mat-icon>
+
+          </a>
+        </div>
+
+        <!-- NAME (ROLE BASED ROUTING FIXED) -->
+        <a
+          class="custom-title"
+          [routerLink]="
+            person.role_code === 'DEF-USERS'
+              ? ['/' + sharedRoutines.getRole() + '/profile', person.code]
+              : ['/' + sharedRoutines.getRole() + '/client_profile', person.code]
+          "
+        >
+          {{ person.fullname }}
+        </a>
+
+        <mat-card-subtitle>
+          {{ person.profession || 'NA' }}
+        </mat-card-subtitle>
+
+        <p class="based-text">
+          Based on your recent {{ person.source }}
         </p>
 
-        <div class="grid-container">
-            <mat-card class="suggestion-card" *ngFor="let person of peopleRecentActivity">
-                <button mat-icon-button class="close-button">
-                    <mat-icon>close</mat-icon>
-                </button>
-                <div class="profile-image-container">
-                    <a [routerLink]="['/profile', person.code]">
-                        <img *ngIf="person.photo_pic" [src]="person.photo_pic" alt="" />
-                        <div *ngIf="!person.photo_pic" class="avatar-letter">
-                            {{ person.fullname?.charAt(0) | uppercase }}
-                        </div>
-                        <mat-icon class="status-dot" matTooltip="{{ person.is_online == 1 ? 'Active now' : 'Offline' }}"
-                            [ngClass]="person.is_online == 1 ? 'online' : 'offline'">
-                            circle
-                        </mat-icon>
-                    </a>
-                </div>
-                <ng-container *ngIf="person.role_code === 'DEF-USERS'; else companyLink">
-                    <a [routerLink]="['/profile', person.code]" class="custom-title">{{ person.fullname }}</a>
-                </ng-container>
-                <ng-template #companyLink>
-                    <a [routerLink]="['/client_profile', person.code]" class="custom-title">{{ person.fullname }}</a>
-                </ng-template>
-                <mat-card-subtitle>{{ person.profession || 'NA' }}</mat-card-subtitle>
-                <p class="based-text">Based on your recent {{ person.source }}</p>
+        <!-- CONNECT BUTTON -->
+        <div class="client-action"
+             *ngIf="currentUserCode !== person.code">
 
-                <div class="client-action" *ngIf="currentUserCode !== person.code">
-                    <button mat-flat-button [color]="
-                        person.follow_status === 'accepted' ? 'accent' :
-                        person.follow_status === 'pending' ? 'warn' :
-                        person.follow_status === 'connect_back' ? 'primary' :
-                        'primary'" class="connect-btn" [ngClass]="person.follow_status"
-                        (click)="AddConnect(person.code, person.fullname, person.follow_status, person.id)" [disabled]="person.follow_status === 'pending'"> <!-- DISABLED HERE -->
+          <button mat-flat-button
+                  class="connect-btn"
+                  [color]="
+                    person.follow_status === 'accepted' ? 'accent' :
+                    person.follow_status === 'pending' ? 'warn' :
+                    'primary'
+                  "
+                  [disabled]="person.follow_status === 'pending'"
+                  (click)="AddConnect(person.code, person.fullname, person.follow_status, person.id)">
 
-                        <!-- Icons -->
-                        <mat-icon *ngIf="person.follow_status === 'not_following'">person_add</mat-icon>
-                        <mat-icon *ngIf="person.follow_status === 'pending'"
-                            class="hourglass-animated">hourglass_top</mat-icon>
-                        <mat-icon *ngIf="person.follow_status === 'accepted'">check_circle</mat-icon>
+            <mat-icon *ngIf="person.follow_status === 'not_following'">
+              person_add
+            </mat-icon>
 
-                        <span class="btn-label">
-                            {{
-                            person.follow_status === 'not_following' ? 'Connect' :
-                            person.follow_status === 'pending' ? 'Pending' :
-                            person.follow_status === 'accepted' ? 'Connected' :
-                            person.follow_status === 'connect_back' ? 'Connect Back' : ''
-                            }}
-                        </span>
-                    </button>
-                </div>
+            <mat-icon *ngIf="person.follow_status === 'pending'"
+                      class="hourglass-animated">
+              hourglass_top
+            </mat-icon>
 
-            </mat-card>
+            <mat-icon *ngIf="person.follow_status === 'accepted'">
+              check_circle
+            </mat-icon>
+
+            <span class="btn-label">
+              {{
+                person.follow_status === 'not_following' ? 'Connect' :
+                person.follow_status === 'pending' ? 'Pending' :
+                person.follow_status === 'accepted' ? 'Connected' :
+                'Connect Back'
+              }}
+            </span>
+
+          </button>
+
         </div>
-    </ng-template>
+
+      </mat-card>
+
+    </div>
+  </ng-template>
+
 </section>

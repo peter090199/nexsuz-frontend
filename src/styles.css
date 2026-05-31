@@ -4,143 +4,32 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
 
-.app-container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
-.header {
-  flex: 0 0 auto;
-}
-
-.content {
-  flex: 1 0 auto;
-}
-
-app-footer {
-  flex: 0 0 auto;
-  background-color: #f8f9fa;
-  text-align: center;
-  padding: 2px 0;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-
-}
 
 
-.heading-container {
-  display: flex;
-  justify-content: center;
-  /* Centers horizontally */
-  align-items: center;
-  /* Centers vertically */
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-
-.content-body {
-  font-family: Verdana, sans-serif;
-  font-size: 16px;
-  margin: 0 auto;
-  overflow: auto;
-  scrollbar-width: none;
-  display: flex;
-  flex-direction: column;
-  min-height: 70vh;
-  max-height: 100vh;
-  padding: 0px;
-}
-
-
-.content-body::-webkit-scrollbar {
-  display: none;
-  /* Hides scrollbar in Chrome, Edge, and Safari */
-}
-
-/* Responsive Adjustments */
-@media (max-width: 1024px) {
-  .content-body {
-    padding: 20px;
-  }
-}
-
-@media (max-width: 768px) {
-  .content-body {
-    padding: 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .content-body {
-    font-size: 14px;
-    padding: 10px;
-  }
-}
-
-/* Responsive Adjustments */
-@media (max-width: 1024px) {
-  .content-body {
-    padding: 30px;
-    overflow-y: auto;
-    max-width: 1200px;
-    /* Limits width for better readability on large screens */
-    width: 100%;
-  }
-}
-
-@media (max-width: 768px) {
-  .content-body {
-    padding: 30px;
-    overflow-y: auto;
-    max-width: 1200px;
-    /* Limits width for better readability on large screens */
-    width: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .content-body {
-    padding: 30px;
-    overflow-y: auto;
-    max-width: 1200px;
-    /* Limits width for better readability on large screens */
-    width: 100%;
-  }
-}
-
-
-.form-group-wrapper {
-  max-height: 500px;
-  overflow-y: auto;
-  padding-right: 10px;
-}
-
-/* ============================= */
-html,
-body
- {
-  margin: 0;
+html, body {
+  height: 100%;
+  margin: 0 !important;
   padding: 0;
-  box-sizing: border-box;
-  font-family: Verdana;
-}
-
-
-/* Overall Layout */
-body {
-  font-family: Verdana;
-  line-height: 1;
-  margin: auto !important;
-  background-color: #f4eeee;
-  height: 100vh;
-}
-.section {
-  padding: 10px; /* added px */
-  overflow-y: auto;
   overflow-x: hidden;
-  height: 90vh;
+  overflow-y: auto; /* ONLY vertical scroll here */
+  font-family: Verdana, sans-serif;
+  background: #f0f2f5;
+}
+
+p{
+  font-size: 14px;
+  color: #413f3f;
+  /* Lighter gray for body text */
+  margin-bottom: 20px;
+  text-align: justify;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+
+.section {
   width: 100%;
+  overflow: visible !important;
+  margin: auto;
 }
 
 /* Responsive adjustments */
@@ -232,31 +121,6 @@ body {
   /* Adds a fixed amount of space between buttons */
   margin: 0px;
   /* Adds space above the button group */
-}
-
-
-
-.main-content {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
-}
-
-@media (max-width: 768px) {
-
-  .main-container,
-  .content-body,
-  .form-row {
-    padding: 5px;
-    gap: 5px;
-    flex-direction: column;
-  }
-
-  .half-width,
-  .code-field,
-  .contact-field {
-    width: 100%;
-  }
 }
 
 
@@ -472,14 +336,20 @@ snack-bar-container.notification simple-snack-bar {
 
 .page-container {
   display: grid;
-  grid-template-columns: 1fr minmax(0, 600px) 300px;
-  /* left spacer | main feed | right panel */
+  grid-template-columns: 300px 1fr 300px;
   gap: 20px;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  /* centers everything in the page */
+  padding: 10px;
 }
+app-sidebar,
+app-feed,
+app-right-sidebar {
+  height: auto;
+  overflow: visible;
+}
+
 
 .main-container {
   display: grid;

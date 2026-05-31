@@ -127,6 +127,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { CandidatesComponent } from './ComponentUI/Client/candidates/candidates.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { InterviewsComponent } from './ComponentUI/Client/interviews/interviews.component';
+import { PublicPostComponent } from './ComponentUI/Feeds/public-post/public-post.component';
+import { AccountTypePlanComponent } from './ComponentSharedUI/account-type-plan/account-type-plan.component';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -245,6 +247,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     SideBarPanelComponent,
     CandidatesComponent,
     InterviewsComponent,
+    PublicPostComponent,
+    AccountTypePlanComponent,
    
   ],
   imports: [

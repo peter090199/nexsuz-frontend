@@ -1,0 +1,142 @@
+.plan-card {
+  padding: 30px;
+  background: #f5f7fb;
+  border-radius: 20px;
+}
+
+/* HEADER */
+.plan-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.plan-header h1 {
+  font-size: 34px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #1a1a1a;
+}
+
+.sub-text {
+  color: #666;
+  font-size: 15px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+/* GRID */
+.plan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+/* CARD */
+.plan-box {
+  position: relative;
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px;
+  transition: 0.3s ease;
+  border: 2px solid transparent;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+.plan-box:hover {
+  transform: translateY(-6px);
+}
+
+.plan-box.active {
+  border-color: #1976d2;
+}
+
+/* BADGES */
+.plan-badge {
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  background: #1976d2;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.popular {
+  background: #ff9800;
+}
+
+.premium-badge {
+  background: #7b1fa2;
+}
+
+.business-badge {
+  background: #00897b;
+}
+
+/* TITLES */
+.plan-box h2 {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.plan-desc {
+  color: #777;
+  min-height: 50px;
+  margin-bottom: 15px;
+}
+
+/* PRICE */
+.price {
+  font-size: 34px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #111;
+}
+
+.price span {
+  font-size: 14px;
+  color: #777;
+}
+
+/* LIST */
+.plan-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 25px;
+}
+
+.plan-box ul li {
+  padding: 9px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+}
+
+.highlight {
+  color: #1976d2;
+  font-weight: 600;
+}
+
+/* BUTTON */
+.plan-box button {
+  width: 100%;
+  border-radius: 10px;
+  height: 45px;
+  font-weight: 600;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .plan-card {
+    padding: 15px;
+  }
+
+  .plan-header h1 {
+    font-size: 26px;
+  }
+
+  .price {
+    font-size: 28px;
+  }
+}

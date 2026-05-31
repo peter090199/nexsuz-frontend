@@ -1,11 +1,12 @@
 <section class="container">
     <div class="page-header">
-        <button mat-button color="primary" [routerLink]="['/recommended-jobs', transNo]">
-            <mat-icon>arrow_back</mat-icon> Back
+        <button mat-button color="primary" [routerLink]="['/' + sharedRoutines.getRole() + '/recommended-jobs',transNo]">
+            <mat-icon>arrow_back</mat-icon>
+            Back
         </button>
+
         <h2>Apply Job</h2>
     </div>
-
     <mat-divider></mat-divider>
 
 
@@ -79,7 +80,7 @@
                         </mat-autocomplete>
                     </mat-form-field>
 
-                    <mat-form-field appearance="standard" class="form-field" >
+                    <mat-form-field appearance="standard" class="form-field">
                         <mat-label>Mobile Phone Number</mat-label>
                         <input matInput type="tel" formControlName="phone_number" required />
                     </mat-form-field>

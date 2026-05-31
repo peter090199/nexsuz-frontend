@@ -13,6 +13,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { UserResumeUIComponent } from 'src/app/ComponentSharedUI/Resume/user-resume-ui/user-resume-ui.component';
 import { SharedService } from 'src/app/services/SharedServices/shared.service';
 import { ProfileService } from 'src/app/services/Profile/profile.service';
+import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
 
 @Component({
   selector: 'app-list-applied-jobs',
@@ -69,7 +70,7 @@ export class ListAppliedJobsComponent implements OnInit, AfterViewInit {
     private notificationsService: NotificationsService,
     private appliedService: AppliedStatusService,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private sharedService: SharedService,
+    public sharedService: SharedRoutinesService,
     private profileService: ProfileService,
     @Optional() private dialogRef: MatDialogRef<ListAppliedJobsComponent>
   ) {

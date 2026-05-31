@@ -1,58 +1,106 @@
+
 <section class="section" (scroll)="onScroll($event)">
     <mat-card class="header-gradient">
         <div class="gradient-bar"></div>
-        <mat-card-title class="gradient-title">Based on Profile</mat-card-title>
+        <mat-card-title class="gradient-title">
+            Based on Profile
+        </mat-card-title>
     </mat-card>
-    <!-- Skeleton Loader -->
+
+    <!-- SKELETON LOADER -->
     <div *ngIf="isLoading; else profileList" class="skeleton-list">
-        <mat-card class="suggestion-card" *ngFor="let _ of skeletonRows">
+        <mat-card class="suggestion-card" *ngFor="let item of skeletonRows">
             <div class="skeleton skeleton-img"></div>
             <div class="skeleton skeleton-text"></div>
             <div class="skeleton skeleton-subtext"></div>
             <div class="skeleton skeleton-button"></div>
         </mat-card>
     </div>
+
+    <!-- PROFILE LIST -->
     <ng-template #profileList>
-        <p class="no-data" *ngIf="!people || people.length === 0">No data found</p>
+
+        <p class="no-data" *ngIf="!people.length">
+            No data found
+        </p>
+
         <div class="grid-container">
+
             <mat-card class="suggestion-card" *ngFor="let person of people">
+
+                <!-- CLOSE BUTTON -->
                 <button mat-icon-button class="close-button">
                     <mat-icon>close</mat-icon>
                 </button>
+
+                <!-- PROFILE IMAGE -->
                 <div class="profile-image-container">
-                    <a [routerLink]="['/profile', person.code]" class="profile-link">
-                        <img *ngIf="person.photo_pic" [src]="person.photo_pic"
-                            alt="{{ person.fullname?.split(' ')[0] }}" class="profile-image" />
-                        <div *ngIf="!person.photo_pic || person.photo_pic === ''" class="avatar-letter">
+
+                    <a class="profile-link" [routerLink]="sharedRoutines.getProfileRoute(person.code)">
+
+                        <!-- IMAGE -->
+                        <img *ngIf="person.photo_pic" [src]="person.photo_pic" class="profile-image" />
+
+                        <!-- FALLBACK AVATAR -->
+                        <div *ngIf="!person.photo_pic" class="avatar-letter">
                             {{ person.fullname?.charAt(0) | uppercase }}
                         </div>
-                        <mat-icon class="status-dot" matTooltip="{{ person.is_online == 1 ? 'Active now' : 'Offline' }}"
+
+                        <!-- STATUS DOT -->
+                        <mat-icon class="status-dot" [matTooltip]="person.is_online == 1 ? 'Active now' : 'Offline'"
                             [ngClass]="person.is_online == 1 ? 'online' : 'offline'">
                             circle
                         </mat-icon>
+
                     </a>
                 </div>
 
-                <a [routerLink]="['/profile', person.code]" class="custom-title">
+                <!-- NAME -->
+                <a class="custom-title" [routerLink]="sharedRoutines.getProfileRoute(person.code)">
                     {{ person.fullname }}
                 </a>
 
-                <mat-card-subtitle>{{ person.profession || 'NA' }}</mat-card-subtitle>
-                <p class="based-text" *ngIf="person.source === 'suggested'">Suggested connection</p>
+                <!-- PROFESSION -->
+                <mat-card-subtitle>
+                    {{ person.profession || 'N/A' }}
+                </mat-card-subtitle>
 
-                <!-- Connect Button -->
+                <!-- SOURCE -->
+                <p class="based-text" *ngIf="person.source === 'suggested'">
+                    Suggested connection
+                </p>
+
+                <!-- CONNECT BUTTON -->
                 <div class="client-action" *ngIf="currentUserCode !== person.code">
-                    <button mat-flat-button [color]="
-                                person.follow_status === 'accepted' ? 'accent' :
-                                person.follow_status === 'pending' ? 'warn' :
-                                person.follow_status === 'connect_back' ? 'primary' :
-                                'primary'" class="connect-btn" [ngClass]="person.follow_status"
-                        (click)="AddConnect(person.code, person.fullname, person.follow_status, person.id)" [disabled]="person.follow_status === 'pending'">
-                        <mat-icon *ngIf="person.follow_status === 'not_following'">person_add</mat-icon>
-                        <mat-icon *ngIf="person.follow_status === 'pending'"
-                            class="hourglass-animated">hourglass_top</mat-icon>
-                        <mat-icon *ngIf="person.follow_status === 'accepted'">check_circle</mat-icon>
-                        <mat-icon *ngIf="person.follow_status === 'connect_back'">autorenew</mat-icon>
+
+                    <button mat-flat-button class="connect-btn" [color]="
+                        person.follow_status === 'accepted' ? 'accent' :
+                        person.follow_status === 'pending' ? 'warn' :
+                        person.follow_status === 'connect_back' ? 'primary' :
+                        'primary'
+                        " [ngClass]="person.follow_status" (click)="AddConnect(
+                        person.code,
+                        person.fullname,
+                        person.follow_status,
+                        person.id
+                        )" [disabled]="person.follow_status === 'pending'">
+
+                        <mat-icon *ngIf="person.follow_status === 'not_following'">
+                            person_add
+                        </mat-icon>
+
+                        <mat-icon *ngIf="person.follow_status === 'pending'" class="hourglass-animated">
+                            hourglass_top
+                        </mat-icon>
+
+                        <mat-icon *ngIf="person.follow_status === 'accepted'">
+                            check_circle
+                        </mat-icon>
+
+                        <mat-icon *ngIf="person.follow_status === 'connect_back'">
+                            autorenew
+                        </mat-icon>
+
                         <span class="btn-label">
                             {{
                             person.follow_status === 'not_following' ? 'Connect' :
@@ -66,4 +114,5 @@
             </mat-card>
         </div>
     </ng-template>
+
 </section>

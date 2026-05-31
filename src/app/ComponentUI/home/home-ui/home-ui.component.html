@@ -1,139 +1,190 @@
-<mat-sidenav-container class="nexsuz-main-container">
+<mat-sidenav-container class="section-container">
+  <!-- LEFT SIDENAV -->
+  <mat-sidenav #leftSidenav class="side-nav-left" [mode]="isMobile ? 'over' : 'side'" [opened]="!isMobile"
+    [fixedInViewport]="isMobile">
 
-  <mat-sidenav #leftSidenav mode="side" [opened]="!isMobile" class="side-nav-left">
     <div class="left-sidebar">
+
+      <!-- LOADING -->
       <ng-container *ngIf="isLoading">
-        <mat-card class="post-box-container">
+
+        <mat-card class="profile-card skeleton-card">
+
+          <div class="skeleton-avatar"></div>
+
           <mat-card-title class="skeleton-line medium"></mat-card-title>
-          <mat-card-subtitle class="skeleton-line medium"></mat-card-subtitle>
-          <mat-card-content class="scrollable-content">
+
+          <mat-card-subtitle class="skeleton-line short"></mat-card-subtitle>
+
+          <mat-card-content>
             <div class="button-gap">
-              <div class="skeleton-btn medium"></div>
-              <div class="skeleton-btn medium"></div>
+              <div class="skeleton-btn"></div>
+              <div class="skeleton-btn"></div>
             </div>
           </mat-card-content>
+
         </mat-card>
+
       </ng-container>
 
-      <mat-card class="left-column" *ngIf="!isLoading && !isMobile">
+      <!-- PROFILE -->
+      <mat-card class="profile-card left-column" *ngIf="!isLoading && !isMobile">
+
+        <!-- COVER -->
+        <div class="profile-cover"></div>
+
+        <!-- AVATAR -->
         <div class="profile-avatar">
-          <div class="avatar-container">
-            <img *ngIf="profile_pic; else defaultAvatar" [src]="profile_pic.photo_pic" alt="Profile Picture"
-              class="profile-pic" />
+
+          <div class="avatar-container" (click)="uploadPic()">
+
+            <img *ngIf="profile_pic?.photo_pic; else defaultAvatar" [src]="profile_pic.photo_pic" class="profile-pic" />
+
             <ng-template #defaultAvatar>
-              <img src="assets/images/default.png" alt="Default Avatar" class="profile-pic" />
+              <img src="assets/images/default.png" class="profile-pic" />
             </ng-template>
-            <div class="edit-overlay" (click)="uploadPic()">
-              <mat-icon>photo_camera</mat-icon>
-            </div>
+
           </div>
+
         </div>
-        <mat-card-title class="profile-name" *ngIf="showDefUserButtons">
-          {{ profiles.fname }} {{ profiles.lname }}
-        </mat-card-title>
-        <mat-card-subtitle class="profile-profession" *ngIf="showDefUserButtons">
-          {{ profiles.profession }}
-        </mat-card-subtitle>
-        <mat-card-content class="scrollable-content">
-          <div class="button-gap" *ngIf="showDefUserButtons">
-            <button mat-button class="list-label" [routerLink]="['/profile/', profiles.code]">
-              <mat-icon>person</mat-icon> View Profile
-            </button>
-            <button mat-button class="list-label" (click)="printCV()">
-              <mat-icon>description</mat-icon> View CV
-            </button>
-          </div>
-        </mat-card-content>
+
+        <!-- USER INFO -->
+        <div class="profile-info">
+
+          <h3 class="profile-name">
+            {{ profiles?.fname }} {{ profiles?.lname }}
+          </h3>
+
+          <p class="profile-profession">
+            {{ profiles?.profession }}
+          </p>
+
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="profile-actions">
+
+          <button mat-button class="profile-btn"
+            [routerLink]="['/' + sharedRoutines.getRole() + '/profile', profiles.code]">
+            View Profile
+          </button>
+
+          <button mat-button class="profile-btn" (click)="printCV()" *ngIf="showDefUserButtons">
+            View CV
+          </button>
+
+        </div>
+
       </mat-card>
+
     </div>
+
   </mat-sidenav>
 
-  <mat-sidenav #rightSidenav mode="side" opened="true" position="end" class="side-nav-right">
-    <div class="right-column" *ngIf="!isMobile">
+  <!-- MAIN CONTENT -->
+  <mat-sidenav-content>
+
+    <!-- MOBILE TOPBAR -->
+    <!-- <div class="mobile-toolbar" *ngIf="isMobile">
+
+      <button mat-icon-button (click)="leftSidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <span class="toolbar-title">Home</span>
+
+      <button mat-icon-button (click)="rightSidenav.toggle()">
+        <mat-icon>group</mat-icon>
+      </button>
+
+    </div> -->
+
+    <!-- POST INPUT -->
+    <div class="post-top-container" *ngIf="!isLoading">
+
+      <div class="input-section">
+        <input type="text" placeholder="Create your post?" class="post-input" readonly (click)="createPost()" />
+      </div>
+
+      <div class="actions-section">
+
+        <button class="action-btn live-video">
+          <span class="icon">🎥</span> Photo
+        </button>
+
+        <button class="action-btn photo-video">
+          <span class="icon">📷</span> Video
+        </button>
+
+        <button class="action-btn reel">
+          <span class="icon">🎞️</span> Events
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- FEED -->
+    <app-public-post></app-public-post>
+
+  </mat-sidenav-content>
+
+  <!-- RIGHT SIDENAV -->
+  <mat-sidenav #rightSidenav position="end" class="side-nav-right" [mode]="isMobile ? 'over' : 'side'"
+    [opened]="!isMobile" [fixedInViewport]="isMobile">
+
+    <div class="right-column" *ngIf="!isMobile || rightSidenav.opened">
+
       <mat-card-header>
         <mat-card-title>Suggested History</mat-card-title>
       </mat-card-header>
-      <div *ngIf="!isLoading && users && users.length > 0; else noData">
+
+      <ng-container *ngIf="!isLoading && users?.length > 0; else noData">
+
         <div *ngFor="let user of users" class="client-item">
-          <div class="profile-image-container">
-            <img [src]="user.photo_pic || 'assets/images/default.png'" [alt]="user.fullname" class="client-photo" />
-          </div>
+
+          <img *ngIf="user.photo_pic" [src]="user.photo_pic || 'assets/images/default.png'" alt="no image"
+            class="mat-avatar" />
+
           <div class="client-info">
+
             <h3 class="client-name">
-              <a [routerLink]="user.role_code === 'DEF-USERS'? ['/profile', user.code]: ['/client_profile', user.code]"
-                class="custom-title">
+
+              <a class="custom-title" [routerLink]="
+                  user.role_code === 'DEF-USERS'
+                    ? ['/' + sharedRoutines.getRole() + '/profile', user.code]
+                    : ['/' + sharedRoutines.getRole() + '/client_profile', user.code]
+                ">
                 {{ user.fullname }}
               </a>
+
             </h3>
+
           </div>
+
           <div class="client-action" *ngIf="currentUserCode !== user.code">
-            <button mat-flat-button [color]="user.follow_status === 'accepted' ? 'accent': 'primary'"
+
+            <button mat-button [color]="user.follow_status === 'accepted' ? 'accent' : 'primary'"
               (click)="AddConnect(user.code, user.fullname, user.follow_status, user.id)">
-              <span class="btn-label">{{ user.follow_status === 'not_following' ? 'Connect' : 'Connected' }}</span>
+              {{ user.follow_status === 'not_following' ? 'Connect' : 'Connected' }}
             </button>
+
           </div>
+
         </div>
-      </div>
+
+      </ng-container>
+
       <ng-template #noData>
-        <p class="no-data-text" *ngIf="!isLoading">No suggested history available.</p>
+
+        <p class="no-data-text" *ngIf="!isLoading">
+          No suggested history available.
+        </p>
+
       </ng-template>
+
     </div>
+
   </mat-sidenav>
-
-  <mat-sidenav-content class="feed-scroll-container">
-    <div class="middle-column" infiniteScroll (scrolled)="onScroll2()">
-      <div class="post-top-container" *ngIf="!isLoading">
-        <div class="input-section">
-          <input type="text" placeholder="Create your post?" class="post-input" readonly (click)="createPost()" />
-        </div>
-        <div class="actions-section">
-          <button class="action-btn live-video"><span class="icon">🎥</span> Photo</button>
-          <button class="action-btn photo-video"><span class="icon">📷</span> Video</button>
-          <button class="action-btn reel"><span class="icon">🎞️</span> Events</button>
-        </div>
-      </div>
-
-      <div *ngIf="!isLoading">
-        <div *ngFor="let post of posts; trackBy: trackByPostId" class="post-card feed-container">
-          <div class="post-header-flex">
-            <div class="header-left">
-              <img [src]="post.profile_pic || 'assets/images/default.png'" class="post-avatar" />
-              <div class="header-info">
-                <a class="custom-title">{{ post.fullname }}</a>
-                <small class="post-time">{{ post.created_at | date: 'medium' }}</small>
-              </div>
-            </div>
-            <button mat-icon-button [matMenuTriggerFor]="menu">
-              <mat-icon>more_horiz</mat-icon>
-            </button>
-
-            <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="onEditPost(post)">
-                <mat-icon>edit</mat-icon>
-                <span>Edit</span>
-              </button>
-              <button mat-menu-item (click)="onDelete(post)">
-                <mat-icon>delete</mat-icon>
-                <span>Delete</span>
-              </button>
-            </mat-menu>
-          </div>
-
-          <div class="post-caption">
-            <p>{{ post.caption }}</p>
-          </div>
-          <div *ngIf="post.images?.length > 0" class="post-media">
-            <img [src]="post.images[0].path_url" class="full-width-img" />
-          </div>
-
-          <div class="post-footer">
-            <button mat-button><mat-icon>thumb_up_off_alt</mat-icon> Like</button>
-            <button mat-button (click)="openCommentModal(post)"><mat-icon>chat_bubble_outline</mat-icon>
-              Comment</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </mat-sidenav-content>
 
 </mat-sidenav-container>

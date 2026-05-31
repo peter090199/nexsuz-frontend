@@ -359,6 +359,7 @@ import { NotificationsService } from 'src/app/services/Global/notifications.serv
 import { JobPostingService } from 'src/app/services/Jobs/job-posting.service';
 import { ProfileService } from 'src/app/services/Profile/profile.service';
 import { AppliedQuestionsService } from 'src/app/services/Jobs/applied-questions.service';
+import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
 
 @Component({
   selector: 'app-apply-job',
@@ -403,7 +404,7 @@ export class ApplyJobComponent implements OnInit, OnDestroy {
     private profileService: ProfileService,
     private appliedService: AppliedQuestionsService,
     private countrycodeServices: CountryCodesService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,public sharedRoutines: SharedRoutinesService
   ) {}
 
   // =========================

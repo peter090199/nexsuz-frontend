@@ -1,4 +1,4 @@
-<div class="profile-card mat-elevation-z4">
+<section class="section">
   <mat-card-footer *ngIf="isLoading">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </mat-card-footer>
@@ -44,8 +44,7 @@
         <div class="profile-row" *ngFor="let field of profileFields">
           <mat-icon class="profile-icon">{{ field.icon }}</mat-icon>
           <ng-container [ngSwitch]="field.type">
-            <a *ngSwitchCase="'link'" [href]="'https://' + users[field.key]" target="_blank">{{ users[field.key] || 'No
-              website' }}</a>
+            <a *ngSwitchCase="'link'" [href]="'https://' + users[field.key]" target="_blank">{{ users[field.key] || 'No website' }}</a>
             <span *ngSwitchDefault>{{ users[field.key] || field.default }}</span>
           </ng-container>
         </div>
@@ -83,4 +82,8 @@
       </mat-card-content>
     </mat-tab>
   </mat-tab-group>
-</div>
+
+  <!-- accountplan -->
+  <app-account-type-plan></app-account-type-plan>
+
+</section>

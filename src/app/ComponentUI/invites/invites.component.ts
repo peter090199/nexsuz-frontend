@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
+import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
 import { NotificationsService } from 'src/app/services/Global/notifications.service';
 import { ClientsService } from 'src/app/services/Networking/clients.service';
 import { ProfileService } from 'src/app/services/Profile/profile.service';
@@ -23,7 +24,8 @@ export class InvitesComponent implements OnInit {
     private clientsService: ClientsService,
     private authService: AuthService,
     private alert: NotificationsService,
-    private profile: ProfileService
+    private profile: ProfileService,
+    public sharedRoutines:SharedRoutinesService
   ) { }
 
   ngOnInit(): void {

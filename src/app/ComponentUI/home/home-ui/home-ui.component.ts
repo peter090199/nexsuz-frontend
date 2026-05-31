@@ -23,6 +23,7 @@ import { finalize, take } from 'rxjs/operators';
 import { EchoService } from 'src/app/services/echo.service';
 import { PusherService } from 'src/app/services/pusher.service';
 import { CommentModalUIComponent } from '../../Modal/comment-modal-ui/comment-modal-ui.component';
+import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
 interface Reaction {
   emoji: string;
   label: string;
@@ -214,9 +215,9 @@ export class HomeUIComponent implements OnInit, AfterViewInit, OnDestroy {
     private reactionsServices: ReactionEmojiService,
     private cdr: ChangeDetectorRef,
     private echoService: EchoService,
-    private pusherService: PusherService
+    private pusherService: PusherService, public sharedRoutines: SharedRoutinesService
   ) {
-   this.checkScreenSize();
+    this.checkScreenSize();
   }
   subscription!: Subscription;
   private postsLoaded = false;
@@ -241,13 +242,15 @@ export class HomeUIComponent implements OnInit, AfterViewInit, OnDestroy {
       this.postsLoaded = true;
     }
 
+    this.postsLoaded = true;
+
   }
 
   newPostSubscription!: Subscription;
   newPostsQueue: any[] = [];         // temporary queue for new posts
   hasNewPosts = false;
 
-@HostListener('window:resize')
+  @HostListener('window:resize')
   onResize() {
     this.checkScreenSize();
   }
@@ -710,10 +713,10 @@ export class HomeUIComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   hideReaction(postId: number) {
-    this.isPopupVisible[postId] = false;
-    this.hoveredReactions[postId] = null;
+    setTimeout(() => {
+      this.isPopupVisible[postId] = false;
+    }, 200);
   }
-
   getReactionEmoji(postId: number): string {
     return this.hoveredReactions[postId]?.emoji
       || this.userReactions[postId]?.emoji
@@ -871,53 +874,62 @@ export class HomeUIComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.postDataservices.getDataPostAddFollow().subscribe({
       next: (res: any) => {
-        if (res?.success && Array.isArray(res.data)) {
-          const normalizeUrl = (path: string) =>
-            `https://api.nexsuz.com/${(path || '').replace(/\\/g, '')}`;
-          const formattedPosts = res.data.map((post: any) => {
-            const images = Array.isArray(post.images)
-              ? post.images.map((img: any) => ({
-                ...img,
-                path_url: normalizeUrl(img.path_url),
-              }))
-              : [];
 
-            const videos = Array.isArray(post.videos)
-              ? post.videos.map((vid: any) => ({
-                ...vid,
-                path_url: normalizeUrl(vid.path_url),
-              }))
-              : [];
-
-            return {
-              ...post,
-              expanded: false,
-              images,
-              videos,
-            };
-          });
-
-          if (append) {
-            // Infinite scroll → add at bottom
-            this.posts = [...this.posts, ...formattedPosts];
-          } else {
-            // Normal load or refresh → replace/merge top
-            this.posts = formattedPosts;
-          }
-
-          // Load reactions for each post
-          this.posts.forEach((post) => this.loadReaction(post.id));
-        } else {
-          console.warn('Unexpected response format:', res);
-          if (!append) this.posts = [];
+        if (!res?.success || !Array.isArray(res.data)) {
+          this.posts = [];
+          this.isLoading = false;
+          return;
         }
 
+        const normalizeUrl = (path: string) =>
+          path ? `https://api.nexsuz.com/${path.replace(/\\/g, '')}` : '';
+
+        const formattedPosts = res.data.map((post: any) => ({
+          ...post,
+          expanded: false,
+          showComments: false,
+          newComment: '',
+          isSubmitting: false,
+
+          images: Array.isArray(post.images)
+            ? post.images.map((img: any) => ({
+              ...img,
+              path_url: normalizeUrl(img.path_url)
+            }))
+            : [],
+
+          videos: Array.isArray(post.videos)
+            ? post.videos.map((vid: any) => ({
+              ...vid,
+              path_url: normalizeUrl(vid.path_url)
+            }))
+            : [],
+
+          comments: Array.isArray(post.comments) ? post.comments : []
+        }));
+
+        // FIX: append or replace
+        this.posts = append
+          ? [...this.posts, ...formattedPosts]
+          : formattedPosts;
+
+        // Load reactions AFTER posts exist
+        setTimeout(() => {
+          this.posts.forEach(post => {
+            if (post?.id) {
+              this.loadReaction(post.id);
+            }
+          });
+        }, 0);
+
         this.isLoading = false;
       },
+
       error: (err) => {
-        console.error('Error fetching posts:', err);
+        console.error('Error loading posts:', err);
+        this.posts = [];
         this.isLoading = false;
-      },
+      }
     });
   }
 
@@ -1071,14 +1083,17 @@ export class HomeUIComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   uploadPic(): void {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = '400px';
-    const dialogRef = this.dialog.open(UploadProfileComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) { /* no-op for now */ }
-    });
+    const url = `/${this.sharedRoutines.getRole()}/user-cv`;
+    window.location.href = url;
+
+    // const dialogConfig = new MatDialogConfig();
+    // dialogConfig.disableClose = true;
+    // dialogConfig.autoFocus = true;
+    // dialogConfig.width = '400px';
+    // const dialogRef = this.dialog.open(UploadProfileComponent, dialogConfig);
+    // dialogRef.afterClosed().subscribe(result => {
+    //   if (result) { /* no-op for now */ }
+    // });
   }
 
   hideReactions() {
@@ -1090,7 +1105,7 @@ export class HomeUIComponent implements OnInit, AfterViewInit, OnDestroy {
     return `menu-${index}`;
   }
 
-  onEditPost(post:any) {
+  onEditPost(post: any) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;

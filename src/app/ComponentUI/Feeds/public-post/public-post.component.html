@@ -1,0 +1,120 @@
+<section class="section">
+  <div class="feed-wrapper">
+    <button *ngIf="newPostsAvailable" mat-raised-button color="primary" (click)="prependNewPosts()">
+      New Posts
+    </button>
+
+  <mat-card *ngFor="let post of posts">
+    <div class="post-header">
+
+      <img class="avatar" [src]="post.photo_pic || 'assets/images/default.png'" [alt]="post.fullname">
+
+      <div class="user-info">
+        <h4 class="name">
+          {{ post.fullname }}
+        </h4>
+
+        <div class="meta">
+          <small class="time">
+            {{ post.created_at | date:'short' }}
+          </small>
+        </div>
+      </div>
+
+      <!-- optional 3-dot menu like Facebook -->
+      <button mat-icon-button class="more-btn" [matMenuTriggerFor]="menu" class="menu-btn" aria-label="Post Options">
+        <mat-icon>more_horiz</mat-icon>
+      </button>
+
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="onEditPost(post)">Edit</button>
+        <button mat-menu-item (click)="onDelete(post)" [disabled]="isLoading">
+          <ng-container *ngIf="!isLoading; else deletingTpl">Delete</ng-container>
+          <ng-template #deletingTpl>
+            <mat-progress-spinner diameter="20" mode="indeterminate" color="warn"></mat-progress-spinner>
+          </ng-template>
+        </button>
+      </mat-menu>
+
+
+    </div>
+    <!-- CAPTION -->
+    <p style="font-family: Verdana, Geneva, Tahoma, sans-serif; color: #413f3f; font-size: 14px; margin-bottom: 20px; text-align: justify;">
+      {{ post.expanded ? post.caption : (post.caption | slice:0:200) }}
+      <a *ngIf="post.caption?.length > 200" (click)="post.expanded = !post.expanded">
+        {{ post.expanded ? 'See less' : 'See more' }}
+      </a>
+    </p>
+
+    <!-- IMAGES -->
+    <img *ngFor="let img of post.images" [src]="img.path_url" (click)="openImages(post.images)">
+
+    <!-- VIDEOS -->
+    <video *ngFor="let v of post.videos" #videoEl controls [src]="v.path_url">
+    </video>
+
+    <!-- REACTIONS -->
+    <div class="reactions-summary"
+      *ngIf="postReactions[post.id]?.reactions?.length || postReactions[post.id]?.totalCount">
+      <div class="emoji-stack" style="position: relative; height: 24px;">
+        <ng-container *ngFor="let reaction of postReactions[post.id]?.reactions; let i = index">
+          <span class="emoji-item" [ngStyle]="{
+                'position': 'absolute',
+                'z-index': postReactions[post.id].reactions.length - i,
+                'left.px': i * 15
+              }">{{ reaction.emoji }}</span>
+        </ng-container>
+      </div>
+
+        <!-- <a *ngIf="postReactions[post.id]?.totalCount" class="reaction-count-text"
+          (mouseenter)="sharedRoutinesService.showHoverNames(post.id, $event)" (mouseleave)="sharedRoutinesService.hideHoverNames()"
+          (click)="sharedRoutinesService.openReactionsModal(post.id)"
+          [ngStyle]="{'margin-left.px': 17 * postReactions[post.id].totalCount, 'cursor': 'pointer'}">
+          {{ postReactions[post.id].totalCount }}
+        </a> -->
+      <a *ngIf="postReactions[post.id]?.totalCount" class="reaction-count-text"
+        (mouseenter)="sharedRoutinesService.showHoverNames(post.id, $event)" (mouseleave)="sharedRoutinesService.hideHoverNames()"
+        (click)="sharedRoutinesService.openReactionsModal(post.id)"
+        [ngStyle]="{'margin-left.px': 17 * postReactions[post.id].totalCount, 'cursor': 'pointer'}">
+        {{ postReactions[post.id]?.totalCount }}
+      </a>
+      <div *ngIf="hoverVisible && hoveredPostId === post.id" class="reaction-tooltip"
+        [ngStyle]="{'top.px': hoverPosition.y, 'left.px': hoverPosition.x}">
+        <div *ngFor="let reaction of hoveredReactions2">
+          <div *ngFor="let person of reaction.person" class="reaction-user">
+            <span>{{ person.fullname }}</span>
+          </div>
+          <div *ngIf="reaction.person.length > 11" class="reaction-more">
+            +{{ reaction.person.length - 11 }} more
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="actions">
+
+      <div (mouseenter)="isPopupVisible[post.id]=true" (mouseleave)="isPopupVisible[post.id]=false">
+
+        <button mat-button>
+          {{ userReactions[post.id]?.emoji || '👍' }}
+          {{ userReactions[post.id]?.label || 'Like' }}
+        </button>
+
+        <div *ngIf="isPopupVisible[post.id]">
+          <span *ngFor="let r of reaction" (click)="selectReaction(post.id, r)">
+            {{ r.emoji }}
+          </span>
+        </div>
+
+      </div>
+
+      <button mat-button (click)="openComments(post)">
+        💬 Comment
+      </button>
+
+    </div>
+
+  </mat-card>
+</div>
+</section>

@@ -231,22 +231,22 @@ export class SignInUIComponent implements OnInit {
 
         /* 🚦 REDIRECT BY ROLE */
         if (res.role === 'DEF-CLIENT') {
-          this.router.navigate(['/recruiter/client-dashboard']);
+          this.router.navigate(['/DEF-CLIENT/client-dashboard']);
           return;
         }
 
         if (res.role === 'DEF-ADMIN') {
-          this.router.navigate(['/admin/admin-dashboard']);
+          this.router.navigate(['/DEF-ADMIN/admin-dashboard']);
           return;
         }
 
         if (res.role === 'DEF-MASTERADMIN') {
-          this.router.navigate(['/masteradmin/admin-dashboard']);
+          this.router.navigate(['/DEF-MASTERADMIN/admin-dashboard']);
           return;
         }
 
         if (res.role === 'DEF-USERS') {
-          this.router.navigate(['/home']);
+          this.router.navigate(['/DEF-USERS/home']);
           return;
         }
 

@@ -30,7 +30,7 @@ export class UserResumeUIComponent implements OnInit {
 
   ngOnInit(): void {
     this.transNo = this.data.transNo;
-    this. loadApplicationScore();
+    this.loadApplicationScore();
 
     // this.sharedService.getApplicationScore(this.transNo).subscribe({
     //   next: (res: any) => {
@@ -62,6 +62,57 @@ export class UserResumeUIComponent implements OnInit {
     //     console.error('Error fetching score data:', err);
     //   }
     // });
+  }
+
+
+  yesScore = 0;
+  noScore = 0;
+  maybeScore = 0;
+  totalScore = 0;
+  calculateScorexx(): void {
+    const answers = this.data?.answers || [];
+
+    const safeText = (a: any) => (a?.answer_text || '').toLowerCase();
+
+    // YES / NO / MAYBE breakdown
+    this.yesScore = answers.filter((a: any) => safeText(a) === 'yes').length;
+    this.noScore = answers.filter((a: any) => safeText(a) === 'no').length;
+    this.maybeScore = answers.filter((a: any) => safeText(a) === 'maybe').length;
+
+    // ✅ TOTAL SCORE (BASED ON numeric_score)
+    this.totalScore = answers.reduce((sum: number, a: { numeric_score: number; }) => {
+      return sum + (a.numeric_score || 0);
+    }, 0);
+
+    // OPTIONAL: total questions
+    this.totalQuestions = answers.length;
+
+    // percentage
+    this.percentage = this.totalQuestions
+      ? Math.round((this.totalScore / this.totalQuestions) * 100)
+      : 0;
+  }
+
+
+
+
+  get yesPercent(): number {
+    return this.totalScore ? Math.round((this.yesScore / this.totalScore) * 100) : 0;
+  }
+
+  get noPercent(): number {
+    return this.totalScore ? Math.round((this.noScore / this.totalScore) * 100) : 0;
+  }
+
+  get maybePercent(): number {
+    return this.totalScore ? Math.round((this.maybeScore / this.totalScore) * 100) : 0;
+  }
+
+
+  flip = false;
+
+  get percentages(): number {
+    return Math.round((this.score / this.totalQuestions) * 100);
   }
 
   loadApplicationScore(): void {

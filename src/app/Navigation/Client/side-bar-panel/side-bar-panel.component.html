@@ -1,107 +1,146 @@
-<mat-sidenav-container class="sidenav-container">
+<mat-sidenav-container class="layout-container">
 
-  <!-- SIDEBAR -->
-  <mat-sidenav mode="side" [(opened)]="sidebarOpen" class="recruit-sidenav">
+  <!-- ================= SIDEBAR ================= -->
+  <mat-sidenav mode="side" [(opened)]="sidebarOpen" class="sidebar">
 
     <!-- LOGO -->
-    <div class="logo" *ngIf="!isMobile">
-      <img src="assets/images/logo.png" alt="logo">
-      <h3>Recruiter</h3>
+    <div class="logo-section" *ngIf="!isMobile">
+      <img src="assets/images/logo.png" alt="logo" />
+      <div class="logo-text">
+        <h2>Recruiter</h2>
+        <span>Dashboard</span>
+      </div>
     </div>
 
-    <!-- MENU LIST -->
+    <!-- MENU -->
     <mat-nav-list class="menu-list">
 
       <ng-container *ngFor="let item of menuItems">
 
-        <!-- MAIN MENU WITHOUT SUBMENU -->
-        <a mat-list-item *ngIf="!item.submenus?.length" [routerLink]="item.route" routerLinkActive="active-link"
-          [routerLinkActiveOptions]="{ exact: true }">
-          <i class="{{ item.icon }} menu-icon"></i>
-          <span class="menu-text">{{ item.label }}</span>
+        <!-- NORMAL MENU -->
+        <a *ngIf="!item.submenus?.length" mat-list-item [routerLink]="item.route" routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }" class="menu-item">
+          <!-- <mat-icon class="menu-icon">{{ item.icon }}</mat-icon> -->
+          <span class="menu-label">{{ item.label }}</span>
         </a>
 
-        <!-- MAIN MENU WITH SUBMENU -->
+        <!-- SUBMENU -->
         <div *ngIf="item.submenus?.length" class="submenu-wrapper">
-          <a mat-list-item (click)="toggleSubmenu(item)">
-            <i class="{{ item.icon }} menu-icon"></i>
-            <span class="menu-text">{{ item.label }}</span>
-            <span class="spacer"></span>
-            <mat-icon class="arrow">{{ item.expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+
+          <a mat-list-item class="menu-item" (click)="toggleSubmenu(item)">
+            <div class="menu-left">
+              <!-- <mat-icon class="menu-icon">{{ item.icon }}</mat-icon> -->
+              <span class="menu-label">{{ item.label }}</span>
+            </div>
+
+            <mat-icon class="expand-icon">
+              {{ item.expanded ? 'expand_less' : 'expand_more' }}
+            </mat-icon>
           </a>
 
-          <!-- SUBMENU -->
           <div class="submenu" *ngIf="item.expanded">
+
             <a mat-list-item *ngFor="let sub of item.submenus" [routerLink]="sub.route" routerLinkActive="active-sub"
-              [routerLinkActiveOptions]="{ exact: true }">
-              <i class="{{ sub.icon }} submenu-icon"></i>
-              <span class="submenu-text">{{ sub.label || sub.description }}</span>
+              [routerLinkActiveOptions]="{ exact: true }" class="submenu-item">
+              <!-- <mat-icon class="submenu-icon">{{ sub.icon }}</mat-icon> -->
+              <span class="submenu-label">
+                {{ sub.label || sub.description }}
+              </span>
             </a>
+
           </div>
+
         </div>
 
       </ng-container>
 
     </mat-nav-list>
-
   </mat-sidenav>
 
-  <!-- MAIN CONTENT -->
+  <!-- ================= MAIN CONTENT ================= -->
   <mat-sidenav-content>
-    <mat-toolbar color="primary" class="topbar">
-      <button mat-icon (click)="toggleSidebar()">
-        <mat-icon>menu</mat-icon>
-      </button>
 
-      <span class="title">{{ pageTitle }}</span>
-      <span class="spacer"></span>
+    <!-- TOP BAR -->
+    <mat-toolbar class="topbar">
 
-      <!-- SEARCH -->
-      <button mat-icon>
-        <mat-icon>search</mat-icon>
-      </button>
+      <div class="toolbar-left">
+        <button *ngIf="isMobile" mat-icon-button class="menu-btn" (click)="toggleSidebar()">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <div class="page-info">
+          <button mat-button class="back-btn" (click)="goBack()">
+            ← Back
+          </button>
+          <h3>{{ pageTitle }}</h3>
+        </div>
+      </div>
 
-      <!-- NOTIFICATIONS -->
-      <button mat-icon matTooltip="View Notifications" (click)="openNotifications()" [matBadge]="unreadCount"
-        [matBadgeHidden]="unreadCount === 0" matBadgeColor="warn">
-        <mat-icon>notifications</mat-icon>
-      </button>
-
-      <!-- USER PROFILE BUTTON -->
-      <button mat-icon [matMenuTriggerFor]="userMenu">
-        <img *ngIf="profile?.coverphoto; else defaultIcon" [src]="profile.coverphoto" alt="Profile"
-          class="profile-icon" />
-        <ng-template #defaultIcon>
-          <mat-icon>account_circle</mat-icon>
-        </ng-template>
-      </button>
-
-
-      <mat-menu #userMenu="matMenu">
-<!-- 
-        <a mat-menu-item [routerLink]="getProfileUrl()">
-          <mat-icon>person</mat-icon>
-          <span>Profile</span>
-        </a> -->
-        <a mat-menu-item [routerLink]="getsettingsUrl()">
-          <mat-icon>settings</mat-icon>
-          <span>Profile</span>
-        </a>
-
-        <button mat-menu-item (click)="logout()">
-          <mat-icon>logout</mat-icon>
-          <span>Logout</span>
+      <!-- RIGHT SIDE -->
+      <div class="toolbar-right">
+        <!-- SEARCH -->
+        <button mat-icon-button class="toolbar-icon" (click)="searchSidenav.open()">
+          <mat-icon>search</mat-icon>
         </button>
 
-      </mat-menu>
+        <!-- NOTIFICATIONS -->
+        <button mat-icon-button class="toolbar-icon" matTooltip="Notifications" (click)="openNotifications()"
+          [matBadge]="unreadCount" [matBadgeHidden]="!unreadCount" matBadgeColor="warn">
+          <mat-icon>notifications</mat-icon>
+        </button>
 
+        <!-- PROFILE -->
+        <button mat-button class="profile-btn" [matMenuTriggerFor]="userMenu">
+
+          <ng-container *ngIf="profile?.photo_pic; else defaultProfile">
+            <img [src]="profile?.photo_pic" alt="Profile Picture" class="profile-pic" />
+          </ng-container>
+
+          <ng-template #defaultProfile>
+            <mat-icon class="default-avatar">account_circle</mat-icon>
+          </ng-template>
+
+        </button>
+
+      </div>
 
     </mat-toolbar>
 
+    <!-- USER MENU -->
+    <mat-menu #userMenu="matMenu">
+
+      <button mat-menu-item [routerLink]="sharedService.getClientProfileRoute(profile?.code)">
+        <mat-icon color="primary">person</mat-icon>
+        <span>Profile</span>
+      </button>
+
+      <button mat-menu-item (click)="getsettingsUrl()">
+        <mat-icon color="primary">settings</mat-icon>
+        <span>Settings</span>
+      </button>
+
+      <button mat-menu-item (click)="logout()">
+        <mat-icon color="primary">logout</mat-icon>
+        <span>Logout</span>
+      </button>
+
+    </mat-menu>
+
+
+
     <!-- PAGE CONTENT -->
-    <div class="content">
+    <div class="page-content">
       <router-outlet></router-outlet>
     </div>
+
+
+
   </mat-sidenav-content>
+
+
+  <!-- ================= SEARCH SIDENAV ================= -->
+ <mat-sidenav #searchSidenav position="end" mode="over" class="search-sidenav">
+  <app-search></app-search>
+</mat-sidenav>
+
 
 </mat-sidenav-container>

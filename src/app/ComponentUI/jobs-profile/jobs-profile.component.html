@@ -1,165 +1,166 @@
 <div class="jobs-container">
+
+  <!-- ================= LEFT SIDEBAR ================= -->
   <mat-card class="sidebar">
     <h3>Jobs for you</h3>
+
     <ng-container *ngIf="isLoading; else jobsList">
       <mat-list>
         <div mat-subheader>Hiring Jobs</div>
+
         <mat-list-item *ngFor="let _ of skeletonRows">
-          <div class="skeleton skeleton-avatar" matListAvatar aria-hidden="true"></div>
+          <div class="skeleton skeleton-avatar" matListAvatar></div>
+
           <div class="job-details w-full">
             <div class="skeleton skeleton-line w-56"></div>
             <div class="skeleton skeleton-line w-40 mt-6px"></div>
           </div>
-          <button mat-icon-button disabled aria-hidden="true">
+
+          <button mat-icon-button disabled>
             <div class="skeleton skeleton-icon"></div>
           </button>
         </mat-list-item>
       </mat-list>
     </ng-container>
 
+    <!-- JOB LIST -->
     <ng-template #jobsList>
       <div class="jobs-list">
+
         <div mat-subheader>Hiring Jobs</div>
         <mat-divider></mat-divider>
-        <div class="job-item" *ngFor="let job of jobs" (click)="selectJob(job)">
 
-          <img [src]="job.job_image" alt="Company Logo" class="job-logo" />
+        <div class="job-item" *ngFor="let job of jobs" (click)="selectJob(job)">
+          <img [src]="job.job_image" class="job-logo" alt="Company Logo" />
 
           <div class="job-details">
             <span class="job-name">{{ job.job_name }}</span>
-            <small>{{ job.comp_name }} · {{ job.work_type }}</small>
+            <small>
+              {{ job.comp_name }} · {{ job.work_type }}
+            </small>
           </div>
         </div>
+
       </div>
     </ng-template>
-
-
-    <!-- <ng-container *ngIf="isLoading; else saveJobList">
-      <mat-list>
-        <div mat-subheader>Saved Jobs</div>
-        <mat-list-item *ngFor="let _ of skeletonRows">
-          <div class="skeleton skeleton-avatar" matListAvatar aria-hidden="true"></div>
-          <div class="job-details w-full">
-            <div class="skeleton skeleton-line w-56"></div>
-            <div class="skeleton skeleton-line w-40 mt-6px"></div>
-          </div>
-          <button mat-icon-button disabled aria-hidden="true">
-            <div class="skeleton skeleton-icon"></div>
-          </button>
-        </mat-list-item>
-      </mat-list>
-    </ng-container> -->
-
-    <!-- <ng-template #saveJobList>
-        <div class="jobs-list">
-          <div mat-subheader>Saved Jobs</div>
-        <mat-divider></mat-divider>
-          <div class="job-item" *ngFor="let job of jobs" (click)="selectJob(job)">
-
-            <img [src]="job.job_image" alt="Company Logo" class="job-logo" />
-
-            <div class="job-details">
-              <span class="job-name">{{ job.job_name }}</span>
-              <small>{{ job.comp_name }} · {{ job.work_type }}</small>
-            </div>
-          </div>
-        </div>
-      </ng-template> -->
-
   </mat-card>
 
+  <!-- ================= OVERLAY ================= -->
   <div class="sidebar-overlay" [class.active]="selectedJob" (click)="closeSidebar()"></div>
+
+  <!-- ================= RIGHT DETAIL PANEL ================= -->
   <mat-card class="leftsidebar" [class.active]="selectedJob">
-    <button class="responsive-back-btn" mat-button [routerLink]="['/jobs']">
+
+    <!-- BACK BUTTON -->
+    <button class="responsive-back-btn" mat-button [routerLink]="['/' + sharedRoutines.getRole() + '/jobs']">
       <mat-icon>arrow_back</mat-icon>
     </button>
 
+    <!-- ================= JOB DETAILS ================= -->
     <ng-container *ngIf="selectedJob; else defaultSidebar">
+
+      <!-- HEADER -->
       <div class="job-header">
-        <img [src]="selectedJob.job_image" alt="Company Logo" class="company-logo" />
+
+        <img [src]="selectedJob.job_image" class="company-logo" alt="Company Logo" />
+
         <div>
-          <h3 class="job-title">{{ selectedJob.job_name }}</h3>
-          <p class="company-name">{{ selectedJob.comp_name }} · {{ selectedJob.work_type }}</p>
-          <p class="job-meta">{{ selectedJob.location }} · Posted {{ selectedJob.created_at }}</p>
+          <h3 class="job-title">
+            {{ selectedJob.job_name }}
+          </h3>
+
+          <p class="company-name">
+            {{ selectedJob.comp_name }} · {{ selectedJob.work_type }}
+          </p>
+
+          <p class="job-meta">
+            {{ selectedJob.location }} · Posted {{ selectedJob.created_at }}
+          </p>
         </div>
+
       </div>
 
+      <!-- ACTION BUTTONS -->
       <div class="sidebar-actions sticky-actions">
-        <!-- <button mat-raised-button (click)="onApplyClick(selectedJob)">
+
+        <!-- APPLY / STATUS BUTTON -->
+        <button mat-raised-button (click)="onApplyClick(selectedJob)" [ngStyle]="{
+            'background-color': getStatusColor(getButtonStatus(selectedJob)),
+            'color': 'white'
+          }">
           <mat-icon>
             {{ getStatusIcon(getButtonStatus(selectedJob)) }}
           </mat-icon>
           {{ getStatusText(getButtonStatus(selectedJob)) }}
-        </button> -->
-
-        <button mat-raised-button (click)="onApplyClick(selectedJob)"
-          [ngStyle]="{'background-color': getStatusColor(getButtonStatus(selectedJob)), 'color': 'white'}"
-          [routerLink]="getButtonStatus(selectedJob) === 'default' ? ['/apply-job', selectedJob.transNo] : null">
-          <mat-icon>{{ getStatusIcon(getButtonStatus(selectedJob)) }}</mat-icon>
-          {{ getStatusText(getButtonStatus(selectedJob)) }}
         </button>
 
-
-        <!-- <button mat-raised-button
-          [ngStyle]="{'background-color': getStatusColor(getButtonStatus(selectedJob)), 'color': 'white'}"
-          [disabled]="getButtonStatus(selectedJob) === 'applied_active'"
-          [routerLink]="getButtonStatus(selectedJob) === 'default' ? ['/apply-job', selectedJob.transNo] : null">
-          <mat-icon>{{ getStatusIcon(getButtonStatus(selectedJob)) }}</mat-icon>
-          {{ getStatusText(getButtonStatus(selectedJob)) }}
-        </button> -->
-
-
-        <!-- Save Heart Button -->
+        <!-- SAVE BUTTON -->
         <button mat-stroked-button color="warn" (click)="toggleHeart()">
-          <mat-icon>{{ saved ? 'favorite' : 'favorite_border' }}</mat-icon>Save
+          <mat-icon>
+            {{ saved ? 'favorite' : 'favorite_border' }}
+          </mat-icon>
+          Save
         </button>
-      </div>
 
+      </div>
 
       <mat-divider></mat-divider>
 
+      <!-- JOB INFO -->
       <div class="job-details-section">
+
         <h4>About the Job</h4>
-        <p class="job-description">{{ selectedJob.job_description }}</p>
+        <p class="job-description">
+          {{ selectedJob.job_description }}
+        </p>
 
         <h4>More About This Role</h4>
-        <p class="job-description">{{ selectedJob.job_about }}</p>
+        <p class="job-description">
+          {{ selectedJob.job_about }}
+        </p>
 
         <mat-divider></mat-divider>
 
+        <!-- RECRUITER -->
         <h4>About the recruiter</h4>
+
         <div class="avatar-wrapper">
+
           <div class="company-details">
-            <a [routerLink]="['/client_profile/', selectedJob.code]" class="custom-title">
+
+            <a class="custom-title"
+              [routerLink]="['/' + sharedRoutines.getRole() + '/client_profile', selectedJob.code]">
               {{ selectedJob.fullname }}
             </a>
-            <button mat-raised-button color="primary" class="connect-btn">+ Connect</button>
+
+            <button mat-raised-button color="primary">
+              + Connect
+            </button>
+
           </div>
         </div>
 
         <div class="job-description-wrapper">
-          <a routerLink="/showMore" class="show-all">Show more →</a>
+          <a routerLink="/showMore" class="show-all">
+            Show more →
+          </a>
         </div>
 
       </div>
+
     </ng-container>
 
+    <!-- DEFAULT STATE -->
     <ng-template #defaultSidebar>
       <p>Please select a job to see the details.</p>
     </ng-template>
 
   </mat-card>
 
-  <!-- RIGHT SAVE SIDEBAR -->
-  <!-- <mat-card class="savesidebar">
-    <app-save-jobs></app-save-jobs>
-  </mat-card> -->
-
-
+  <!-- ================= RIGHT SAVED SIDEBAR ================= -->
   <mat-card class="sidebar">
     <div mat-subheader>Saved Jobs</div>
     <mat-divider></mat-divider>
   </mat-card>
-
 
 </div>

@@ -1,70 +1,52 @@
-<div class="position-relative search-wrapper">
-  <!-- Search Input -->
-  <input type="text"
-         class="form-control rounded-pill px-4 py-2 shadow-sm"
-         placeholder="Search"
-         [(ngModel)]="searchQuery"
-         (input)="onSearch()"
-         (focus)="showOverlay = true" />
+<div class="search-container">
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput placeholder="Search users..." [(ngModel)]="searchQuery" (input)="onSearch()" />
+    <button mat-icon-button matSuffix *ngIf="searchQuery" (click)="clearSearch()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
 
-  <!-- Clear Button -->
-  <button *ngIf="searchQuery"
-          class="clear-btn position-absolute end-0 me-4 top-50 translate-middle-y"
-          (click)="clearSearch()"
-          style="background: transparent; border: none;">
-    <mat-icon>close</mat-icon>
-  </button>
-
-  <!-- Suggestions & Recent -->
-  <div *ngIf="showOverlay"
-       class="search-dropdown dropdown-menu show w-100 mt-2 shadow rounded-4 overflow-hidden">
-
-    <!-- Autocomplete Results -->
-    <ng-container *ngIf="searchQuery && users.length > 0">
-      <div *ngFor="let user of users"
-           class="dropdown-item d-flex align-items-center hover-bg"
-           [routerLink]="['/search']"
-           [queryParams]="{ search: user.fullname }"
-           (click)="onViewUser(user)">
-        <img [src]="user.photo_pic || 'assets/images/default2.png'"
-             alt="{{ user.fullname }}"
-             class="rounded-circle me-3"
-             style="width: 40px; height: 40px;" />
-        <span class="fw-semibold">{{ user.fullname }}</span>
-      </div>
-
-      <!-- See All Results -->
-      <div class="see-all text-center py-2 border-top">
-        <a [routerLink]="['/search/results/all/keywords']"
-           [queryParams]="{ search: searchQuery }"
-           class="text-decoration-none text-primary fw-semibold">
-          See all results for "{{ searchQuery }}"
+  <!-- RESULTS -->
+  <div class="results">
+    <div *ngFor="let user of users" class="result-item d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-2" (click)="onViewUser(user)">
+        <img [src]="user.photo_pic || 'assets/images/default2.png'" />
+        <a [routerLink]="this.sharedService.getProfileRouteAll(user)" matTooltip="View Profile">
+          {{ user.fullname }}
         </a>
       </div>
-    </ng-container>
+      <!-- RIGHT SIDE: VIEW PROFILE -->
+      <button mat-button color="primary" [routerLink]="this.sharedService.getProfileRouteAll(user)" matTooltip="View Profile">
+          View Profile
+        </button>
 
-    <!-- Recent Searches -->
-    <ng-container *ngIf="searchHistory.length > 0 && !searchQuery">
-      <div class="sticky-header px-3 pt-3 text-muted small">Recent Searches</div>
-      <div *ngFor="let user of searchHistory"
-           class="dropdown-item d-flex align-items-center hover-bg"
-           [routerLink]="['/search']"
-           [queryParams]="{ search: user.fullname }"
-           (click)="onViewUser(user)" >
-        <img [src]="user.photo_pic || 'assets/images/default2.png'"
-             alt="{{ user.fullname }}"
-             class="rounded-circle me-3"
-             style="width: 40px; height: 40px;" />
-        <span class="fw-semibold">{{ user.fullname }}</span>
+    </div>
+
+    <!-- HISTORY -->
+    <div *ngIf="!searchQuery && searchHistory.length">
+      <h4>Recent Searches</h4>
+      <div *ngFor="let user of searchHistory" class="result-item d-flex align-items-center justify-content-between">
+        <!-- LEFT -->
+        <div class="d-flex align-items-center gap-2" (click)="searchFromHistory(user.fullname)">
+          <img [src]="user.photo_pic || 'assets/images/default2.png'" />
+          <a [routerLink]="this.sharedService.getProfileRouteAll(user)" matTooltip="View Profile">
+            {{ user.fullname }}
+          </a>
+        </div>
+        <!-- RIGHT -->
+        <button mat-button color="primary" [routerLink]="this.sharedService.getProfileRouteAll(user)" matTooltip="View Profile">
+          View Profile
+        </button>
+
       </div>
 
-      <!-- Clear History -->
-      <div class="text-end px-3 py-2 border-top">
-        <button class="btn btn-sm btn-link text-danger" (click)="clearHistory()">Clear History</button>
-      </div>
-    </ng-container>
+      <button class="clear-btn" (click)="clearHistory()">
+        Clear History
+      </button>
+
+    </div>
+
   </div>
-</div>
 
-<!-- Overlay -->
-<div *ngIf="showOverlay" class="search-overlay" (click)="clearSearch()"></div>
+</div>

@@ -8,6 +8,7 @@ import { UploadProfileComponent } from 'src/app/ComponentSharedUI/Individual/upl
 import { CurriculumVitaeService } from 'src/app/services/CV/curriculum-vitae.service';
 import { ProfileService } from 'src/app/services/Profile/profile.service';
 import { HttpClient, HttpEventType } from '@angular/common/http';
+import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
 
 @Component({
   selector: 'app-settings',
@@ -22,7 +23,7 @@ export class SettingsComponent implements OnInit {
   selectedFile: File | null = null;
   uploadProgress: number = -1;
   preview: string | ArrayBuffer | null = null;
-
+  role: any;
   @ViewChild('coverInput') coverInput!: ElementRef<HTMLInputElement>;
 
   constructor(
@@ -30,10 +31,12 @@ export class SettingsComponent implements OnInit {
     private alert: NotificationsService,
     private dialog: MatDialog,
     private cvService: CurriculumVitaeService,
-    private profileService: ProfileService, private http: HttpClient
+    private profileService: ProfileService, private http: HttpClient,
+    public sharedRoutines: SharedRoutinesService
   ) { }
 
   async ngOnInit(): Promise<void> {
+    this.role = this.sharedRoutines.getRole();
     this.getProfile();
     await this.getUserAccounts();
     this.currentUserCode = this.authService.getAuthCode();
@@ -70,14 +73,14 @@ export class SettingsComponent implements OnInit {
       this.isLoading = false;
     }
   }
-profileFields = [
-  { icon: 'email', key: 'email', default: 'No email available', type: 'text' },
-  { icon: 'business', key: 'company', default: 'N/A', type: 'text' },
-  { icon: 'link', key: 'companywebsite', default: 'No website', type: 'link' },
-  { icon: 'phone', key: 'contact_no', default: 'N/A', type: 'text' },
-  { icon: 'location_on', key: 'current_location', default: 'N/A', type: 'text' },
-  { icon: 'cake', key: 'date_birth', default: 'Birthday not set', type: 'text' },
-];
+  profileFields = [
+    { icon: 'email', key: 'email', default: 'No email available', type: 'text' },
+    { icon: 'business', key: 'company', default: 'N/A', type: 'text' },
+    { icon: 'link', key: 'companywebsite', default: 'No website', type: 'link' },
+    { icon: 'phone', key: 'contact_no', default: 'N/A', type: 'text' },
+    { icon: 'location_on', key: 'current_location', default: 'N/A', type: 'text' },
+    { icon: 'cake', key: 'date_birth', default: 'Birthday not set', type: 'text' },
+  ];
 
   /** Open file dialog for cover photo */
   triggerCoverUpload(): void {
@@ -201,10 +204,27 @@ profileFields = [
 
   /** Open profile upload dialog */
   uploadPic(): void {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = '400px';
-    this.dialog.open(UploadProfileComponent, dialogConfig);
+    const url = `/${this.role}/user-cv`;
+    window.location.href = url;
   }
+
+  uploadPicxx(): void {
+
+    // const dialogConfig = new MatDialogConfig();
+    // dialogConfig.disableClose = true;
+    // dialogConfig.autoFocus = true;
+    // dialogConfig.width = '400px';
+    // this.dialog.open(UploadProfileComponent, dialogConfig);
+  }
+
+
+  selectPlan(plan: string) {
+    console.log('Selected Plan:', plan);
+
+    // call API here
+    // this.userService.updatePlan(plan).subscribe(res => {
+    //   this.users.account_type = plan;
+    // });
+  }
+
 }

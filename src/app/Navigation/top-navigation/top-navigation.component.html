@@ -1,118 +1,152 @@
+<!-- LOADING -->
 <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
-<div class="app-shell">
-  <mat-toolbar color="primary" class="header">
-    <div class="mobile-header" *ngIf="isMobile">
-      <div class="logo">
-        <img src="assets/images/logo.png" />
+<mat-sidenav-container class="layout-container">
+  <mat-toolbar color="primary" class="premium-toolbar">
+    <!-- MOBILE HEADER -->
+    <section class="mobile-header" *ngIf="isMobile">
+
+      <div class="brand">
+        <div class="brand-logo">
+          <img src="assets/images/logo.png" />
+        </div>
+        <span>Nexsuz</span>
       </div>
 
-      <div class="space-gap">
-        <ng-container *ngFor="let link of nav_module">
-
-          <!-- Dropdown -->
-          <ng-container *ngIf="link.submenus?.length; else normalMobile">
-            <button mat-icon-button [matMenuTriggerFor]="menu">
-              <i class="{{ link.icon }}"></i>
-            </button>
-
-            <mat-menu #menu="matMenu">
-              <button mat-menu-item *ngFor="let sub of link.submenus" [routerLink]="[sub.route]">
-                {{ sub.description }}
-              </button>
-            </mat-menu>
-          </ng-container>
-
-          <!-- Normal -->
-          <ng-template #normalMobile>
-            <button mat-icon-button [routerLink]="[link.route]">
-              <i class="{{ link.icon }}"></i>
-            </button>
-          </ng-template>
-
-        </ng-container>
-
-        <!-- Search -->
+      <div class="mobile-actions">
         <button mat-icon-button (click)="toggleSearch()">
           <mat-icon>search</mat-icon>
         </button>
 
-        <!-- Menu -->
         <button mat-icon-button (click)="toggleSidebar()">
           <mat-icon>{{ isSidebarOpen ? 'close' : 'menu' }}</mat-icon>
         </button>
-
-      </div>
-    </div>
-
-    <!-- DESKTOP -->
-    <div class="desktop-header" *ngIf="!isMobile">
-
-      <div class="logo">
-        <img src="assets/images/logo.png" />
       </div>
 
-      <div class="nav">
-        <div class="nav-left">
-          <app-search></app-search>
+    </section>
+
+    <!-- DESKTOP HEADER -->
+    <section class="desktop-header" *ngIf="!isMobile">
+
+      <a href="https://nexsuz.com/homepage" class="brand" target="_blank">
+        <div class="brand-logo">
+          <img src="assets/images/logo.png" alt="logo" />
         </div>
+        <span>Nexsuz</span>
+      </a>
 
-        <div class="nav-center"></div>
-        <div class="nav-right"></div>
+      <div class="desktop-nav">
         <ng-container *ngFor="let link of nav_module">
 
-          <ng-container *ngIf="link.submenus?.length; else normalDesktop">
-            <button mat-button [matMenuTriggerFor]="menu">
-              <i class="{{ link.icon }}"></i> {{ link.description }}
+          <ng-container *ngIf="link.submenus?.length; else normalMenu">
+            <button mat-button class="nav-btn" [matMenuTriggerFor]="menuMap">
+              <i [class]="link.icon"></i>
+              <span>{{ link.description }}</span>
             </button>
 
-            <mat-menu #menu="matMenu">
-              <button mat-menu-item *ngFor="let sub of link.submenus" [routerLink]="[sub.route]">
+            <mat-menu #menu="matMenu" #menuMap="matMenu">
+              <button mat-menu-item *ngFor="let sub of link.submenus" [routerLink]="sub.route">
+                <i [class]="sub.icon"></i>
                 {{ sub.description }}
               </button>
             </mat-menu>
           </ng-container>
 
-          <ng-template #normalDesktop>
-            <button mat-button [routerLink]="[link.route]">
-              <i class="{{ link.icon }}"></i> {{ link.description }}
+          <ng-template #normalMenu>
+            <button mat-button class="nav-btn" [routerLink]="link.route">
+              <i [class]="link.icon"></i>
+              <span>{{ link.description }}</span>
             </button>
           </ng-template>
 
         </ng-container>
-
       </div>
-    </div>
+
+      <div class="desktop-actions">
+        <div class="glass-box">
+
+          <button mat-icon-button class="toolbar-icon" (click)="searchSidenav.open()">
+            <mat-icon>search</mat-icon>
+          </button>
+
+          <button mat-icon-button (click)="onLogout()">
+            <mat-icon>logout</mat-icon>
+          </button>
+
+        </div>
+      </div>
+
+    </section>
 
   </mat-toolbar>
 
-  <!-- SIDEBAR -->
-  <div class="sidebar" [class.active]="isSidebarOpen">
+  <!-- =========================
+       MAIN AREA (FIX OVERFLOW)
+  ========================= -->
+  <div class="layout-body">
 
-    <div class="side-header">
-      <h3 class="side-title">Nexsuz</h3>
-    </div>
+    <!-- SIDEBAR -->
+    <aside class="sidebar" [class.active]="isSidebarOpen">
 
-    <div class="side-menu">
-      <a class="menu-item" *ngFor="let link of nav_module" [routerLink]="[link.route]" routerLinkActive="active">
-        <!-- <mat-icon class="menu-icon">{{ link.icon }}</mat-icon> -->
-        <span class="menu-text">{{ link.description }}</span>
-      </a>
+      <div class="side-header">NEXSUZ</div>
 
-    </div>
+      <div class="side-menu">
+
+        <ng-container *ngFor="let link of nav_module">
+
+          <a *ngIf="!link.submenus?.length" class="menu-item" [routerLink]="link.route" (click)="toggleSidebar()">
+
+            <i [class]="link.icon"></i>
+            <span>{{ link.description }}</span>
+          </a>
+
+          <div *ngIf="link.submenus?.length" class="menu-group">
+
+            <div class="menu-title">
+              <i [class]="link.icon"></i>
+              <span>{{ link.description }}</span>
+            </div>
+
+            <a *ngFor="let sub of link.submenus" class="submenu-item" [routerLink]="sub.route"
+              (click)="toggleSidebar()">
+
+              <i [class]="sub.icon"></i>
+              {{ sub.description }}
+            </a>
+
+          </div>
+
+        </ng-container>
+
+        <div class="menu-item logout" (click)="onLogout()">
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- CONTENT AREA -->
+    <main class="page-content">
+      <router-outlet></router-outlet>
+    </main>
 
   </div>
 
-  <!-- OVERLAY SEARCH -->
-  <div class="search-overlay" *ngIf="isSearchOpen">
+  <!-- SEARCH -->
+  <section class="search-overlay" *ngIf="isSearchOpen">
+    <div class="search-backdrop" (click)="toggleSearch()"></div>
+
+    <div class="search-box">
+      <app-search></app-search>
+
+      <button mat-icon-button class="close-btn" (click)="toggleSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </section>
+
+  <mat-sidenav #searchSidenav position="end" mode="over" class="search-sidenav">
     <app-search></app-search>
-    <button mat-icon-button (click)="toggleSearch()">
-      <mat-icon>close</mat-icon>
-    </button>
-  </div>
+  </mat-sidenav>
 
-  <!-- MAIN CONTENT -->
-  <main class="content">
-    <router-outlet></router-outlet>
-  </main>
-
-</div>
+</mat-sidenav-container>

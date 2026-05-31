@@ -310,3 +310,13 @@ mat-card.leftsidebar:hover {
     display: inline-flex; /* or block if you want full width */
   }
 }
+.interview-status {
+  animation: pulse 1.2s infinite;
+  font-weight: 600;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
