@@ -2,15 +2,8 @@
 <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
 <mat-sidenav-container class="layout-container">
   <mat-toolbar color="primary" class="premium-toolbar">
-    <!-- MOBILE HEADER -->
     <section class="mobile-header" *ngIf="isMobile">
-
-      <div class="brand">
-        <div class="brand-logo">
-          <img src="assets/images/logo.png" />
-        </div>
-        <span>Nexsuz</span>
-      </div>
+      <app-app-logo></app-app-logo>
 
       <div class="mobile-actions">
         <button mat-icon-button (click)="toggleSearch()">
@@ -26,13 +19,7 @@
 
     <!-- DESKTOP HEADER -->
     <section class="desktop-header" *ngIf="!isMobile">
-
-      <a href="https://nexsuz.com/homepage" class="brand" target="_blank">
-        <div class="brand-logo">
-          <img src="assets/images/logo.png" alt="logo" />
-        </div>
-        <span>Nexsuz</span>
-      </a>
+      <app-app-logo></app-app-logo>
 
       <div class="desktop-nav">
         <ng-container *ngFor="let link of nav_module">
@@ -68,13 +55,32 @@
             <mat-icon>search</mat-icon>
           </button>
 
-          <button mat-icon-button (click)="onLogout()">
-            <mat-icon>logout</mat-icon>
+          <button mat-button class="profile-btn" [matMenuTriggerFor]="userMenu">
+            <ng-container *ngIf="profileservices?.photo_pic; else defaultProfile">
+              <img [src]="profileservices?.photo_pic" class="profile-pic" />
+            </ng-container>
+            <ng-template #defaultProfile>
+              <mat-icon class="default-avatar">account_circle</mat-icon>
+            </ng-template>
           </button>
+
+          <mat-menu #userMenu="matMenu">
+            <button mat-menu-item [routerLink]="sharedRoutines.getClientProfileRoute(profileservices?.code)">
+              <mat-icon color="primary">person</mat-icon>
+              <span>Profile</span>
+            </button>
+            <button mat-menu-item [routerLink]="sharedRoutines.getsettingsRoute()">
+              <mat-icon color="primary">settings</mat-icon>
+              <span>Settings</span>
+            </button>
+            <button mat-menu-item (click)="onLogout()">
+              <mat-icon color="primary">logout</mat-icon>
+              <span>Logout</span>
+            </button>
+          </mat-menu>
 
         </div>
       </div>
-
     </section>
 
   </mat-toolbar>

@@ -43,6 +43,10 @@ import { SideBarPanelComponent } from './Navigation/Client/side-bar-panel/side-b
 import { RoleGuard } from './AuthGuard/role.guard';
 import { CandidatesComponent } from './ComponentUI/Client/candidates/candidates.component';
 import { InterviewsComponent } from './ComponentUI/Client/interviews/interviews.component';
+import { AccountManagementComponent } from './ComponentUI/account-management/account-management.component';
+import { UserPlanComponent } from './ComponentUI/AccountManagement/user-plan/user-plan.component';
+import { CategoryPlanComponent } from './ComponentUI/AccountManagement/category-plan/category-plan.component';
+import { ClientPlanComponent } from './ComponentUI/AccountManagement/client-plan/client-plan.component';
 
 const routes: Routes = [
   // Public routes
@@ -118,9 +122,13 @@ const routes: Routes = [
       { path: 'settings', component: SettingsComponent },
       { path: 'network', component: NetworkingComponent },
       { path: 'user', component: UsersComponent },
-      // ✅ FIXED
       { path: 'client_profile/:code', component: CompanyProfileUIComponent },
       { path: 'profile/:code', component: ProfileUIComponent },
+       // ACCOUNTPLAN
+      { path: 'userplan', component: UserPlanComponent },
+      { path: 'clientplan', component: ClientPlanComponent },
+      { path: 'plancategory', component: CategoryPlanComponent }, 
+
     ]
   },
 
@@ -158,7 +166,13 @@ const routes: Routes = [
       { path: 'apply-job/:transNo', component: ApplyJobComponent },
       { path: 'applied-jobs', component: ListAppliedJobsComponent },
       { path: 'candidates', component: CandidatesComponent },
-      { path: 'interviews', component: InterviewsComponent },
+      { path: 'interviews', component: InterviewsComponent },  
+
+      // ACCOUNTPLAN
+      { path: 'userplan', component: UserPlanComponent },
+      { path: 'clientplan', component: ClientPlanComponent },
+      { path: 'plancategory', component: CategoryPlanComponent }, 
+
     ]
   },
 

@@ -2404,6 +2404,28 @@ button[mat-stroked-button] {
 }
 
 
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  cursor: pointer;
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.logo img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  display: block;
+}
+
+.logo span {
+  margin-top: 12px;
+  line-height: 0.5;
+}
 
 
 

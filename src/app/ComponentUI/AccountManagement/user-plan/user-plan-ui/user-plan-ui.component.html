@@ -1,0 +1,75 @@
+<button mat-icon-button class="close-button" (click)="onClose()">
+    <mat-icon color="warn">close</mat-icon>
+</button>
+
+<h2 mat-dialog-title>{{ btnSave }} Plan</h2>
+<mat-divider></mat-divider>
+<section class="section">
+    <form [formGroup]="planForm" class="form-container">
+
+        <!-- Plan Name -->
+        <mat-form-field appearance="standard" class="w-100">
+            <mat-label>Plan Name</mat-label>
+            <input matInput formControlName="plan_name">
+            <mat-error *ngIf="planForm.get('plan_name')?.hasError('required')">
+                Plan Name is required
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Price -->
+        <div class="form-row">
+            <mat-form-field appearance="standard" class="w-20">
+                <mat-label>Price</mat-label>
+                <input matInput type="number" formControlName="price">
+                <mat-error *ngIf="planForm.get('price')?.hasError('required')">
+                    Price is required
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="standard" class="w-50">
+                <mat-label>Select</mat-label>
+                <mat-select formControlName="tagmonthYear">
+                    <mat-option value="Monthly">Monthly</mat-option>
+                    <mat-option value="Yearly">Yearly</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+        </div>
+
+
+        <!-- Tag -->
+        <div class="form-row">
+            <mat-form-field appearance="standard" class="w-20">
+                <mat-label>Tag</mat-label>
+                <mat-select formControlName="tag">
+                    <mat-option value="STARTER">STARTER</mat-option>
+                    <mat-option value="MOST POPULAR">MOST POPULAR</mat-option>
+                    <mat-option value="PREMIUM">PREMIUM</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="standard" class="w-50">
+                <mat-label>Button Color</mat-label>
+                <mat-select formControlName="button_color">
+                    <mat-option value="basic">Basic</mat-option>
+                    <mat-option value="primary">Primary</mat-option>
+                    <mat-option value="accent">Accent</mat-option>
+                    <mat-option value="warn">Warn</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <!-- Description -->
+        <mat-form-field appearance="standard" class="w-100">
+            <mat-label>Description</mat-label>
+            <textarea matInput rows="3" formControlName="description">
+      </textarea>
+        </mat-form-field>
+    </form>
+</section>
+<div class="button-end">
+    <button mat-raised-button color="primary" type="button" (click)="save()">
+        {{ btnSave }}
+    </button>
+
+</div>

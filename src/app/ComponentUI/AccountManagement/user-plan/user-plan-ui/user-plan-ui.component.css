@@ -1,0 +1,15 @@
+.dialog-content {
+  max-height: 85vh;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 15px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}

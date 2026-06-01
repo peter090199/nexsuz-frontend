@@ -176,7 +176,6 @@ export class SharedRoutinesService {
   }
 
   getProfileRouteAll(user: any): any[] {
-    console.log('User role:', user.role);
     const role = this.getRole();
     if (
       user.role === 'DEF-CLIENT' ||

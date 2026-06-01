@@ -17,6 +17,7 @@ import { Title } from '@angular/platform-browser';
 import { NotificationsService } from 'src/app/services/Global/notifications.service';
 import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
 import { ProfileService } from 'src/app/services/Profile/profile.service';
+import { CurriculumVitaeService } from 'src/app/services/CV/curriculum-vitae.service';
 
 export interface User {
   name: string;
@@ -75,7 +76,8 @@ desktopMenu: MatMenuPanel<any>;
     private navigationService: TNavigationService,private dialog:MatDialog,
     private router: Router, private chatService:ChatService,private echoService:EchoService,
     private notificationService:NotificationService, private ngZone: NgZone,private titleService: Title,
-    private alert:NotificationsService,public sharedRoutines: SharedRoutinesService,private profile: ProfileService
+    private alert:NotificationsService,public sharedRoutines: SharedRoutinesService,private profile: ProfileService,
+     private cvService: CurriculumVitaeService,
   ) {
     this.sharedRoutines.onNewPostsDetected = (count: number) => {
       this.homeNewDataCount = count;
@@ -86,8 +88,11 @@ desktopMenu: MatMenuPanel<any>;
   lastActionTime = Date.now();
   inactivityCheck: any;
   refreshingIcon: string | null = null;
-
+ profileservices:any;
+ 
   ngOnInit(): void {
+     this.getProfile();
+
      this.inactivityCheck = setInterval(() => this.checkInactivity(), 30000);
        setTimeout(() => {
       this.isLoading = false;
@@ -126,6 +131,23 @@ desktopMenu: MatMenuPanel<any>;
     }
   }
 
+
+  refreshHomePage() {
+    this.router.navigate(['/homepage']).then(() => {
+      window.location.reload();
+    });
+  }
+
+    getProfile(): void {
+    this.cvService.getDataCV().subscribe({
+      next: (res: any) => {
+        this.profileservices = res.message;
+      },
+      error: (err: any) => console.error('Error loading profile:', err)
+    });
+  }
+
+  
   triggerRefresh(): void {
     this.isLoading = true;
 

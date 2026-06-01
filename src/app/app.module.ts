@@ -129,6 +129,14 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { InterviewsComponent } from './ComponentUI/Client/interviews/interviews.component';
 import { PublicPostComponent } from './ComponentUI/Feeds/public-post/public-post.component';
 import { AccountTypePlanComponent } from './ComponentSharedUI/account-type-plan/account-type-plan.component';
+import { AppLogoComponent } from './ComponentSharedUI/app-logo/app-logo.component';
+import { AccountManagementComponent } from './ComponentUI/account-management/account-management.component';
+import { UserPlanComponent } from './ComponentUI/AccountManagement/user-plan/user-plan.component';
+import { ClientPlanComponent } from './ComponentUI/AccountManagement/client-plan/client-plan.component';
+import { CategoryPlanComponent } from './ComponentUI/AccountManagement/category-plan/category-plan.component';
+import { UserPlanUIComponent } from './ComponentUI/AccountManagement/user-plan/user-plan-ui/user-plan-ui.component';
+
+
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -249,6 +257,13 @@ export function HttpLoaderFactory(http: HttpClient) {
     InterviewsComponent,
     PublicPostComponent,
     AccountTypePlanComponent,
+    AppLogoComponent,
+    AccountManagementComponent,
+    UserPlanComponent,
+    ClientPlanComponent,
+    CategoryPlanComponent,
+    UserPlanUIComponent,
+
    
   ],
   imports: [
