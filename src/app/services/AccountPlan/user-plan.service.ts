@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { catchError, Observable, of } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { _url } from 'src/global-variables';
 
 @Injectable({
@@ -11,63 +11,109 @@ export class UserPlanService {
   constructor(private http: HttpClient) { }
 
   private getAuthToken(): string {
-    return sessionStorage.getItem('token') || ''; // Fetch the token from localStorage or other storage
+    return sessionStorage.getItem('token') || '';
   }
 
   private createHeaders(): HttpHeaders {
-    const token = this.getAuthToken();
     return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${this.getAuthToken()}`,
       'Content-Type': 'application/json'
     });
   }
 
-  private createParams(): HttpParams {
-    return new HttpParams().set('desc_code', 'top_navigation');
+  /**
+   * CREATE
+   */
+  save(data: any): Observable<any> {
+    return this.http.post(
+      `${_url}account-plan/save`,
+      data,
+      { headers: this.createHeaders() }
+    );
+  }
+
+  /**
+   * READ ALL
+   */
+  getAll(): Observable<any> {
+    return this.http.get(
+      `${_url}account-plan/list`,
+      { headers: this.createHeaders() }
+    );
+  }
+
+  /**
+   * READ SINGLE
+   */
+  getById(id: number): Observable<any> {
+    return this.http.get(
+      `${_url}account-plan/show/${id}`,
+      { headers: this.createHeaders() }
+    );
+  }
+
+  /**
+   * UPDATE
+   */
+  update(id: number, data: any): Observable<any> {
+    return this.http.put(
+      `${_url}account-plan/update/${id}`,
+      data,
+      { headers: this.createHeaders() }
+    );
+  }
+
+  /**
+   * DELETE
+   */
+  delete(id: number): Observable<any> {
+    return this.http.delete(
+      `${_url}account-plan/delete/${id}`,
+      { headers: this.createHeaders() }
+    );
+  }
+
+  /**
+   * DEACTIVATE
+   */
+  deactivate(id: number): Observable<any> {
+    return this.http.patch(
+      `${_url}account-plan/deactivate/${id}`,
+      {},
+      { headers: this.createHeaders() }
+    );
   }
 
 
-  private handleAuthError(error: any): Observable<any> {
-    if (error.status === 401) {
-      console.error('Unauthorized: Please log in.');
-      alert('Unauthorized access. Please log in again.');
-    } else if (error.status === 403) {
-      console.error('Forbidden: You do not have permission to access this resource.');
-      alert('Forbidden: You do not have the required permissions.');
-    } else {
-      console.error('An error occurred:', error.message);
-      alert('An unexpected error occurred. Please try again.');
-    }
-    return of(null); // Return an observable with a fallback value
+
+  // Feature APIs
+  saveFeature(data: any) {
+    return this.http.post(
+      `${_url}account-plan-details/save`,
+      data,
+      { headers: this.createHeaders() }
+    );
   }
 
-
-
-
-  getSecurityRolesByDesc_Code(rolecode: string): Observable<any> {
-    const headers = this.createHeaders();
-    return this.http.get(`${_url}security/${rolecode}`, { headers });
+  getFeatures(planId: string) {
+    return this.http.get(
+      `${_url}account-plan-details/getByPlan/${planId}`,
+      { headers: this.createHeaders() }
+    );
   }
 
-  postData(endpoint: string, body: any): Observable<any> {
-    const headers = this.createHeaders();
-    return this.http.post(`${_url}${endpoint}`, body, { headers });
+  updateFeature(id: number, data: any) {
+    return this.http.put(
+      `${_url}account-plan-details/update/${id}`,
+      data,
+      { headers: this.createHeaders() }
+    );
   }
 
-  putData(endpoint: string, body: any): Observable<any> {
-    const headers = this.createHeaders();
-    return this.http.put(`${_url}${endpoint}`, body, { headers });
+  deleteFeature(id: number) {
+    return this.http.delete(
+      `${_url}account-plan-details/delete/${id}`,
+      { headers: this.createHeaders() }
+    );
   }
-
-  deleteData(endpoint: string): Observable<any> {
-    const headers = this.createHeaders();
-    return this.http.delete(`${_url}${endpoint}`, { headers });
-  }
-
-  submitData(data: any): Observable<any> {
-    const headers = this.createHeaders();
-    return this.http.post(`${_url}account-plan/save`,data, { headers });
-  }
-
-
 }

@@ -1,18 +1,3 @@
-// import { Component, OnInit } from '@angular/core';
-
-// @Component({
-//   selector: 'app-user-plan',
-//   templateUrl: './user-plan.component.html',
-//   styleUrls: ['./user-plan.component.css']
-// })
-// export class UserPlanComponent implements OnInit {
-
-//   constructor() { }
-
-//   ngOnInit(): void {
-//   }
-
-// }
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -26,6 +11,8 @@ import { firstValueFrom } from 'rxjs';
 
 import { MenuUIComponent } from 'src/app/ComponentSharedUI/system/menu-ui/menu-ui.component';
 import { UserPlanUIComponent } from './user-plan-ui/user-plan-ui.component';
+import { UserPlanService } from 'src/app/services/AccountPlan/user-plan.service';
+import { FeaturesPlanUIComponent } from './features-plan-ui/features-plan-ui.component';
 
 @Component({
   selector: 'app-user-plan',
@@ -36,10 +23,20 @@ export class UserPlanComponent implements OnInit {
   searchKey: string = '';
   placeHolder: string = 'Search';
   isLoading: boolean = false;
-  displayedColumns: string[] = ['transNo', 'routes', 'description', 'created_by', 'updated_by', 'actions'];
+  displayedColumns: any[] = [
+    'planId',
+    'sort_number',
+    'plan_name',
+    'price',
+    'tag',
+    'recordStatus',
+    'actions'
+  ];
+
+
   dataSource = new MatTableDataSource<any>([]);
   menus: any[] = [];
-  pageSizeOptions: number[] = [7, 10, 25, 100];
+  pageSizeOptions: number[] = [5, 10, 25, 100];
   success: boolean = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -52,35 +49,34 @@ export class UserPlanComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private menuServices: MenuService,
     private notificationsService: NotificationsService,
-    private overlay: Overlay
+    private overlay: Overlay,
+    private userPlanService: UserPlanService
   ) { }
 
   ngOnInit(): void {
-    //this.getMenus();
+    this.getPlans();
   }
 
-  async getMenus() {
+
+  async getPlans() {
     this.isLoading = true;
-    try {
-      this.dataSource.data = [];
-      const res = await firstValueFrom(this.menuServices.getMenu());
-      if (res.success) {
-        // this.menus = res.data;
-        // this.menus.sort((a, b) => a.transNo - b.transNo);
-        // this.dataSource.data = this.menus;
-        // this.dataSource.paginator = this.paginator;
-        // this.dataSource.sort = this.sort;
-      } else {
-        this.notificationsService.toastrError(res.message);
+
+    this.userPlanService.getAll().subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.dataSource.data = res.data;
+          this.menus = res.data;
+        }
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+        this.notificationsService.toastrError('Failed to load plans');
       }
-    } catch (err) {
-      this.notificationsService.toastrError('Failed to load menus');
-    } finally {
-      this.isLoading = false;
-    }
+    });
   }
+
 
   applyFilter() {
     this.dataSource.filter = this.searchKey.trim().toLowerCase();
@@ -137,42 +133,64 @@ export class UserPlanComponent implements OnInit {
 
     const dialogRef = this.dialog.open(UserPlanUIComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(result => {
-     // if (result) this.getMenus();
+      if (result) this.getPlans();
     });
   }
 
-  edit(data: any): void {
+  edit(row: any): void {
     const dialogRef = this.dialog.open(UserPlanUIComponent, {
       width: '500px',
-      data: data
+      disableClose: true,
+      data: row
     });
+
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        //this.getMenus();
+        this.getPlans();
       }
     });
+
   }
 
+  view(row: any): void {
+    const dialogRef = this.dialog.open(FeaturesPlanUIComponent, {
+      width: '1000px',
+      disableClose: true,
+      data: row
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.getPlans();
+      }
+    });
 
-  view(row: any) {
   }
+
 
 
   delete(row: any) {
-    this.notificationsService.popupWarning(row.description, 'Are you sure to delete this menu?')
+    this.notificationsService
+      .popupWarning(row.plan_name, 'Delete this plan?')
       .then(result => {
+
         if (result.value) {
-          this.menuServices.deleteMenu(row.transNo).subscribe({
-            next: res => {
-              if (res.success) this.notificationsService.toastrSuccess(res.message);
-              else this.notificationsService.toastrError(res.message);
-            //  this.getMenus();
-            },
-            error: err => this.notificationsService.toastrError(err.error)
-          });
+
+          this.userPlanService.delete(row.id)
+            .subscribe({
+              next: (res) => {
+
+                if (res.success) {
+                  this.notificationsService.toastrSuccess(res.message);
+                  this.getPlans();
+                } else {
+                  this.notificationsService.toastrError(res.message);
+                }
+              }
+            });
         }
       });
-    if (this.overlayRef) this.overlayRef.dispose();
   }
+
+
 }

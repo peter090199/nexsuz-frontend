@@ -135,6 +135,7 @@ import { UserPlanComponent } from './ComponentUI/AccountManagement/user-plan/use
 import { ClientPlanComponent } from './ComponentUI/AccountManagement/client-plan/client-plan.component';
 import { CategoryPlanComponent } from './ComponentUI/AccountManagement/category-plan/category-plan.component';
 import { UserPlanUIComponent } from './ComponentUI/AccountManagement/user-plan/user-plan-ui/user-plan-ui.component';
+import { FeaturesPlanUIComponent } from './ComponentUI/AccountManagement/user-plan/features-plan-ui/features-plan-ui.component';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -263,6 +264,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ClientPlanComponent,
     CategoryPlanComponent,
     UserPlanUIComponent,
+    FeaturesPlanUIComponent,
 
    
   ],

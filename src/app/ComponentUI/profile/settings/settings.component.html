@@ -44,7 +44,8 @@
         <div class="profile-row" *ngFor="let field of profileFields">
           <mat-icon class="profile-icon">{{ field.icon }}</mat-icon>
           <ng-container [ngSwitch]="field.type">
-            <a *ngSwitchCase="'link'" [href]="'https://' + users[field.key]" target="_blank">{{ users[field.key] || 'No website' }}</a>
+            <a *ngSwitchCase="'link'" [href]="'https://' + users[field.key]" target="_blank">{{ users[field.key] || 'No
+              website' }}</a>
             <span *ngSwitchDefault>{{ users[field.key] || field.default }}</span>
           </ng-container>
         </div>
@@ -83,7 +84,6 @@
     </mat-tab>
   </mat-tab-group>
 
-  <!-- accountplan -->
-  <app-account-type-plan></app-account-type-plan>
+<app-account-type-plan *ngIf="sharedRoutines.getRole() === 'DEF-USERS'"></app-account-type-plan>
 
 </section>

@@ -6,17 +6,22 @@
 
 
 
-html, body {
-  height: 100%;
+html,
+body {
   margin: 0 !important;
   padding: 0;
   overflow-x: hidden;
-  overflow-y: auto; /* ONLY vertical scroll here */
-  font-family: Verdana, sans-serif;
+  overflow-y: auto;
+  /* ONLY vertical scroll here */
+  font-family: Verdana;
   background: #f0f2f5;
+  width: 100%;
+}
+div {
+  font-family: Verdana;
 }
 
-p{
+p {
   font-size: 14px;
   color: #413f3f;
   /* Lighter gray for body text */
@@ -44,7 +49,8 @@ p{
   .section {
     padding: 6px;
     margin: 6px;
-    height: auto; /* allow height to grow with content */
+    height: auto;
+    /* allow height to grow with content */
     max-height: none;
   }
 }
@@ -124,12 +130,12 @@ p{
 }
 
 
-
 .form-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 16px;
+  gap: 15px;
+  padding: 5px;
+  align-items: flex-start;
 }
 
 .half-width {
@@ -245,6 +251,10 @@ snack-bar-container.notification simple-snack-bar {
   width: 10%;
 }
 
+.w-20 {
+  width: 20%;
+}
+
 .w-15 {
   width: 15%;
 }
@@ -256,18 +266,46 @@ snack-bar-container.notification simple-snack-bar {
 .w-30 {
   width: 30%;
 }
+.w-35 {
+  width: 35%;
+}
 
 .w-50 {
   width: 50%;
+}
+
+.w-60 {
+  width: 60%;
+}
+
+.w-65 {
+  width: 65%;
+}
+
+.w-70 {
+  width: 70%;
+}
+
+.w-75 {
+  width: 75%;
 }
 
 .w-80 {
   width: 80%;
 }
 
+.w-85 {
+  width: 85%;
+}
+
 .w-90 {
   width: 90%;
 }
+
+.w-95 {
+  width: 95%;
+}
+
 
 .save-button {
   margin: 0;
@@ -323,7 +361,8 @@ snack-bar-container.notification simple-snack-bar {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: #4a6cf7; /* Facebook-style blue */
+  background: #4a6cf7;
+  /* Facebook-style blue */
   color: white;
   display: flex;
   align-items: center;
@@ -343,6 +382,7 @@ snack-bar-container.notification simple-snack-bar {
   margin: 0 auto;
   padding: 10px;
 }
+
 app-sidebar,
 app-feed,
 app-right-sidebar {
@@ -770,18 +810,6 @@ h2 {
 }
 
 
-/* Form rows for two-column layout */
-.form-row {
-  display: flex;
-  align-items: center;
-  /* Space between columns */
-  margin-bottom: 0px;
-  /* Space between rows */
-  gap: 25px;
-  margin-left: 10px;
-  margin-right: 10px;
-}
-
 .form-group {
   display: flex;
   flex-direction: column;
@@ -809,7 +837,6 @@ h2 {
 @media (max-width: 768px) {
   .form-row {
     flex-direction: column;
-    gap: 12px;
   }
 
   .width {
@@ -1973,7 +2000,6 @@ mat-list-item .job-details .skeleton-line {
 
   .form-row {
     flex-direction: column;
-    gap: 12px;
   }
 }
 
@@ -2426,6 +2452,3 @@ button[mat-stroked-button] {
   margin-top: 12px;
   line-height: 0.5;
 }
-
-
-

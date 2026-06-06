@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { UserPlanService } from 'src/app/services/AccountPlan/user-plan.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
 import { NotificationsService } from 'src/app/services/Global/notifications.service';
@@ -13,11 +14,40 @@ export class AccountTypePlanComponent implements OnInit {
 
   constructor(private authService: AuthService,
     private alert: NotificationsService,
-    public sharedRoutinesService: SharedRoutinesService
-  
+    public sharedRoutinesService: SharedRoutinesService,
+    private userPlanService: UserPlanService
+
   ) { }
+  getBadgeClass(color: string): string {
+    return color || 'primary';
+  }
+  plans: any[] = [];
+  planFeatures: any = {}; // key = planId
 
   ngOnInit(): void {
+    this.loadPlans();
+  }
+
+  loadPlans() {
+    this.userPlanService.getAll().subscribe((res: any) => {
+      if (res.success) {
+        this.plans = res.data;
+
+        this.plans.forEach(plan => {
+          this.loadFeatures(plan.planId);
+        });
+      }
+    });
+  }
+
+  loadFeatures(planId: string) {
+    this.userPlanService.getFeatures(planId).subscribe((res: any) => {
+      if (res.success) {
+        this.planFeatures[planId] = res.data;
+      } else {
+        this.planFeatures[planId] = [];
+      }
+    });
   }
 
   isLoading: boolean = false;

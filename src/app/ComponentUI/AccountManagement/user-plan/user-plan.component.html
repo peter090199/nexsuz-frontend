@@ -6,7 +6,7 @@
         </button>
     </mat-form-field>
 
-    <button mat-raised-button color="warn" (click)="getMenus()">View</button>
+    <button mat-raised-button color="warn" (click)="getPlans()">View</button>
     <button mat-raised-button color="primary" (click)="onClickNew()">
         <mat-icon>add_circle</mat-icon> New Plan
     </button>
@@ -18,50 +18,96 @@
 <section class="container-fluid">
     <mat-table [dataSource]="dataSource" class="mat-elevation-z4" matSort>
         <!-- Columns -->
-        <ng-container matColumnDef="transNo">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>TransNo</mat-header-cell>
-            <mat-cell *matCellDef="let row">{{ row.transNo }}</mat-cell>
+        <!-- PLAN ID -->
+        <ng-container matColumnDef="planId">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>
+                Plan ID
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <strong>{{ row.planId }}</strong>
+            </mat-cell>
         </ng-container>
 
-        <ng-container matColumnDef="routes">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Routes</mat-header-cell>
-            <mat-cell *matCellDef="let row">{{ row.routes }}</mat-cell>
+          <ng-container matColumnDef="sort_number">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>
+                Sort Number
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <strong>{{ row.sort_number }}</strong>
+            </mat-cell>
         </ng-container>
 
-        <ng-container matColumnDef="description">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Menu</mat-header-cell>
-            <mat-cell *matCellDef="let row">{{ row.description }}</mat-cell>
+
+        <ng-container matColumnDef="plan_name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>
+                Plan Name
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                {{ row.plan_name }}
+            </mat-cell>
         </ng-container>
 
-        <ng-container matColumnDef="created_by">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Created By</mat-header-cell>
-            <mat-cell *matCellDef="let row">{{ row.created_by }}</mat-cell>
+        <!-- PRICE -->
+        <ng-container matColumnDef="price">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>
+                Price
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <span class="price">
+                    ₱{{ row.price | number:'1.2-2' }}
+                </span>
+            </mat-cell>
         </ng-container>
 
-        <ng-container matColumnDef="updated_by">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Updated By</mat-header-cell>
-            <mat-cell *matCellDef="let row">{{ row.updated_by }}</mat-cell>
+        <!-- TAG -->
+        <ng-container matColumnDef="tag">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>
+                Badge
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <span class="plan-tag">
+                    {{ row.tag }}
+                </span>
+            </mat-cell>
         </ng-container>
+
+        <!-- STATUS -->
+        <ng-container matColumnDef="recordStatus">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>
+                Status
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <span
+                    [ngClass]="{'active': row.recordStatus === 'Active', 'inactive': row.recordStatus === 'Inactive'}">
+                    {{ row.recordStatus }}
+                </span>
+            </mat-cell>
+        </ng-container>
+
 
         <ng-container matColumnDef="actions">
             <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
             <mat-cell *matCellDef="let row">
                 <button mat-icon-button color="primary" (click)="edit(row)"><mat-icon>edit</mat-icon></button>
                 <button mat-icon-button color="warn" (click)="delete(row)"><mat-icon>delete</mat-icon></button>
-                <button mat-icon-button color="primary" (click)="view(row)" matTooltip="add features"><mat-icon>add_circle</mat-icon></button>
+                <button mat-icon-button color="primary" (click)="view(row)"
+                    matTooltip="add features"><mat-icon>add_circle</mat-icon></button>
             </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="noData">
-            <mat-footer-cell *matFooterCellDef colspan="6">No data.</mat-footer-cell>
+            <mat-footer-cell *matFooterCellDef colspan="6">
+                No plans found.
+            </mat-footer-cell>
         </ng-container>
+
 
         <!-- Header & Rows -->
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns" (click)="onRowClick(row)"
             (contextmenu)="openContextMenu($event, row)">
         </mat-row>
-        <mat-footer-row *matFooterRowDef="['noData']" [ngClass]="{'hide': menus.length > 0}"></mat-footer-row>
+        <mat-footer-row *matFooterRowDef="['noData']" [ngClass]="{'hide': dataSource.data.length > 0}"></mat-footer-row>
 
     </mat-table>
 
@@ -79,8 +125,8 @@
         <button mat-menu-item color="warn" (click)="delete(contextMenuRow)">
             <mat-icon>delete</mat-icon> Delete
         </button>
-        <button mat-menu-item color="primary" (click)="view(contextMenuRow)">
-            <mat-icon>visibility</mat-icon> View
-        </button>
+        <!-- <button mat-icon-button color="accent" (click)="view(row)" matTooltip="View Plan">
+            <mat-icon>visibility</mat-icon>
+        </button> -->
     </div>
 </ng-template>

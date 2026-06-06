@@ -3,7 +3,7 @@ import { PostUploadImagesService } from '../post-upload-images.service';
 import { NotificationsService } from '../Global/notifications.service';
 import { CommentService } from '../comment/comment.service';
 import { AuthService } from '../auth.service';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ReactionPostComponent } from 'src/app/ComponentSharedUI/ReactionEmoji/reaction-post/reaction-post.component';
 
 @Injectable({
@@ -17,7 +17,7 @@ export class SharedRoutinesService {
     private comment: CommentService,
     private authService: AuthService,
     private notificationsService: NotificationsService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) { }
 
   // =========================

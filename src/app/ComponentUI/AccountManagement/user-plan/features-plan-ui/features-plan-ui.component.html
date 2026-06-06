@@ -1,0 +1,97 @@
+<!-- <button mat-icon-button class="close-button" (click)="sharedRoutinesService.onClose(dialogRef,  true)">
+    <mat-icon color="warn">close</mat-icon>
+</button> -->
+
+<button mat-icon-button class="close-button" [mat-dialog-close]="true">
+    <mat-icon class="close-icon" color="warn">close</mat-icon>
+</button>
+
+<h2 mat-dialog-title>
+    Plan Features - {{ data.plan_name }}
+</h2>
+<mat-dialog-content>
+    <form [formGroup]="featureForm">
+        <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Feature Name</mat-label>
+            <input matInput formControlName="feature_name">
+            <mat-error *ngIf="featureForm.get('feature_name')?.hasError('required')">
+                Feature name is required
+            </mat-error>
+        </mat-form-field>
+    </form>
+
+    <div class="mb-3">
+        <button mat-raised-button color="primary" *ngIf="!selectedFeature" (click)="save()">
+            Add Feature
+        </button>
+        <button mat-raised-button color="accent" *ngIf="selectedFeature" (click)="update()">
+            Update Feature
+        </button>
+        <button mat-button (click)="clear()">
+            Clear
+        </button>
+    </div>
+
+    <mat-table [dataSource]="dataSource" class="mat-elevation-z2">
+
+        <ng-container matColumnDef="fid">
+            <mat-header-cell *matHeaderCellDef>
+                Feature ID
+            </mat-header-cell>
+
+            <mat-cell *matCellDef="let row">
+                {{ row.fid }}
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="feature_name">
+            <mat-header-cell *matHeaderCellDef>
+                Feature Name
+            </mat-header-cell>
+
+            <mat-cell *matCellDef="let row">
+                {{ row.feature_name }}
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="recordStatus">
+            <mat-header-cell *matHeaderCellDef>
+                Status
+            </mat-header-cell>
+
+            <mat-cell *matCellDef="let row">
+                {{ row.recordStatus }}
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+
+            <mat-header-cell *matHeaderCellDef>
+                Actions
+            </mat-header-cell>
+
+            <mat-cell *matCellDef="let row">
+
+                <button mat-icon-button color="primary" (click)="edit(row)">
+
+                    <mat-icon>edit</mat-icon>
+                </button>
+
+                <button mat-icon-button color="warn" (click)="delete(row)">
+
+                    <mat-icon>delete</mat-icon>
+                </button>
+
+            </mat-cell>
+
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+
+    </mat-table>
+
+    
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="primary"></mat-progress-bar>
+    <mat-paginator [pageSize]="5" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></mat-paginator>
+</mat-dialog-content>
