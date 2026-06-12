@@ -84,14 +84,15 @@
       <div class="sidebar-actions sticky-actions">
 
         <!-- APPLY / STATUS BUTTON -->
-        <button mat-raised-button (click)="onApplyClick(selectedJob)" [ngStyle]="{
-            'background-color': getStatusColor(getButtonStatus(selectedJob)),
-            'color': 'white'
-          }">
+        <button mat-raised-button class="apply-btn" (click)="onApplyClick(selectedJob)"
+          [disabled]="sharedRoutines.isApplyDisabled(selectedJob)" [ngStyle]="sharedRoutines.getApplyButtonStyle(selectedJob)">
+
           <mat-icon>
-            {{ getStatusIcon(getButtonStatus(selectedJob)) }}
+            {{ sharedRoutines.getApplyIcon(selectedJob) }}
           </mat-icon>
-          {{ getStatusText(getButtonStatus(selectedJob)) }}
+
+          {{ sharedRoutines.getApplyText(selectedJob) }}
+
         </button>
 
         <!-- SAVE BUTTON -->

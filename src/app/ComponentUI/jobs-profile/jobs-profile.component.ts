@@ -9,6 +9,7 @@ import { NotificationsService } from 'src/app/services/Global/notifications.serv
 import { SharedService } from 'src/app/services/SharedServices/shared.service';
 import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
 import { AppliedStatusDialogComponent } from '../jobs/applied-status-dialog/applied-status-dialog.component';
+import { FeatureService } from 'src/app/services/AccountPlan/feature.service';
 
 @Component({
   selector: 'app-jobs-profile',
@@ -29,7 +30,7 @@ export class JobsProfileComponent implements OnInit {
   skeletonRows = Array.from({ length: 5 });
 
   constructor(
-    private jobListServices: JobListService,
+    private jobListServices: JobListService, public feature: FeatureService,
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
@@ -191,6 +192,12 @@ export class JobsProfileComponent implements OnInit {
      APPLY CLICK
   ========================= */
   onApplyClick(job: any): void {
+    // ❌ FEATURE CHECK (PLAN RESTRICTION)
+    if (!this.feature.can('APPLY_JOBS')) {
+       this.sharedRoutines.openUpgradeModal();
+      return;
+    }
+
     const status = this.getButtonStatus(job);
 
     if (status === 'default') {

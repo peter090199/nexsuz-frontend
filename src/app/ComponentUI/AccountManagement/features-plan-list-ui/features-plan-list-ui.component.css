@@ -1,0 +1,46 @@
+.feature-container {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.feature-panel {
+    width: 45%;
+    min-height: 500px;
+}
+
+.transfer-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.transfer-buttons button {
+    min-width: 60px;
+}
+
+.footer-actions {
+    text-align: center;
+    margin-top: 20px;
+}
+
+mat-card-content {
+    max-height: 450px;
+    overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+    .feature-container {
+        flex-direction: column;
+    }
+
+    .feature-panel {
+        width: 100%;
+    }
+
+    .transfer-buttons {
+        flex-direction: row;
+    }
+}

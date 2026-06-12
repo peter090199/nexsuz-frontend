@@ -5,11 +5,13 @@ import { CommentService } from '../comment/comment.service';
 import { AuthService } from '../auth.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ReactionPostComponent } from 'src/app/ComponentSharedUI/ReactionEmoji/reaction-post/reaction-post.component';
+import { FeatureService } from '../AccountPlan/feature.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SharedRoutinesService {
+  currentUserCode: any;
 
   constructor(
     private postDataservices: PostUploadImagesService,
@@ -17,9 +19,13 @@ export class SharedRoutinesService {
     private comment: CommentService,
     private authService: AuthService,
     private notificationsService: NotificationsService,
-    private dialog: MatDialog,
+    private dialog: MatDialog, public feature: FeatureService
   ) { }
 
+  async ngOnInit(): Promise<void> {
+    this.currentUserCode = this.authService.getAuthCode();
+
+  }
   // =========================
   // STATE
   // =========================
@@ -206,5 +212,163 @@ export class SharedRoutinesService {
     return [`/${role}/settings`];
   }
 
+
+  isApplyDisabled(job: any): boolean {
+    // no feature access
+    if (!this.feature.can('APPLY_JOBS')) return true;
+
+    // already applied
+    if (job?.applied) return true;
+
+    // optional: pending status
+    if (job?.status === 'pending') return true;
+
+    return false;
+  }
+  getApplyButtonStyle(job: any) {
+
+    if (!this.feature.can('APPLY_JOBS')) {
+      return {
+        'background-color': '#9e9e9e',
+        'color': '#fff'
+      };
+    }
+
+    if (job?.applied) {
+      return {
+        'background-color': '#4caf50',
+        'color': '#fff'
+      };
+    }
+
+    return {
+      'background-color': this.getStatusColor(this.getButtonStatus(job)),
+      'color': '#fff'
+    };
+  }
+
+
+  getStatusColor(status: string): string {
+    switch (status) {
+      case 'applied_active':
+        return '#f4895e';
+
+      case 'review':
+        return '#ffb300';
+
+      case 'interview':
+        return '#6a5acd'; // purple (interview)
+
+      case 'approved':
+        return '#388e3c';
+
+      case 'reject':
+        return '#d32f2f';
+
+      default:
+        return '#3071e0';
+    }
+  }
+
+  getButtonStatus(job: any): string {
+    if (!job) return 'default';
+
+    if (job.code === this.currentUserCode) {
+      return 'applied_active';
+    }
+    return job.applied_status || 'default';
+  }
+
+
+  getApplyText(job: any): string {
+
+    if (!this.feature.can('APPLY_JOBS')) {
+      return 'Upgrade to Apply';
+    }
+
+    if (job?.applied) {
+      return 'Applied';
+    }
+
+    if (job?.status === 'pending') {
+      return 'Pending';
+    }
+
+    return this.getStatusText(this.getButtonStatus(job));
+  }
+
+  openUpgradeModal() {
+   console.warn('Apply feature is not enabled for this user.');
+    // const dialogRef = this.dialog.open(UpgradePlanComponent, {
+    //   width: '400px',
+    //   data: {
+    //     message: 'Upgrade your plan to apply for jobs'
+    //   }
+    // });
+
+    // dialogRef.afterClosed().subscribe(result => {
+    //   if (result === 'upgrade') {
+    //     this.router.navigate(['/plans']);
+    //   }
+    // });
+  }
+
+  getStatusText(status: string): string {
+    switch (status) {
+      case 'applied_active':
+        return 'Applied';
+
+      case 'review':
+        return 'Under Review';
+
+      case 'interview':
+        return 'Interview Scheduled';
+
+      case 'approved':
+        return 'Hired';
+
+      case 'reject':
+        return 'Rejected';
+
+      default:
+        return 'Apply Now';
+    }
+  }
+
+
+  getApplyIcon(job: any): string {
+
+    if (!this.feature.can('APPLY_JOBS')) {
+      return 'lock';
+    }
+
+    if (job?.applied) {
+      return 'check_circle';
+    }
+    return this.getStatusIcon(this.getButtonStatus(job));
+  }
+
+
+  getStatusIcon(status: string): string {
+    switch (status) {
+      case 'applied_active':
+        return 'hourglass_top';
+
+      case 'review':
+        return 'search';
+
+      case 'interview':
+        return 'event';
+
+      case 'approved':
+        return 'check_circle';
+
+      case 'reject':
+        return 'cancel';
+
+      default:
+        return 'send';
+    }
+  }
 
 }

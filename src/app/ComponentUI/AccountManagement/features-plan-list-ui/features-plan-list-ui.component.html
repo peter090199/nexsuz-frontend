@@ -1,0 +1,171 @@
+<!-- <button mat-icon-button class="close-button" [mat-dialog-close]="true">
+    <mat-icon class="close-icon" color="warn">close</mat-icon>
+</button>
+
+<h2 mat-dialog-title>
+    Plan Features - {{ data.plan_name }} 
+</h2>
+
+<mat-table [dataSource]="dataSource" class="mat-elevation-z2">
+
+    <ng-container matColumnDef="fid">
+        <mat-header-cell *matHeaderCellDef>
+            Feature ID
+        </mat-header-cell>
+
+        <mat-cell *matCellDef="let row">
+            {{ row.fid }}
+        </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="feature_name">
+        <mat-header-cell *matHeaderCellDef>
+            Feature Name
+        </mat-header-cell>
+
+        <mat-cell *matCellDef="let row">
+            {{ row.feature_name }}
+        </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="recordStatus">
+        <mat-header-cell *matHeaderCellDef>
+            Status
+        </mat-header-cell>
+
+        <mat-cell *matCellDef="let row">
+            {{ row.recordStatus }}
+        </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="toggleAll($event.checked)"></mat-checkbox> Check All
+        </mat-header-cell>
+
+        <mat-cell *matCellDef="let row">
+            <mat-checkbox [(ngModel)]="row.selected"></mat-checkbox>
+        </mat-cell>
+
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+
+</mat-table>
+
+
+<mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="primary"></mat-progress-bar>
+<mat-paginator [pageSize]="5" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></mat-paginator>
+ -->
+
+
+
+<button mat-icon-button class="close-button" [mat-dialog-close]="true">
+    <mat-icon color="warn">close</mat-icon>
+</button>
+
+<h2 mat-dialog-title>
+    Plan Features - {{ data.plan_name }}
+</h2>
+
+<div class="feature-container">
+
+    <!-- LEFT PANEL -->
+    <mat-card class="feature-panel">
+        <mat-card-header>
+            <mat-card-title>Available Features</mat-card-title>
+
+                <button mat-button color="primary" (click)="saveAssignments()" class="button-ends"> 
+                    Assign Roles
+                </button>
+        </mat-card-header>
+
+        <mat-card-content>
+
+            <mat-table [dataSource]="dataSource" class="mat-elevation-z1">
+
+                <ng-container matColumnDef="select">
+                    <mat-header-cell *matHeaderCellDef>
+                        <mat-checkbox (change)="toggleAllAvailable($event.checked)">
+                        </mat-checkbox>
+                    </mat-header-cell>
+
+                    <mat-cell *matCellDef="let row">
+                        <mat-checkbox [(ngModel)]="row.selected"></mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="feature_name">
+                    <mat-header-cell *matHeaderCellDef>
+                        Feature Name
+                    </mat-header-cell>
+
+                    <mat-cell *matCellDef="let row">
+                        {{ row.feature_name }}
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="availableColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: availableColumns"></mat-row>
+
+            </mat-table>
+
+        </mat-card-content>
+    </mat-card>
+
+    <!-- CENTER BUTTONS -->
+    <div class="transfer-buttons">
+        <!-- 
+        <button mat-raised-button color="primary"
+            (click)="assignSelected()">
+            >>
+        </button>
+
+        <button mat-raised-button color="warn"
+            (click)="removeSelected()">
+            <<
+        </button> -->
+
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <mat-card class="feature-panel">
+        <mat-card-header>
+            <mat-card-title>Assigned Features</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+
+            <mat-table [dataSource]="assignedFeatures" class="mat-elevation-z1">
+
+                <ng-container matColumnDef="select">
+                    <mat-header-cell *matHeaderCellDef>
+                        <mat-checkbox (change)="toggleAllAssigned($event.checked)">
+                        </mat-checkbox>
+                    </mat-header-cell>
+
+                    <mat-cell *matCellDef="let row">
+                        <mat-checkbox [(ngModel)]="row.selected"></mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="feature_name">
+                    <mat-header-cell *matHeaderCellDef>
+                        Feature Name
+                    </mat-header-cell>
+
+                    <mat-cell *matCellDef="let row">
+                        {{ row.feature_name }}
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="assignedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: assignedColumns"></mat-row>
+
+            </mat-table>
+
+        </mat-card-content>
+    </mat-card>
+
+</div>

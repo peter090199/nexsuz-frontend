@@ -47,6 +47,7 @@ import { AccountManagementComponent } from './ComponentUI/account-management/acc
 import { UserPlanComponent } from './ComponentUI/AccountManagement/user-plan/user-plan.component';
 import { CategoryPlanComponent } from './ComponentUI/AccountManagement/category-plan/category-plan.component';
 import { ClientPlanComponent } from './ComponentUI/AccountManagement/client-plan/client-plan.component';
+import { FeaturesPlanListComponent } from './ComponentUI/AccountManagement/features-plan-list/features-plan-list.component';
 
 const routes: Routes = [
   // Public routes
@@ -124,10 +125,10 @@ const routes: Routes = [
       { path: 'user', component: UsersComponent },
       { path: 'client_profile/:code', component: CompanyProfileUIComponent },
       { path: 'profile/:code', component: ProfileUIComponent },
-       // ACCOUNTPLAN
+      // ACCOUNTPLAN
       { path: 'userplan', component: UserPlanComponent },
       { path: 'clientplan', component: ClientPlanComponent },
-      { path: 'plancategory', component: CategoryPlanComponent }, 
+      { path: 'plancategory', component: CategoryPlanComponent },
 
     ]
   },
@@ -166,12 +167,13 @@ const routes: Routes = [
       { path: 'apply-job/:transNo', component: ApplyJobComponent },
       { path: 'applied-jobs', component: ListAppliedJobsComponent },
       { path: 'candidates', component: CandidatesComponent },
-      { path: 'interviews', component: InterviewsComponent },  
+      { path: 'interviews', component: InterviewsComponent },
 
       // ACCOUNTPLAN
+      { path: 'featuresplan', component: FeaturesPlanListComponent },
       { path: 'userplan', component: UserPlanComponent },
       { path: 'clientplan', component: ClientPlanComponent },
-      { path: 'plancategory', component: CategoryPlanComponent }, 
+      { path: 'plancategory', component: CategoryPlanComponent },
 
     ]
   },

@@ -37,7 +37,7 @@
 //   showWebsiteChat: boolean = true; // Default visibility
 //   message: string = '';
 //   userId: number | null = null;
-  
+
 //   constructor(private translate: TranslateService,public dialog: MatDialog,private pusherService: PusherService,
 //     private cookieService: CookieService,private authService: AuthService,private echoService:EchoService,
 //     private logoutServices: SigInService,private inactivityService:InactivityService,private authguard:AuthGuard,
@@ -47,7 +47,7 @@
 //     translate.addLangs(['en', 'fr']); // Add other languages as needed
 //     translate.setDefaultLang('en');   // Set the default language
 //   }
-  
+
 //   ngOnInit(): void {
 //      this.router.events
 //       .pipe(filter(event => event instanceof NavigationEnd))
@@ -60,7 +60,7 @@
 //     // if (!user) {
 //     // this.authguard.logout();
 //     // }
-    
+
 //     this.cookieService.set('myCookie', 'cookieValue', { expires: 7, path: '/' });
 //     const myCookieValue = this.cookieService.get('myCookie');
 //     this.cookieService.delete('myCookie');
@@ -74,7 +74,7 @@
 //    // this.inactivityService.startWatching();
 
 
-    
+
 //   }
 
 //   onLogout(): void {
@@ -91,7 +91,7 @@
 //       error: (err) => console.error('Logout failed:', err)
 //     });
 //   }
-  
+
 
 //   loadUserID() {
 //     this.authService.getData().subscribe(res => {
@@ -102,9 +102,9 @@
 //     });
 //     this.load();
 //   }
-  
+
 //   notificationCounts: number = 0;
-  
+
 //   load(){
 //     this.echoService.notificationCount$.subscribe(counts => {
 //       this.notificationCounts = counts;
@@ -133,16 +133,16 @@
 //       panelClass: 'custom-chat-popup',
 //     });
 //   }
-  
+
 //   openChat() {
 //     const dialogRef = this.dialog.open(ChatPopupComponent, {
 //       width: '450px',
 //       position: { bottom: '20px', right: '20px' }, // Adjusted position for better visibility
 //       panelClass: 'custom-chat-popup',
 //     });
-   
+
 //   }
-  
+
 //   closeChat() {
 //     this.showChatButton = true; // Show floating button
 //     localStorage.setItem('showChatButton', JSON.stringify(true)); // Save to localStorage
@@ -161,12 +161,14 @@ import { EchoService } from './services/echo.service';
 import { SigInService } from './services/signIn/sig-in.service';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { SubscriptionService } from './services/AccountPlan/subscription.service';
+import { FeatureService } from './services/AccountPlan/feature.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-   template: `<div class="app-container"><router-outlet></router-outlet></div>`,
+  template: `<div class="app-container"><router-outlet></router-outlet></div>`,
   animations: [
     trigger('fadeInUp', [
       transition(':enter', [
@@ -194,14 +196,19 @@ export class AppComponent implements OnInit {
     private authService: AuthService,
     private echoService: EchoService,
     private logoutServices: SigInService,
-    private router: Router
+    private router: Router, private sub: SubscriptionService,
+    private feature: FeatureService
   ) {
     translate.addLangs(['en', 'fr']);
     translate.setDefaultLang('en');
   }
 
   ngOnInit(): void {
-  
+    this.sub.myFeatures().subscribe((res: any) => {
+      this.feature.set(res.features);
+    });
+
+    
     // Set default cookies safely
     this.cookieService.set('myCookie', 'cookieValue', { expires: 7, path: '/' });
 
