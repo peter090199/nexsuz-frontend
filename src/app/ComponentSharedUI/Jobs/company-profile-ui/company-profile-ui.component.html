@@ -24,20 +24,24 @@
 
       <div class="button-gap">
         <button mat-flat-button *ngIf="currentUserCode !== ownCode" [color]="
-                  followStatus === 'accepted'
-                    ? 'accent'
-                    : followStatus === 'pending'
-                    ? 'warn'
-                    : 'primary'
-                " (click)="AddFollow(currentUserCode, followStatus, profiles.fname, profiles.lname)"
-          [disabled]="followStatus === 'pending'">
-
+      followStatus === 'accepted'
+        ? 'accent'
+        : followStatus === 'pending'
+        ? 'warn'
+        : 'primary'
+        " [disabled]="followStatus === 'pending'" (click)="
+         feature.can('NETWORK_FEED')
+        ? AddFollow(currentUserCode, followStatus, profiles.fname, profiles.lname)
+        : sharedRoutines.openUpgradeModal()
+          ">
           <mat-icon *ngIf="followStatus === 'none' || followStatus === 'cancelled'">
             person_add
           </mat-icon>
+
           <mat-icon *ngIf="followStatus === 'pending'" class="hourglass-animated">
             hourglass_top
           </mat-icon>
+
           <mat-icon *ngIf="followStatus === 'accepted'">
             check_circle
           </mat-icon>
@@ -50,6 +54,7 @@
           </ng-container>
         </button>
       </div>
+
     </div>
   </div>
 

@@ -21,15 +21,13 @@
   <!-- ================= LIST ================= -->
   <ng-template #recentActivityList>
 
-    <p class="no-data"
-       *ngIf="peopleRecentActivity.length === 0">
+    <p class="no-data" *ngIf="peopleRecentActivity.length === 0">
       No data found
     </p>
 
     <div class="grid-container">
 
-      <mat-card class="suggestion-card"
-                *ngFor="let person of peopleRecentActivity">
+      <mat-card class="suggestion-card" *ngFor="let person of peopleRecentActivity">
 
         <!-- CLOSE -->
         <button mat-icon-button class="close-button">
@@ -41,18 +39,14 @@
 
           <a [routerLink]="['/' + sharedRoutines.getRole() + '/profile', person.code]">
 
-            <img *ngIf="person.photo_pic"
-                 [src]="person.photo_pic"
-                 class="profile-image" />
+            <img *ngIf="person.photo_pic" [src]="person.photo_pic" class="profile-image" />
 
-            <div *ngIf="!person.photo_pic"
-                 class="avatar-letter">
+            <div *ngIf="!person.photo_pic" class="avatar-letter">
               {{ person.fullname?.charAt(0) | uppercase }}
             </div>
 
-            <mat-icon class="status-dot"
-                      [matTooltip]="person.is_online == 1 ? 'Active now' : 'Offline'"
-                      [ngClass]="person.is_online == 1 ? 'online' : 'offline'">
+            <mat-icon class="status-dot" [matTooltip]="person.is_online == 1 ? 'Active now' : 'Offline'"
+              [ngClass]="person.is_online == 1 ? 'online' : 'offline'">
               circle
             </mat-icon>
 
@@ -60,14 +54,11 @@
         </div>
 
         <!-- NAME (ROLE BASED ROUTING FIXED) -->
-        <a
-          class="custom-title"
-          [routerLink]="
+        <a class="custom-title" [routerLink]="
             person.role_code === 'DEF-USERS'
               ? ['/' + sharedRoutines.getRole() + '/profile', person.code]
               : ['/' + sharedRoutines.getRole() + '/client_profile', person.code]
-          "
-        >
+          ">
           {{ person.fullname }}
         </a>
 
@@ -80,25 +71,20 @@
         </p>
 
         <!-- CONNECT BUTTON -->
-        <div class="client-action"
-             *ngIf="currentUserCode !== person.code">
-
-          <button mat-flat-button
-                  class="connect-btn"
-                  [color]="
-                    person.follow_status === 'accepted' ? 'accent' :
-                    person.follow_status === 'pending' ? 'warn' :
-                    'primary'
-                  "
-                  [disabled]="person.follow_status === 'pending'"
-                  (click)="AddConnect(person.code, person.fullname, person.follow_status, person.id)">
+        <div class="client-action" *ngIf="currentUserCode !== person.code">
+          <button mat-flat-button class="connect-btn" [color]="person.follow_status === 'accepted'
+            ? 'accent'
+            : person.follow_status === 'pending'
+            ? 'warn'
+            : 'primary'" [disabled]="person.follow_status === 'pending'" (click)="feature.can('NETWORK_FEED')
+            ? AddConnect(person.code, person.fullname, person.follow_status, person.id)
+            : sharedRoutines.openUpgradeModal()">
 
             <mat-icon *ngIf="person.follow_status === 'not_following'">
               person_add
             </mat-icon>
 
-            <mat-icon *ngIf="person.follow_status === 'pending'"
-                      class="hourglass-animated">
+            <mat-icon *ngIf="person.follow_status === 'pending'" class="hourglass-animated">
               hourglass_top
             </mat-icon>
 
@@ -108,15 +94,13 @@
 
             <span class="btn-label">
               {{
-                person.follow_status === 'not_following' ? 'Connect' :
-                person.follow_status === 'pending' ? 'Pending' :
-                person.follow_status === 'accepted' ? 'Connected' :
-                'Connect Back'
+              person.follow_status === 'not_following' ? 'Connect' :
+              person.follow_status === 'pending' ? 'Pending' :
+              person.follow_status === 'accepted' ? 'Connected' :
+              'Connect Back'
               }}
             </span>
-
           </button>
-
         </div>
 
       </mat-card>

@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -7,6 +7,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotificationsService } from 'src/app/services/Global/notifications.service';
 import { UserPlanService } from 'src/app/services/AccountPlan/user-plan.service';
 import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
+import { UpdatePlanUIComponent } from '../update-plan-ui/update-plan-ui.component';
 
 @Component({
   selector: 'app-features-plan-ui',
@@ -37,7 +38,8 @@ export class FeaturesPlanUIComponent implements OnInit {
     private notificationsService: NotificationsService,
     private dialogRef: MatDialogRef<FeaturesPlanUIComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public sharedRoutinesService: SharedRoutinesService
+    public sharedRoutinesService: SharedRoutinesService,
+    private dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
@@ -71,6 +73,22 @@ export class FeaturesPlanUIComponent implements OnInit {
       });
   }
 
+  new(): void {
+    const dialogRef = this.dialog.open(UpdatePlanUIComponent, {
+      width: '500px',
+      disableClose: true,
+      data: {
+        planId: this.data.planId,
+        plan_name: this.data.plan_name
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadFeatures();
+      }
+    });
+  }
   save(): void {
 
     if (this.featureForm.invalid) {
@@ -105,12 +123,27 @@ export class FeaturesPlanUIComponent implements OnInit {
   }
 
   edit(row: any): void {
-
-    this.selectedFeature = row;
-
-    this.featureForm.patchValue({
-      feature_name: row.feature_name
+    const dialogRef = this.dialog.open(UpdatePlanUIComponent, {
+      width: '500px',
+      disableClose: true,
+      data: row
     });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadFeatures();
+      }
+    });
+
+  }
+
+  editx(row: any): void {
+
+    // this.selectedFeature = row;
+
+    // this.featureForm.patchValue({
+    //   feature_name: row.feature_name
+    // });
   }
 
   update(): void {

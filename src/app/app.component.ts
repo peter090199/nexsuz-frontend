@@ -208,7 +208,6 @@ export class AppComponent implements OnInit {
       this.feature.set(res.features);
     });
 
-    
     // Set default cookies safely
     this.cookieService.set('myCookie', 'cookieValue', { expires: 7, path: '/' });
 
@@ -271,3 +270,211 @@ export class AppComponent implements OnInit {
     localStorage.setItem('showChatButton', 'true');
   }
 }
+
+
+
+// import { Component, OnInit } from '@angular/core';
+// import { TranslateService } from '@ngx-translate/core';
+// import { CookieService } from 'ngx-cookie-service';
+// import { MatDialog } from '@angular/material/dialog';
+// import { trigger, style, animate, transition } from '@angular/animations';
+// import { Router, NavigationEnd } from '@angular/router';
+// import { filter } from 'rxjs/operators';
+
+// import { ChatPopupComponent } from './ComponentUI/messages/chat-popup/chat-popup.component';
+// import { ChatWebsitePopUPComponent } from './ComponentUI/messages/chat-website-pop-up/chat-website-pop-up.component';
+
+// import { AuthService } from './services/auth.service';
+// import { EchoService } from './services/echo.service';
+// import { SigInService } from './services/signIn/sig-in.service';
+
+// import { SubscriptionService } from './services/AccountPlan/subscription.service';
+// import { FeatureService } from './services/AccountPlan/feature.service';
+
+// @Component({
+//   selector: 'app-root',
+//   templateUrl: './app.component.html',
+//   styleUrls: ['./app.component.css'],
+//   animations: [
+//     trigger('fadeInUp', [
+//       transition(':enter', [
+//         style({
+//           opacity: 0,
+//           transform: 'translateY(20px)'
+//         }),
+//         animate(
+//           '0.5s ease-out',
+//           style({
+//             opacity: 1,
+//             transform: 'translateY(0)'
+//           })
+//         )
+//       ])
+//     ])
+//   ]
+// })
+// export class AppComponent implements OnInit {
+
+//   isLoggedIn = false;
+//   showChatButton = true;
+//   showWebsiteChat = true;
+
+//   userId: number | null = null;
+//   notificationCounts = 0;
+
+//   constructor(
+//     private translate: TranslateService,
+//     public dialog: MatDialog,
+//     private cookieService: CookieService,
+//     private authService: AuthService,
+//     private echoService: EchoService,
+//     private logoutServices: SigInService,
+//     private router: Router,
+//     private subscriptionService: SubscriptionService,
+//     public feature: FeatureService
+//   ) {
+
+//     this.translate.addLangs(['en', 'fr']);
+//     this.translate.setDefaultLang('en');
+//   }
+
+//   ngOnInit(): void {
+
+//     this.router.events
+//       .pipe(filter(event => event instanceof NavigationEnd))
+//       .subscribe((event: NavigationEnd) => {
+//         console.log('Route Loaded:', event.urlAfterRedirects);
+//       });
+
+//     this.cookieService.set(
+//       'myCookie',
+//       'cookieValue',
+//       { expires: 7, path: '/' }
+//     );
+
+//     this.isLoggedIn =
+//       localStorage.getItem('isLoggedIn') === 'true';
+
+//     this.showChatButton = this.isLoggedIn;
+
+//     this.showWebsiteChat =
+//       localStorage.getItem('chatmessages') === 'true';
+
+//     if (this.isLoggedIn) {
+//       this.loadFeatures();
+//       this.loadUserID();
+//     }
+
+//     this.echoService.notificationCount$
+//       .subscribe(counts => {
+//         this.notificationCounts = counts;
+//       });
+//   }
+
+//   loadFeatures(): void {
+
+//     this.subscriptionService.myFeatures().subscribe({
+//       next: (res: any) => {
+
+//         if (res.success) {
+
+//           this.feature.set(res.features);
+
+//           console.log(
+//             'APPLY_JOBS:',
+//             this.feature.can('APPLY_JOBS')
+//           );
+
+//           console.log(
+//             'CONNECTION_LIMIT:',
+//             this.feature.getValue('CONNECTION_LIMIT')
+//           );
+//         }
+
+//       },
+//       error: (err) => {
+//         console.error('Failed to load features', err);
+//       }
+//     });
+//   }
+
+//   loadUserID(): void {
+
+//     this.authService.getData().subscribe({
+//       next: (res: any) => {
+
+//         this.userId = res.id;
+
+//         if (this.userId) {
+//           sessionStorage.setItem(
+//             'userId',
+//             this.userId.toString()
+//           );
+//         }
+//       },
+//       error: (err) => {
+//         console.error(err);
+//       }
+//     });
+//   }
+
+//   onLogout(): void {
+
+//     this.logoutServices.logout().subscribe({
+//       next: () => {
+
+//         sessionStorage.clear();
+//         localStorage.clear();
+
+//         localStorage.setItem(
+//           'showWebsiteChat',
+//           'false'
+//         );
+
+//         window.location.href = '/homepage';
+//       },
+//       error: (err) => {
+//         console.error('Logout failed:', err);
+//       }
+//     });
+//   }
+
+//   switchLanguage(language: string): void {
+//     this.translate.use(language);
+//   }
+
+//   openChat1(): void {
+
+//     this.dialog.open(ChatWebsitePopUPComponent, {
+//       width: '450px',
+//       position: {
+//         bottom: '20px',
+//         right: '20px'
+//       },
+//       panelClass: 'custom-chat-popup'
+//     });
+//   }
+
+//   openChat(): void {
+
+//     this.dialog.open(ChatPopupComponent, {
+//       width: '400px',
+//       position: {
+//         bottom: '20px',
+//         right: '5px'
+//       },
+//       panelClass: 'custom-chat-popup'
+//     });
+//   }
+
+//   closeChat(): void {
+
+//     this.showChatButton = true;
+
+//     localStorage.setItem(
+//       'showChatButton',
+//       'true'
+//     );
+//   }
+
+// }

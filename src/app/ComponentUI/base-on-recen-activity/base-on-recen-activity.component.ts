@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FeatureService } from 'src/app/services/AccountPlan/feature.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
 import { NotificationsService } from 'src/app/services/Global/notifications.service';
@@ -28,7 +29,8 @@ export class BaseOnRecenActivityComponent implements OnInit {
     private authService: AuthService,
     private alert: NotificationsService,
     private profile: ProfileService,
-    public sharedRoutines: SharedRoutinesService
+    public sharedRoutines: SharedRoutinesService,
+    public feature: FeatureService
   ) {}
 
   ngOnInit(): void {

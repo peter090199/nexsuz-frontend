@@ -2,7 +2,8 @@
 
   <!-- Cover Photo -->
   <div *ngIf="!isloading; else coverSkeleton" class="cover-photo">
-    <img [src]="coverphoto?.coverphoto || 'assets/images/default-cover.png'" alt="Cover Photo" class="cover-photo-img" />
+    <img [src]="coverphoto?.coverphoto || 'assets/images/default-cover.png'" alt="Cover Photo"
+      class="cover-photo-img" />
     <!-- <button *ngIf="profiles?.btnCurriculum === 1" mat-button class="edit-cover-btn">Edit cover photo</button> -->
   </div>
 
@@ -13,7 +14,7 @@
   <!-- Profile Details -->
   <div *ngIf="!isloading; else profileSkeleton" class="profile-details">
     <div class="profile-info" *ngIf="profiles">
-       <div class="profile-picture">
+      <div class="profile-picture">
         <div class="avatar-container">
           <img class="profile-img" [src]="profiles?.photo_pic || 'assets/images/default.png'" alt="Profile" />
           <mat-icon class="status-icon online">circle</mat-icon>
@@ -25,8 +26,10 @@
       </h1>
       <p>761 followers · 369 following</p>
       <div class="button-gap">
-        <button *ngIf="profiles?.btnCurriculum === 1" mat-flat-button (click)="UserCV()" color="primary">New Curriculum
-          Vitae</button>
+        <button *ngIf="profiles?.btnCurriculum === 1" mat-flat-button color="primary"
+          (click)="feature.can('UPLOAD_RESUME') ? UserCV() : sharedRoutines.openUpgradeModal()">
+          New Curriculum Vitae
+        </button>
         <button *ngIf="profiles?.btnCurriculum === 1" mat-raised-button (click)="uploadPic()">
           <mat-icon>cloud_upload</mat-icon> Upload
         </button>
@@ -34,7 +37,8 @@
         <button mat-flat-button [color]="
           followStatus === 'accepted' ? 'accent' :
           followStatus === 'pending' ? 'warn' : 'primary'" *ngIf="currentUserCode !== this.code"
-          (click)="AddFollow(code, followStatus, profiles.fname, profiles.lname)" [disabled]="followStatus === 'pending'">
+          (click)="AddFollow(code, followStatus, profiles.fname, profiles.lname)"
+          [disabled]="followStatus === 'pending'">
           <mat-icon *ngIf="followStatus === 'none' || followStatus === 'cancelled'">person_add</mat-icon>
           <mat-icon *ngIf="followStatus === 'pending'" class="hourglass-animated">hourglass_top</mat-icon>
           <mat-icon *ngIf="followStatus === 'accepted'">check_circle</mat-icon>
@@ -152,7 +156,7 @@
 
           </mat-card>
         </div>-->
-      </div> 
+      </div>
     </mat-tab>
 
     <!-- Basic Information Tab -->

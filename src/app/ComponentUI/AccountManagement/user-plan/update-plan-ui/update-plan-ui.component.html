@@ -1,0 +1,49 @@
+<button mat-icon-button class="close-button" [mat-dialog-close]="true">
+    <mat-icon color="warn">close</mat-icon>
+</button>
+
+<h2 mat-dialog-title>
+    {{ selectedFeature ? 'Update Feature' : 'Add Feature' }}
+</h2>
+
+<mat-divider></mat-divider>
+<mat-dialog-content>
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+
+    <form [formGroup]="featureForm">
+        <mat-form-field appearance="standard" class="w-100">
+            <mat-label>Feature Name</mat-label>
+            <input matInput formControlName="feature_name">
+            <mat-error *ngIf="featureForm.get('feature_name')?.hasError('required')">
+                Feature name is required
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="standard" class="w-100" required>
+            <mat-label>Feature Code</mat-label>
+            <input matInput formControlName="feature_code">
+            <mat-error *ngIf="featureForm.get('feature_code')?.hasError('required')">
+                Feature code is required
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="standard" class="w-100" required>
+            <mat-label>Feature Value</mat-label>
+            <input matInput formControlName="feature_value">
+            <mat-error *ngIf="featureForm.get('feature_value')?.hasError('required')">
+                Feature value is required
+            </mat-error>
+        </mat-form-field>
+    </form>
+    <div class="button-end">
+        <button mat-raised-button color="primary" *ngIf="!selectedFeature" (click)="save()">
+            Add Feature
+        </button>
+        <button mat-raised-button color="accent" *ngIf="selectedFeature" (click)="update()">
+            Update Feature
+        </button>
+
+    </div>
+
+
+</mat-dialog-content>

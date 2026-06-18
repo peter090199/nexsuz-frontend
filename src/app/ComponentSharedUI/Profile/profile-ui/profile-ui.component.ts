@@ -12,6 +12,8 @@ import { ClientsService } from 'src/app/services/Networking/clients.service';
 
 import { UploadProfileComponent } from '../../Individual/upload-profile/upload-profile.component';
 import { ImageModalComponent } from 'src/app/ComponentUI/Modal/image-modal/image-modal.component';
+import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
+import { FeatureService } from 'src/app/services/AccountPlan/feature.service';
 
 @Component({
   selector: 'app-profile-ui',
@@ -64,7 +66,7 @@ export class ProfileUIComponent implements OnInit {
     private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
-    public dialog: MatDialog
+    public dialog: MatDialog,public feature: FeatureService, public sharedRoutines: SharedRoutinesService
   ) { }
 
   // =========================

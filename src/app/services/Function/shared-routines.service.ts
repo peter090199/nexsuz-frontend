@@ -214,9 +214,7 @@ export class SharedRoutinesService {
 
 
   isApplyDisabled(job: any): boolean {
-    // no feature access
     if (!this.feature.can('APPLY_JOBS')) return true;
-
     // already applied
     if (job?.applied) return true;
 
@@ -296,22 +294,32 @@ export class SharedRoutinesService {
 
     return this.getStatusText(this.getButtonStatus(job));
   }
-
   openUpgradeModal() {
-   console.warn('Apply feature is not enabled for this user.');
-    // const dialogRef = this.dialog.open(UpgradePlanComponent, {
-    //   width: '400px',
-    //   data: {
-    //     message: 'Upgrade your plan to apply for jobs'
-    //   }
-    // });
-
-    // dialogRef.afterClosed().subscribe(result => {
-    //   if (result === 'upgrade') {
-    //     this.router.navigate(['/plans']);
-    //   }
-    // });
+    this.notificationsService.toastrWarning('Please upgrade your plan.');
   }
+
+  onApplyClick(): void {
+    if (!this.feature.can('APPLY_JOBS')) {
+      this.openUpgradeModal();
+      return;
+    }
+  }
+
+  // openUpgradeModalx1Sx() {
+  //   console.log('Apply feature is not enabled for this user.');
+  //   // const dialogRef = this.dialog.open(UpgradePlanComponent, {
+  //   //   width: '400px',
+  //   //   data: {
+  //   //     message: 'Upgrade your plan to apply for jobs'
+  //   //   }
+  //   // });
+
+  //   // dialogRef.afterClosed().subscribe(result => {
+  //   //   if (result === 'upgrade') {
+  //   //     this.router.navigate(['/plans']);
+  //   //   }
+  //   // });
+  // }
 
   getStatusText(status: string): string {
     switch (status) {

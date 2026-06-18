@@ -10,7 +10,7 @@
     Plan Features - {{ data.plan_name }}
 </h2>
 <mat-dialog-content>
-    <form [formGroup]="featureForm">
+    <!-- <form [formGroup]="featureForm">
         <mat-form-field appearance="outline" class="w-100">
             <mat-label>Feature Name</mat-label>
             <input matInput formControlName="feature_name">
@@ -18,18 +18,18 @@
                 Feature name is required
             </mat-error>
         </mat-form-field>
-    </form>
+    </form> -->
 
     <div class="mb-3">
-        <button mat-raised-button color="primary" *ngIf="!selectedFeature" (click)="save()">
-            Add Feature
+        <button mat-raised-button color="primary" *ngIf="!selectedFeature" (click)="new()">
+            New Feature
         </button>
-        <button mat-raised-button color="accent" *ngIf="selectedFeature" (click)="update()">
+        <!-- <button mat-raised-button color="accent" *ngIf="selectedFeature" (click)="update()">
             Update Feature
         </button>
         <button mat-button (click)="clear()">
             Clear
-        </button>
+        </button> -->
     </div>
 
     <mat-table [dataSource]="dataSource" class="mat-elevation-z2">

@@ -636,6 +636,8 @@ import { CurriculumVitaeService } from 'src/app/services/CV/curriculum-vitae.ser
 import { ReactionModalComponent } from '../../ReactEmoji/reaction-modal/reaction-modal.component';
 import { PostReactionByIdService } from 'src/app/services/Reaction/post-reaction-by-id.service';
 import { ReactionEmojiService } from 'src/app/services/Reaction/reaction-emoji.service';
+import { FeatureService } from 'src/app/services/AccountPlan/feature.service';
+import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
 
 interface Reaction {
   emoji: string;
@@ -688,7 +690,9 @@ export class CompanyProfileUIComponent implements OnInit {
     private clientService: ClientsService,
     private cvService: CurriculumVitaeService,
     private postReactionByIdService: PostReactionByIdService,
-    private reactionService: ReactionEmojiService
+    private reactionService: ReactionEmojiService,
+    public feature:FeatureService,
+    public sharedRoutines:SharedRoutinesService
   ) {}
  skeletonPosts: any[] = [];
   // ===========================

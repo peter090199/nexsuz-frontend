@@ -85,14 +85,11 @@
 
         <!-- APPLY / STATUS BUTTON -->
         <button mat-raised-button class="apply-btn" (click)="onApplyClick(selectedJob)"
-          [disabled]="sharedRoutines.isApplyDisabled(selectedJob)" [ngStyle]="sharedRoutines.getApplyButtonStyle(selectedJob)">
-
+          [ngStyle]="sharedRoutines.getApplyButtonStyle(selectedJob)">
           <mat-icon>
             {{ sharedRoutines.getApplyIcon(selectedJob) }}
           </mat-icon>
-
           {{ sharedRoutines.getApplyText(selectedJob) }}
-
         </button>
 
         <!-- SAVE BUTTON -->

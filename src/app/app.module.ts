@@ -138,6 +138,7 @@ import { UserPlanUIComponent } from './ComponentUI/AccountManagement/user-plan/u
 import { FeaturesPlanUIComponent } from './ComponentUI/AccountManagement/user-plan/features-plan-ui/features-plan-ui.component';
 import { FeaturesPlanListComponent } from './ComponentUI/AccountManagement/features-plan-list/features-plan-list.component';
 import { FeaturesPlanListUIComponent } from './ComponentUI/AccountManagement/features-plan-list-ui/features-plan-list-ui.component';
+import { UpdatePlanUIComponent } from './ComponentUI/AccountManagement/user-plan/update-plan-ui/update-plan-ui.component';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -269,6 +270,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     FeaturesPlanUIComponent,
     FeaturesPlanListComponent,
     FeaturesPlanListUIComponent,
+    UpdatePlanUIComponent,
 
    
   ],
