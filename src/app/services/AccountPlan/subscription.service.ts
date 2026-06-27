@@ -29,7 +29,7 @@ export class SubscriptionService {
 
   myFeatures(): Observable<any> {
     return this.http.get(
-      `${_url}my-plan-features`,
+      `${_url}account-plan-details/my-plan-features`,
       { headers: this.createHeaders() }
     );
   }

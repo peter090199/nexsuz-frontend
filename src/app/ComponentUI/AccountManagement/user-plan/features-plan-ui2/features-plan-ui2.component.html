@@ -1,7 +1,3 @@
-<!-- <button mat-icon-button class="close-button" (click)="sharedRoutinesService.onClose(dialogRef,  true)">
-    <mat-icon color="warn">close</mat-icon>
-</button> -->
-
 <button mat-icon-button class="close-button" [mat-dialog-close]="true">
     <mat-icon class="close-icon" color="warn">close</mat-icon>
 </button>
@@ -10,17 +6,11 @@
     Plan Features - {{ data.plan_name }}
 </h2>
 <mat-dialog-content>
-    <div class="search-div">
-        <button mat-raised-button color="basic" *ngIf="!selectedFeature" (click)="new()">
-             <mat-icon>add</mat-icon>
-            New Feature
+    <!-- <div class="mb-3">
+        <button mat-raised-button color="basic"  (click)="new()">
+            Add Features
         </button>
-        <button mat-raised-button color="primary" *ngIf="!selectedFeature" (click)="new()">
-            <mat-icon>playlist_add</mat-icon>
-            Add Everything Free
-        </button>
-
-    </div>
+    </div> -->
 
     <mat-table [dataSource]="dataSource" class="mat-elevation-z2">
 
@@ -81,7 +71,7 @@
 
     </mat-table>
 
-
+    
     <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="primary"></mat-progress-bar>
     <mat-paginator [pageSize]="5" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></mat-paginator>
 </mat-dialog-content>

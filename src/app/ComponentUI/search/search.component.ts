@@ -9,6 +9,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { NotificationsService } from 'src/app/services/Global/notifications.service';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
+import { FeatureService } from 'src/app/services/AccountPlan/feature.service';
 
 @Component({
   selector: 'app-search',
@@ -32,8 +33,8 @@ export class SearchComponent implements OnInit {
   private searchSubject = new Subject<string>();
 
   constructor(
-    private userService: SearchService,
-    private dialog: MatDialog,
+    private userService: SearchService,public feature:FeatureService,
+    private dialog: MatDialog,public sharedRoutines: SharedRoutinesService,
     private route: ActivatedRoute,
     private router: Router,
     private searchHistoryService: SearchHistoryService,

@@ -1,0 +1,140 @@
+<div class="checkout-page">
+
+    <button mat-button class="back-btn" (click)="sharedService.goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Back
+    </button>
+
+    <!-- ================= Skeleton ================= -->
+
+    <div class="checkout-container" *ngIf="isLoading">
+
+        <mat-card class="payment-card">
+
+            <div class="skeleton skeleton-title"></div>
+
+            <div class="skeleton skeleton-radio"></div>
+            <div class="skeleton skeleton-radio"></div>
+            <div class="skeleton skeleton-radio"></div>
+
+            <div class="skeleton skeleton-input"></div>
+            <div class="skeleton skeleton-input"></div>
+            <div class="skeleton skeleton-input"></div>
+
+        </mat-card>
+
+        <mat-card class="payment-card">
+
+            <div class="skeleton skeleton-plan"></div>
+            <div class="skeleton skeleton-price"></div>
+
+            <div class="skeleton skeleton-feature" *ngFor="let item of [1,2,3,4,5,6]">
+            </div>
+
+            <div class="skeleton skeleton-total"></div>
+
+            <div class="skeleton skeleton-button"></div>
+
+        </mat-card>
+
+    </div>
+
+    <!-- ================= Actual Content ================= -->
+
+    <div class="checkout-container" *ngIf="!isLoading">
+
+        <!-- LEFT -->
+
+        <mat-card class="payment-card glass">
+            <h3>Choose Payment Method</h3>
+            <mat-radio-group class="payment-methods" [(ngModel)]="selectedPayment">
+                <mat-radio-button value="gcash">GCash</mat-radio-button>
+                <mat-radio-button value="maya">PayPal</mat-radio-button>
+                <mat-radio-button value="card">Card</mat-radio-button>
+            </mat-radio-group>
+            <mat-divider></mat-divider>
+            <div class="card-form" *ngIf="selectedPayment==='card'">
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Card Number</mat-label>
+                    <input matInput>
+                </mat-form-field>
+
+                <div class="row">
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>MM / YY</mat-label>
+                        <input matInput>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>CVV</mat-label>
+                        <input matInput>
+                    </mat-form-field>
+
+                </div>
+
+            </div>
+
+        </mat-card>
+
+        <!-- RIGHT -->
+
+        <mat-card class="payment-card premium">
+
+            <div class="plan-header">
+
+                <h2>{{plan?.plan_name}}</h2>
+
+                <div class="plan-price">
+                    ₱{{plan?.price}}/{{plan?.tagmonthYear}}
+                </div>
+
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="feature-item" *ngFor="let feature of plan?.features">
+
+                <mat-icon color="primary">
+                    verified
+                </mat-icon>
+
+                {{feature.feature_name}}
+
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="pricing">
+
+                <div class="price-row">
+                    <span>Subscription</span>
+                    <span>₱{{plan?.price}}</span>
+                </div>
+
+                <div class="price-row">
+                    <span>VAT</span>
+                    <span>₱{{vat}}</span>
+                </div>
+
+                <div class="price-row total">
+                    <span>Total</span>
+                    <span>₱{{total}}</span>
+                </div>
+
+            </div>
+
+            <button mat-raised-button color="primary" class="subscribe-btn" (click)="subscribe()">
+
+                <mat-icon>workspace_premium</mat-icon>
+
+                Subscribe Now
+
+            </button>
+
+        </mat-card>
+
+    </div>
+
+</div>

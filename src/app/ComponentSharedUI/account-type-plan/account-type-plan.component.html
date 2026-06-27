@@ -1,31 +1,61 @@
 <h1 class="title">Choose Your Plan</h1>
 <p class="subtitle">Select the best plan that suits your needs.</p>
 
-<div class="plan-card">
-  <div class="plan-box" *ngFor="let plan of plans" [ngClass]="plan.plan_name?.toLowerCase() + '-plan'">
-    <div class="plan-badge" [ngClass]="plan.button_color">
-      {{ plan.tag || 'PLAN' }}
-    </div>
-
-    <h2>{{ plan.plan_name }}</h2>
-
-    <p class="plan-desc">
-      {{ plan.description }}
-    </p>
-
-    <div class="price">
-      ₱{{ plan.price }}
-      <span>/ {{ plan.tagmonthYear }}</span>
-    </div>
+<!-- Skeleton Loading -->
+<div class="plan-card" *ngIf="isLoading">
+  <div class="plan-box skeleton-card" *ngFor="let item of [1,2,3,4]">
+    <div class="skeleton skeleton-badge"></div>
+    <div class="skeleton skeleton-title"></div>
+    <div class="skeleton skeleton-desc"></div>
+    <div class="skeleton skeleton-price"></div>
 
     <ul>
-      <li *ngFor="let f of planFeatures?.[plan.planId]">
-        ✔ {{ f.feature_name }}
+      <li *ngFor="let f of [1,2,3,4]">
+        <div class="skeleton skeleton-feature"></div>
       </li>
     </ul>
 
-    <button mat-raised-button [color]="plan.button_color || 'primary'" (click)="selectPlan(plan)">
-      {{ plan.button_name || 'Choose Plan' }}
+    <div class="skeleton skeleton-button"></div>
+  </div>
+</div>
+
+<!-- Actual Content -->
+<div class="plan-card" *ngIf="!isLoading">
+  <div class="plan-box" *ngFor="let plan of plans" [ngClass]="plan.plan_name?.toLowerCase() + '-plan'">
+
+    <div class="plan-header">
+      <span class="plan-badge" [ngClass]="plan.button_color">
+        {{ plan.tag }}
+      </span>
+
+      <h2>{{ plan.plan_name }}</h2>
+      <p>{{ plan.description }}</p>
+    </div>
+    <div class="price-card">
+      <span class="currency">₱</span>
+      <span class="amount">{{ plan.price }}</span>
+      <span class="month">/{{ plan.tagmonthYear }}</span>
+    </div>
+
+    <mat-divider></mat-divider>
+    <div class="feature-list">
+      <div class="feature" *ngFor="let f of planFeatures?.[plan.planId]">
+        <mat-icon color="primary">check_circle</mat-icon>
+        <span>{{ f.feature_name }}</span>
+      </div>
+    </div>
+
+    <button mat-raised-button [color]="plan.button_color || 'primary'" [disabled]="plan.button_name==='Current Plan'"
+      (click)="goToCheckout(plan)">
+
+      <mat-icon>
+        {{ plan.button_name === 'Current Plan'
+        ? 'verified'
+        : 'workspace_premium' }}
+      </mat-icon>
+
+      {{ plan.button_name }}
     </button>
+
   </div>
 </div>

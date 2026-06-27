@@ -1,11 +1,13 @@
 <div class="search-container">
   <mat-form-field appearance="outline" class="w-100">
     <mat-icon matPrefix>search</mat-icon>
-    <input matInput placeholder="Search users..." [(ngModel)]="searchQuery" (input)="onSearch()" />
+    <input matInput placeholder="Search users..." [(ngModel)]="searchQuery"
+      (input)="feature.can('SEARCH_ACCESS') ? onSearch() : sharedRoutines.openUpgradeModal()" />
     <button mat-icon-button matSuffix *ngIf="searchQuery" (click)="clearSearch()">
       <mat-icon>close</mat-icon>
     </button>
   </mat-form-field>
+
 
   <!-- RESULTS -->
   <div class="results">
@@ -17,9 +19,10 @@
         </a>
       </div>
       <!-- RIGHT SIDE: VIEW PROFILE -->
-      <button mat-button color="primary" [routerLink]="this.sharedService.getProfileRouteAll(user)" matTooltip="View Profile">
-          View Profile
-        </button>
+      <button mat-button color="primary" [routerLink]="this.sharedService.getProfileRouteAll(user)"
+        matTooltip="View Profile">
+        View Profile
+      </button>
 
     </div>
 
@@ -35,7 +38,8 @@
           </a>
         </div>
         <!-- RIGHT -->
-        <button mat-button color="primary" [routerLink]="this.sharedService.getProfileRouteAll(user)" matTooltip="View Profile">
+        <button mat-button color="primary" [routerLink]="this.sharedService.getProfileRouteAll(user)"
+          matTooltip="View Profile">
           View Profile
         </button>
 

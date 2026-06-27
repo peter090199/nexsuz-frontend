@@ -1,9 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { UserPlanService } from 'src/app/services/AccountPlan/user-plan.service';
-import { AuthService } from 'src/app/services/auth.service';
 import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
-import { NotificationsService } from 'src/app/services/Global/notifications.service';
 
 @Component({
   selector: 'app-account-type-plan',
@@ -12,74 +10,106 @@ import { NotificationsService } from 'src/app/services/Global/notifications.serv
 })
 export class AccountTypePlanComponent implements OnInit {
 
-  constructor(private authService: AuthService,
-    private alert: NotificationsService,
-    public sharedRoutinesService: SharedRoutinesService,
-    private userPlanService: UserPlanService
-
-  ) { }
-  getBadgeClass(color: string): string {
-    return color || 'primary';
-  }
   plans: any[] = [];
-  planFeatures: any = {}; // key = planId
+  planFeatures: any= [];
+  isLoading = false;
+
+  constructor(
+    private router: Router,public sharedService: SharedRoutinesService,
+    private userPlanService: UserPlanService
+  ) { }
 
   ngOnInit(): void {
     this.loadPlans();
   }
 
-  loadPlans() {
-    this.userPlanService.getAll().subscribe((res: any) => {
-      if (res.success) {
-        this.plans = res.data;
+  getBadgeClass(color: string): string {
+    return color || 'primary';
+  }
+
+  goToCheckout(plan: any): void {
+    this.sharedService.goToCheckoutByDEF_USERS(plan);
+  }
+
+  loadPlans(): void {
+
+    this.isLoading = true;
+
+    this.userPlanService.getAll().subscribe({
+      next: (res: any) => {
+
+        if (!res.success) {
+          this.isLoading = false;
+          return;
+        }
+
+        this.plans = res.data || [];
+
+        if (!this.plans.length) {
+          this.isLoading = false;
+          return;
+        }
+
+        let loaded = 0;
 
         this.plans.forEach(plan => {
-          this.loadFeatures(plan.planId);
+
+          this.userPlanService.getFeatures(plan.planId).subscribe({
+            next: (featureRes: any) => {
+              this.planFeatures[plan.planId] = featureRes.success
+                ? featureRes.data
+                : [];
+            },
+            error: () => {
+              this.planFeatures[plan.planId] = [];
+            },
+            complete: () => {
+              loaded++;
+
+              if (loaded === this.plans.length) {
+                this.isLoading = false;
+              }
+            }
+          });
+
         });
+
+      },
+      error: () => {
+        this.isLoading = false;
       }
     });
+
   }
 
-  loadFeatures(planId: string) {
-    this.userPlanService.getFeatures(planId).subscribe((res: any) => {
-      if (res.success) {
-        this.planFeatures[planId] = res.data;
-      } else {
-        this.planFeatures[planId] = [];
-      }
-    });
+  /* =====================================
+     Disable Right Click
+  ===================================== */
+
+  @HostListener('document:contextmenu', ['$event'])
+  onRightClick(event: MouseEvent): void {
+    event.preventDefault();
   }
 
-  isLoading: boolean = false;
-  users: any = [];
-  async getUserAccounts(): Promise<void> {
-    this.isLoading = true;
-    try {
-      const res: any = await firstValueFrom(this.authService.getProfilecode());
-      this.users = { ...this.users, ...res.message };
+  /* =====================================
+     Disable Common Developer Shortcuts
+  ===================================== */
 
-      if (!this.users.activity || this.users.activity.length === 0) {
-        this.users.activity = [
-          'Logged in on ' + new Date().toLocaleDateString(),
-          'Updated profile information',
-          'Changed password last week'
-        ];
-      }
-    } catch (err) {
-      console.error('Error loading user:', err);
-      this.alert.toastrError('Error loading user profile');
-    } finally {
-      this.isLoading = false;
+  @HostListener('document:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent): void {
+
+    const key = event.key.toUpperCase();
+
+    if (
+      key === 'F12' ||
+      (event.ctrlKey && key === 'U') ||
+      (event.ctrlKey && event.shiftKey &&
+        ['I', 'J', 'C', 'K'].includes(key))
+    ) {
+      event.preventDefault();
+      event.stopPropagation();
     }
-  }
 
-  selectPlan(plan: string) {
-    console.log('Selected Plan:', plan);
-
-    // call API here
-    // this.userService.updatePlan(plan).subscribe(res => {
-    //   this.users.account_type = plan;
-    // });
   }
 
 }

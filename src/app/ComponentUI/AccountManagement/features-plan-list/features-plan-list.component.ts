@@ -29,6 +29,7 @@ import { MenuUIComponent } from 'src/app/ComponentSharedUI/system/menu-ui/menu-u
 import { UserPlanService } from 'src/app/services/AccountPlan/user-plan.service';
 import { FeaturesPlanUIComponent } from '../user-plan/features-plan-ui/features-plan-ui.component';
 import { FeaturesPlanListUIComponent } from '../features-plan-list-ui/features-plan-list-ui.component';
+import { FeaturesPlanUI2Component } from '../user-plan/features-plan-ui2/features-plan-ui2.component';
 
 @Component({
   selector: 'app-features-plan-list',
@@ -168,11 +169,14 @@ export class FeaturesPlanListComponent implements OnInit {
 
   }
 
-  view(data: any): void {
-    const dialogRef = this.dialog.open(FeaturesPlanListUIComponent, {
+
+
+  
+  view(row: any): void {
+    const dialogRef = this.dialog.open(FeaturesPlanUI2Component, {
       width: '1000px',
       disableClose: true,
-      data: data
+      data: row
     });
 
     dialogRef.afterClosed().subscribe(result => {

@@ -6,6 +6,8 @@ import { AuthService } from '../auth.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ReactionPostComponent } from 'src/app/ComponentSharedUI/ReactionEmoji/reaction-post/reaction-post.component';
 import { FeatureService } from '../AccountPlan/feature.service';
+import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +16,8 @@ export class SharedRoutinesService {
   currentUserCode: any;
 
   constructor(
-    private postDataservices: PostUploadImagesService,
-    private alert: NotificationsService,
+    private postDataservices: PostUploadImagesService, private location: Location,
+    private alert: NotificationsService,private router: Router,
     private comment: CommentService,
     private authService: AuthService,
     private notificationsService: NotificationsService,
@@ -194,6 +196,9 @@ export class SharedRoutinesService {
     return [`/${role}/profile`, user.code];
   }
 
+  getisMasterAdmin(): boolean {
+    return sessionStorage.getItem('role') === 'DEF-MASTERADMIN';
+  }
 
   //users
   getProfileRoute(code: string): any[] {
@@ -245,6 +250,9 @@ export class SharedRoutinesService {
     };
   }
 
+  goBack(): void {
+    this.location.back();
+  }
 
   getStatusColor(status: string): string {
     switch (status) {
@@ -279,10 +287,6 @@ export class SharedRoutinesService {
 
 
   getApplyText(job: any): string {
-
-    if (!this.feature.can('APPLY_JOBS')) {
-      return 'Upgrade to Apply';
-    }
 
     if (job?.applied) {
       return 'Applied';
@@ -377,6 +381,11 @@ export class SharedRoutinesService {
       default:
         return 'send';
     }
+  }
+
+
+  goToCheckoutByDEF_USERS(plan: any): void {
+    this.router.navigate(['/DEF-USERS/checkout', plan.planId]);
   }
 
 }

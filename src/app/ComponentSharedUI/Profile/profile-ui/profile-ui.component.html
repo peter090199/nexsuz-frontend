@@ -27,7 +27,7 @@
       <p>761 followers · 369 following</p>
       <div class="button-gap">
         <button *ngIf="profiles?.btnCurriculum === 1" mat-flat-button color="primary"
-          (click)="feature.can('UPLOAD_RESUME') ? UserCV() : sharedRoutines.openUpgradeModal()">
+          (click)="feature.can('CREATE_RESUME') ? UserCV() : sharedRoutines.openUpgradeModal()">
           New Curriculum Vitae
         </button>
         <button *ngIf="profiles?.btnCurriculum === 1" mat-raised-button (click)="uploadPic()">

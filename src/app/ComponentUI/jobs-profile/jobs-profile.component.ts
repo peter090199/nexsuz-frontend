@@ -97,16 +97,26 @@ export class JobsProfileComponent implements OnInit {
         this.jobListServices.getAppliedStatus(job.transNo)
       );
 
-      job.applied_status =
+      const status =
         res?.success && res?.data?.length
           ? res.data[0].applied_status
           : 'default';
 
-      this.selectedJob = { ...job };
+      job.applied_status = status;
+
+      // Force Angular change detection
+      this.selectedJob = {
+        ...job,
+        applied_status: status
+      };
 
     } catch (err) {
       console.error(err);
-      job.applied_status = 'default';
+
+      this.selectedJob = {
+        ...job,
+        applied_status: 'default'
+      };
     }
   }
 
@@ -194,7 +204,7 @@ export class JobsProfileComponent implements OnInit {
   onApplyClick(job: any): void {
     // ❌ FEATURE CHECK (PLAN RESTRICTION)
     if (!this.feature.can('APPLY_JOBS')) {
-       this.sharedRoutines.openUpgradeModal();
+      this.sharedRoutines.openUpgradeModal();
       return;
     }
 
@@ -217,8 +227,18 @@ export class JobsProfileComponent implements OnInit {
       data: job
     });
 
-    dialogRef.afterClosed().subscribe(res => {
-      if (res) this.getJobPosting();
+    dialogRef.afterClosed().subscribe(async (res) => {
+      if (res) {
+        await this.getJobPosting();
+
+        const updated = this.jobs.find(
+          x => x.transNo === this.selectedJob?.transNo
+        );
+
+        if (updated) {
+          await this.loadAppliedStatus(updated);
+        }
+      }
     });
   }
 
@@ -226,16 +246,18 @@ export class JobsProfileComponent implements OnInit {
      SELECT JOB
   ========================= */
   async selectJob(job: any): Promise<void> {
-    this.selectedJob = job;
 
     this.router.navigate([
       '/' + this.sharedRoutines.getRole() + '/recommended-jobs',
       job.transNo
     ]);
 
-    await this.loadAppliedStatus(job);
-  }
+    // Copy the object so Angular detects the change
+    this.selectedJob = { ...job };
 
+    // Load the latest application status
+    await this.loadAppliedStatus(this.selectedJob);
+  }
   /* =========================
      UI ACTIONS
   ========================= */

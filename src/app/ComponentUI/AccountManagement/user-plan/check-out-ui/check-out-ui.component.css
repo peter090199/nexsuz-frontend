@@ -1,0 +1,292 @@
+/* ===========================
+   PAGE
+=========================== */
+.checkout-page {
+  width: 100%;
+  margin: auto;
+  margin-top: -90px;
+  padding: 120px;
+}
+
+/* ===========================
+   BACK BUTTON
+=========================== */
+.back-btn {
+  margin-bottom: 20px;
+}
+
+/* ===========================
+   LAYOUT
+=========================== */
+.checkout-container {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* ===========================
+   CARD
+=========================== */
+.payment-card {
+  padding: 24px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .08);
+  background: #fff;
+}
+
+.glass {
+  backdrop-filter: blur(12px);
+}
+
+.premium {
+  border-top: 5px solid #ff9800;
+}
+
+/* ===========================
+   PAYMENT
+=========================== */
+.payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.card-form {
+  margin-top: 20px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+/* ===========================
+   PLAN
+=========================== */
+.plan-header {
+  text-align: center;
+}
+
+.plan-header h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.plan-price {
+  font-size: 20px;
+  font-weight: 400;
+  color: #3f51b5;
+  margin: 15px 0;
+}
+
+.feature-title {
+  font-weight: 600;
+  margin: 20px 0 10px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.pricing {
+  margin-top: 20px;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.total {
+  font-size: 20px;
+  font-weight: bold;
+  border-top: 1px solid #e5e5e5;
+  margin-top: 10px;
+  padding-top: 15px;
+}
+
+.subscribe-btn {
+  width: 100%;
+  margin-top: 20px;
+  height: 50px;
+  font-size: 16px;
+  border-radius: 10px;
+}
+
+.terms {
+  margin-top: 15px;
+  font-size: 13px;
+  color: #777;
+  text-align: center;
+}
+
+/* ===========================
+   SKELETON
+=========================== */
+
+.skeleton {
+  border-radius: 8px;
+  background: linear-gradient(90deg,
+      #f5f5f5 25%,
+      #ececec 50%,
+      #f5f5f5 75%);
+  background-size: 200% 100%;
+  animation: loading 1.2s linear infinite;
+}
+
+.skeleton-title {
+  height: 28px;
+  width: 180px;
+  margin-bottom: 20px;
+}
+
+.skeleton-radio {
+  height: 20px;
+  width: 140px;
+  margin: 14px 0;
+}
+
+.skeleton-input {
+  height: 52px;
+  width: 100%;
+  margin-top: 18px;
+}
+
+.skeleton-plan {
+  height: 30px;
+  width: 180px;
+  margin: auto;
+}
+
+.skeleton-price {
+  height: 45px;
+  width: 130px;
+  margin: 25px auto;
+}
+
+.skeleton-feature {
+  height: 18px;
+  width: 100%;
+  margin: 12px 0;
+}
+
+.skeleton-total {
+  height: 70px;
+  width: 100%;
+  margin: 20px 0;
+}
+
+.skeleton-button {
+  height: 48px;
+  width: 100%;
+}
+
+@keyframes loading {
+  from {
+    background-position: -200% 0;
+  }
+
+  to {
+    background-position: 200% 0;
+  }
+}
+
+/* ===========================
+   TABLET
+=========================== */
+
+@media (max-width:992px) {
+
+  .checkout-container {
+    grid-template-columns: 1fr;
+  }
+
+  .plan-price {
+    font-size: 36px;
+  }
+
+}
+
+/* ===========================
+   MOBILE
+=========================== */
+
+@media (max-width:768px) {
+
+  .checkout-page {
+    padding: 12px;
+  }
+
+  .payment-card {
+    padding: 18px;
+    border-radius: 14px;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  .plan-header h2 {
+    font-size: 22px;
+  }
+
+  .plan-price {
+    font-size: 32px;
+  }
+
+  .price-row {
+    font-size: 14px;
+  }
+
+  .subscribe-btn {
+    height: 46px;
+    font-size: 15px;
+  }
+
+}
+
+/* ===========================
+   SMALL MOBILE
+=========================== */
+
+@media (max-width:480px) {
+
+  .payment-card {
+    padding: 15px;
+  }
+
+  .plan-price {
+    font-size: 28px;
+  }
+
+  .plan-header h2 {
+    font-size: 20px;
+  }
+
+  .feature-item {
+    font-size: 14px;
+  }
+
+  .total {
+    font-size: 18px;
+  }
+
+  .subscribe-btn {
+    height: 44px;
+  }
+
+}

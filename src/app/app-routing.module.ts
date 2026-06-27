@@ -48,6 +48,7 @@ import { UserPlanComponent } from './ComponentUI/AccountManagement/user-plan/use
 import { CategoryPlanComponent } from './ComponentUI/AccountManagement/category-plan/category-plan.component';
 import { ClientPlanComponent } from './ComponentUI/AccountManagement/client-plan/client-plan.component';
 import { FeaturesPlanListComponent } from './ComponentUI/AccountManagement/features-plan-list/features-plan-list.component';
+import { CheckOutUIComponent } from './ComponentUI/AccountManagement/user-plan/check-out-ui/check-out-ui.component';
 
 const routes: Routes = [
   // Public routes
@@ -86,6 +87,7 @@ const routes: Routes = [
       { path: 'recommended-jobs/:transNo', component: JobsProfileComponent },
       { path: 'apply-job/:transNo', component: ApplyJobComponent },
       { path: 'applied-jobs', component: ListAppliedJobsComponent },
+      { path: 'checkout/:planId', component: CheckOutUIComponent },
     ]
   },
 
@@ -129,7 +131,7 @@ const routes: Routes = [
       { path: 'userplan', component: UserPlanComponent },
       { path: 'clientplan', component: ClientPlanComponent },
       { path: 'plancategory', component: CategoryPlanComponent },
-
+      { path: 'featuresplan', component: FeaturesPlanListComponent },
     ]
   },
 

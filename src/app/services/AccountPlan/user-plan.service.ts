@@ -45,9 +45,9 @@ export class UserPlanService {
   /**
    * READ SINGLE
    */
-  getById(id: number): Observable<any> {
+  getById(planId: string): Observable<any> {
     return this.http.get(
-      `${_url}account-plan/show/${id}`,
+      `${_url}account-plan/show/${planId}`,
       { headers: this.createHeaders() }
     );
   }
@@ -55,9 +55,9 @@ export class UserPlanService {
   /**
    * UPDATE
    */
-  update(id: number, data: any): Observable<any> {
+  update(planId: string, data: any): Observable<any> {
     return this.http.put(
-      `${_url}account-plan/update/${id}`,
+      `${_url}account-plan/update/${planId}`,
       data,
       { headers: this.createHeaders() }
     );

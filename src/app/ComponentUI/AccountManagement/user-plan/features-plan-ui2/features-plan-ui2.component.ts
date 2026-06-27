@@ -1,3 +1,18 @@
+// import { Component, OnInit } from '@angular/core';
+
+// @Component({
+//   selector: 'app-features-plan-ui2',
+//   templateUrl: './features-plan-ui2.component.html',
+//   styleUrls: ['./features-plan-ui2.component.css']
+// })
+// export class FeaturesPlanUI2Component implements OnInit {
+
+//   constructor() { }
+
+//   ngOnInit(): void {
+//   }
+
+// }
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
@@ -10,11 +25,11 @@ import { SharedRoutinesService } from 'src/app/services/Function/shared-routines
 import { UpdatePlanUIComponent } from '../update-plan-ui/update-plan-ui.component';
 
 @Component({
-  selector: 'app-features-plan-ui',
-  templateUrl: './features-plan-ui.component.html',
-  styleUrls: ['./features-plan-ui.component.css']
+  selector: 'app-features-plan-ui2',
+  templateUrl: './features-plan-ui2.component.html',
+  styleUrls: ['./features-plan-ui2.component.css']
 })
-export class FeaturesPlanUIComponent implements OnInit {
+export class FeaturesPlanUI2Component implements OnInit {
 
   featureForm!: FormGroup;
 
@@ -36,7 +51,7 @@ export class FeaturesPlanUIComponent implements OnInit {
     private fb: FormBuilder,
     private userPlanService: UserPlanService,
     private notificationsService: NotificationsService,
-    private dialogRef: MatDialogRef<FeaturesPlanUIComponent>,
+    private dialogRef: MatDialogRef<FeaturesPlanUI2Component>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public sharedRoutinesService: SharedRoutinesService,
     private dialog: MatDialog,
@@ -50,8 +65,6 @@ export class FeaturesPlanUIComponent implements OnInit {
 
     this.loadFeatures();
   }
-
-  
 
   loadFeatures(): void {
 
