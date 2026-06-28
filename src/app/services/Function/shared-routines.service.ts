@@ -17,7 +17,7 @@ export class SharedRoutinesService {
 
   constructor(
     private postDataservices: PostUploadImagesService, private location: Location,
-    private alert: NotificationsService,private router: Router,
+    private alert: NotificationsService, private router: Router,
     private comment: CommentService,
     private authService: AuthService,
     private notificationsService: NotificationsService,
@@ -386,6 +386,24 @@ export class SharedRoutinesService {
 
   goToCheckoutByDEF_USERS(plan: any): void {
     this.router.navigate(['/DEF-USERS/checkout', plan.planId]);
+  }
+
+  public goToSubscription(): void {
+    const role = this.getRole();
+
+    if (
+      role === 'DEF-ADMIN' ||
+      role === 'DEF-MASTERADMIN' ||
+      role === 'DEF-CLIENT'
+    ) {
+      return;
+    }
+
+    const route = `/${role}/subscription`;
+
+    if (this.router.url !== route) {
+      this.router.navigate([route]);
+    }
   }
 
 }

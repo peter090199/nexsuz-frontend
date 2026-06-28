@@ -1,0 +1,294 @@
+/* ==========================================================
+   Global
+========================================================== */
+
+*,
+*::before,
+*::after{
+    box-sizing:border-box;
+}
+.upgrade-container *:not(mat-icon),
+.windows-loading *:not(mat-icon){
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+mat-icon{
+    font-family: 'Material Icons' !important;
+}
+
+/* ==========================================================
+   Upgrade Container
+========================================================== */
+
+.upgrade-container{
+    width:100%;
+    max-width:600px;
+    margin:0 auto;
+    padding:24px;
+    text-align:center;
+    overflow:hidden;
+}
+
+.premium-header{
+    margin-bottom:24px;
+}
+
+.premium-icon{
+    width:90px;
+    height:90px;
+    margin:0 auto 18px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#FFE082,#FFC107);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    animation:pulse 2s infinite;
+}
+
+.premium-icon mat-icon{
+    width:50px;
+    height:50px;
+    font-size:50px;
+    color:#fff;
+}
+
+.premium-badge{
+    display:inline-block;
+    margin-bottom:12px;
+    padding:6px 14px;
+    border-radius:50px;
+    background:#FFF8E1;
+    color:#C49000;
+    font-size:13px;
+    font-weight:700;
+}
+
+h2{
+    margin:0 0 12px;
+    font-size:28px;
+    font-weight:700;
+    line-height:1.2;
+    color:#222;
+}
+
+p{
+    margin:0;
+    color:#666;
+    line-height:1.7;
+    font-size:15px;
+}
+
+mat-divider{
+    margin:28px 0;
+}
+
+/* ==========================================================
+   Features
+========================================================== */
+
+.feature-list{
+    margin:24px 0;
+    text-align:left;
+}
+
+.feature-item{
+    display:flex;
+    align-items:flex-start;
+    gap:14px;
+    padding:14px 0;
+}
+
+.feature-item mat-icon{
+    color:#4CAF50;
+    flex-shrink:0;
+    margin-top:2px;
+}
+
+.feature-item h4{
+    margin:0 0 4px;
+    font-size:16px;
+    font-weight:700;
+    color:#222;
+}
+
+.feature-item small{
+    color:#666;
+    font-size:13px;
+    line-height:1.5;
+}
+
+/* ==========================================================
+   Buttons
+========================================================== */
+
+.actions{
+    margin-top:30px;
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+.actions button{
+    min-width:220px;
+    min-height:48px;
+    border-radius:12px;
+    font-weight:700;
+    font-size:15px;
+}
+
+.actions button mat-icon{
+    margin-right:6px;
+}
+
+/* ==========================================================
+   Premium Animation
+========================================================== */
+
+@keyframes pulse{
+
+    0%{
+        transform:scale(1);
+        box-shadow:0 0 0 rgba(255,193,7,.35);
+    }
+
+    50%{
+        transform:scale(1.05);
+        box-shadow:0 0 22px rgba(255,193,7,.7);
+    }
+
+    100%{
+        transform:scale(1);
+        box-shadow:0 0 0 rgba(255,193,7,.35);
+    }
+
+}
+
+/* ==========================================================
+   Windows 11 Loading
+========================================================== */
+
+.windows-loading{
+    position:fixed;
+    inset:0;
+    background:rgba(250,250,250,.95);
+    backdrop-filter:blur(10px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:99999;
+}
+
+.loading-content{
+    text-align:center;
+    animation:fadeIn .25s ease;
+}
+
+.loading-content h3{
+    margin:30px 0 10px;
+    font-size:24px;
+    font-weight:700;
+    color:#202124;
+}
+
+.loading-content p{
+    margin:0;
+    font-size:14px;
+    color:#666;
+}
+
+.win-spinner{
+    width:80px;
+    height:80px;
+    margin:auto;
+    position:relative;
+    animation:spin 1.4s linear infinite;
+}
+
+.win-spinner span{
+    position:absolute;
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#0A84FF;
+    top:50%;
+    left:50%;
+    margin:-5px;
+    transform-origin:0 -30px;
+}
+
+.win-spinner span:nth-child(1){transform:rotate(0deg) translateY(-30px);opacity:1;}
+.win-spinner span:nth-child(2){transform:rotate(45deg) translateY(-30px);opacity:.9;}
+.win-spinner span:nth-child(3){transform:rotate(90deg) translateY(-30px);opacity:.8;}
+.win-spinner span:nth-child(4){transform:rotate(135deg) translateY(-30px);opacity:.7;}
+.win-spinner span:nth-child(5){transform:rotate(180deg) translateY(-30px);opacity:.6;}
+.win-spinner span:nth-child(6){transform:rotate(225deg) translateY(-30px);opacity:.5;}
+.win-spinner span:nth-child(7){transform:rotate(270deg) translateY(-30px);opacity:.4;}
+.win-spinner span:nth-child(8){transform:rotate(315deg) translateY(-30px);opacity:.3;}
+
+@keyframes spin{
+    from{transform:rotate(0deg);}
+    to{transform:rotate(360deg);}
+}
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:scale(.96);
+    }
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+/* ==========================================================
+   Responsive
+========================================================== */
+
+@media (max-width:600px){
+
+    .upgrade-container{
+        padding:18px;
+    }
+
+    .premium-icon{
+        width:75px;
+        height:75px;
+    }
+
+    .premium-icon mat-icon{
+        width:42px;
+        height:42px;
+        font-size:42px;
+    }
+
+    h2{
+        font-size:24px;
+    }
+
+    .feature-item h4{
+        font-size:15px;
+    }
+
+    .feature-item small{
+        font-size:12px;
+    }
+
+    .actions{
+        flex-direction:column;
+    }
+
+    .actions button{
+        width:100%;
+        min-width:100%;
+    }
+
+    .loading-content h3{
+        font-size:20px;
+    }
+
+    .loading-content p{
+        font-size:13px;
+    }
+}

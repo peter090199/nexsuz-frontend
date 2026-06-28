@@ -23,6 +23,11 @@
 <div class="plan-card" *ngIf="!isLoading">
   <div class="plan-box" *ngFor="let plan of plans" [ngClass]="plan.plan_name?.toLowerCase() + '-plan'">
 
+    <div class="current-badge" *ngIf="plan.button_name === 'Current Plan'">
+      <mat-icon>verified</mat-icon>
+      Current Plan
+    </div>
+    
     <div class="plan-header">
       <span class="plan-badge" [ngClass]="plan.button_color">
         {{ plan.tag }}
@@ -45,13 +50,12 @@
       </div>
     </div>
 
-    <button mat-raised-button [color]="plan.button_color || 'primary'" [disabled]="plan.button_name==='Current Plan'"
+    <button mat-raised-button [color]="plan.button_color || 'primary'" [disabled]="plan.disabled"
       (click)="goToCheckout(plan)">
-
-      <mat-icon>
-        {{ plan.button_name === 'Current Plan'
-        ? 'verified'
-        : 'workspace_premium' }}
+      <mat-icon [ngSwitch]="plan.button_name">
+        <ng-container *ngSwitchCase="'Current Plan'">verified</ng-container>
+        <ng-container *ngSwitchCase="'Downgrade'">lock</ng-container>
+        <ng-container *ngSwitchDefault>workspace_premium</ng-container>
       </mat-icon>
 
       {{ plan.button_name }}

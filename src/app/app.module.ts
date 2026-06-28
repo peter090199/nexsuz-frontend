@@ -141,6 +141,7 @@ import { FeaturesPlanListUIComponent } from './ComponentUI/AccountManagement/fea
 import { UpdatePlanUIComponent } from './ComponentUI/AccountManagement/user-plan/update-plan-ui/update-plan-ui.component';
 import { FeaturesPlanUI2Component } from './ComponentUI/AccountManagement/user-plan/features-plan-ui2/features-plan-ui2.component';
 import { CheckOutUIComponent } from './ComponentUI/AccountManagement/user-plan/check-out-ui/check-out-ui.component';
+import { UpgradeRequiredComponent } from './ComponentSharedUI/account-type-plan/upgrade-required/upgrade-required.component';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -275,8 +276,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     UpdatePlanUIComponent,
     FeaturesPlanUI2Component,
     CheckOutUIComponent,
-
-   
+    UpgradeRequiredComponent,
   ],
   imports: [
     BrowserModule,

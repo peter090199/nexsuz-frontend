@@ -49,6 +49,7 @@ import { CategoryPlanComponent } from './ComponentUI/AccountManagement/category-
 import { ClientPlanComponent } from './ComponentUI/AccountManagement/client-plan/client-plan.component';
 import { FeaturesPlanListComponent } from './ComponentUI/AccountManagement/features-plan-list/features-plan-list.component';
 import { CheckOutUIComponent } from './ComponentUI/AccountManagement/user-plan/check-out-ui/check-out-ui.component';
+import { UpgradeRequiredComponent } from './ComponentSharedUI/account-type-plan/upgrade-required/upgrade-required.component';
 
 const routes: Routes = [
   // Public routes
@@ -88,6 +89,7 @@ const routes: Routes = [
       { path: 'apply-job/:transNo', component: ApplyJobComponent },
       { path: 'applied-jobs', component: ListAppliedJobsComponent },
       { path: 'checkout/:planId', component: CheckOutUIComponent },
+      { path: 'subscription', component: UpgradeRequiredComponent },
     ]
   },
 
@@ -201,7 +203,11 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [
+    RouterModule.forRoot(routes, {
+      onSameUrlNavigation: 'reload'
+    })
+  ],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

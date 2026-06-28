@@ -11,11 +11,11 @@ import { SharedRoutinesService } from 'src/app/services/Function/shared-routines
 export class AccountTypePlanComponent implements OnInit {
 
   plans: any[] = [];
-  planFeatures: any= [];
+  planFeatures: any = [];
   isLoading = false;
 
   constructor(
-    private router: Router,public sharedService: SharedRoutinesService,
+    private router: Router, public sharedService: SharedRoutinesService,
     private userPlanService: UserPlanService
   ) { }
 
@@ -28,6 +28,10 @@ export class AccountTypePlanComponent implements OnInit {
   }
 
   goToCheckout(plan: any): void {
+    if (plan.tag === 'STARTER') {
+      this.sharedService.goToSubscription();
+      return;
+    }
     this.sharedService.goToCheckoutByDEF_USERS(plan);
   }
 

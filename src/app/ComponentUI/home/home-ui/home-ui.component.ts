@@ -227,25 +227,22 @@ export class HomeUIComponent implements OnInit, AfterViewInit, OnDestroy {
   isSidebarCollapsed: boolean = true;
   // ----------------------- LIFECYCLE -----------------------
 
+  isPageLoading = true;
 
   ngOnInit(): void {
-    this.loadRealtimePosts();
-
-
     this.currentUserCode = this.authService.getAuthCode();
     this.skeletonUsers = Array.from({ length: 8 });
     this.skeletonPosts = Array.from({ length: 5 });
-    // Load all posts and related APIs once
-    if (!this.postsLoaded) {
-      this.loadAllApisConcurrently();
-      this.loadUserPost();
-      this.postsLoaded = true;
-    }
+    this.loadRealtimePosts();
+    this.loadAllApisConcurrently();
+    this.loadUserPost();
 
-    this.postsLoaded = true;
+    // Windows loading screen
+    setTimeout(() => {
+      this.isPageLoading = false;
+    }, 2000);
 
   }
-
   newPostSubscription!: Subscription;
   newPostsQueue: any[] = [];         // temporary queue for new posts
   hasNewPosts = false;

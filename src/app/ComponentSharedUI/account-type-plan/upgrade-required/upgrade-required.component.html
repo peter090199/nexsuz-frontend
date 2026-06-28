@@ -1,0 +1,93 @@
+<div class="upgrade-container">
+    <!-- Windows 11 Loading -->
+    <div class="windows-loading" *ngIf="loading">
+        <div class="loading-box">
+            <div class="win-spinner">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <p>Please Activate your free Plan...</p>
+        </div>
+    </div>
+
+    <div class="premium-header">
+
+        <div class="premium-icon">
+            <mat-icon>workspace_premium</mat-icon>
+        </div>
+
+        <span class="premium-badge">
+            Free Plan Required
+        </span>
+
+        <h2>Unlock Premium Features</h2>
+
+        <p>
+            Your account doesn't have an active subscription yet.
+            Activate your <strong>Free Plan</strong> or upgrade to Premium to access all platform features.
+        </p>
+
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="feature-list">
+
+        <div class="feature-item">
+            <mat-icon>check_circle</mat-icon>
+            <div>
+                <h4>Unlimited Job Applications</h4>
+                <small>Apply to as many jobs as you want.</small>
+            </div>
+        </div>
+
+        <div class="feature-item">
+            <mat-icon>check_circle</mat-icon>
+            <div>
+                <h4>Unlimited Networking</h4>
+                <small>Connect with professionals without limits.</small>
+            </div>
+        </div>
+
+        <div class="feature-item">
+            <mat-icon>check_circle</mat-icon>
+            <div>
+                <h4>Advanced Candidate Search</h4>
+                <small>Find candidates faster with smart filters.</small>
+            </div>
+        </div>
+
+        <div class="feature-item">
+            <mat-icon>check_circle</mat-icon>
+            <div>
+                <h4>Unlimited Messages</h4>
+                <small>Message anyone in your network anytime.</small>
+            </div>
+        </div>
+
+        <div class="feature-item">
+            <mat-icon>check_circle</mat-icon>
+            <div>
+                <h4>Priority Support</h4>
+                <small>Receive faster customer assistance.</small>
+            </div>
+        </div>
+
+    </div>
+    <div class="actions">
+        <button mat-raised-button color="primary" (click)="activateFreePlan()" [disabled]="loading">
+            <mat-spinner *ngIf="loading" diameter="20"> </mat-spinner>
+            <ng-container *ngIf="!loading">
+                <mat-icon>rocket_launch</mat-icon>
+                Activate Free Plan
+            </ng-container>
+
+        </button>
+    </div>
+</div>

@@ -1,480 +1,241 @@
-// import { Component,OnInit  } from '@angular/core';
-// import { TranslateService } from '@ngx-translate/core';
-// import { CookieService } from 'ngx-cookie-service';
-// import { MessengerChatComponent } from './messenger-chat/messenger-chat.component';
-// import { MatDialog } from '@angular/material/dialog';
-// import { trigger, state, style, animate, transition } from '@angular/animations';
-// import { ChatPopupComponent } from './ComponentUI/messages/chat-popup/chat-popup.component';
-// import { ChatWebsitePopUPComponent } from './ComponentUI/messages/chat-website-pop-up/chat-website-pop-up.component';
-// import { PusherService } from './services/pusher.service';
-// import { AuthService } from './services/auth.service';
-// import { EchoService } from './services/echo.service';
-// import { SigInService } from './services/signIn/sig-in.service';
-// import { InactivityService } from './services/inactivity.service';
-// import { AuthGuard } from './AuthGuard/auth.guard';
-// import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
-// import { filter } from 'rxjs/operators';
-
-
-// @Component({
-//   selector: 'app-root',
-//   templateUrl: './app.component.html',
-//   styleUrls: ['./app.component.css'],
-//   animations: [
-//     trigger('fadeInUp', [
-//       transition(':enter', [
-//         style({ opacity: 0, transform: 'translateY(20px)' }),
-//         animate('0.5s ease-out', style({ opacity: 1, transform: 'translateY(0)' })),
-//       ]),
-//     ]),
-//   ],
-
-// })
-// export class AppComponent implements OnInit {
-
-//   isLoggedIn: boolean = false; // Track login status
-//   showChatButton: boolean = true; // Default visibility
-//   showWebsiteChat: boolean = true; // Default visibility
-//   message: string = '';
-//   userId: number | null = null;
-
-//   constructor(private translate: TranslateService,public dialog: MatDialog,private pusherService: PusherService,
-//     private cookieService: CookieService,private authService: AuthService,private echoService:EchoService,
-//     private logoutServices: SigInService,private inactivityService:InactivityService,private authguard:AuthGuard,
-//     private router: Router, private route: ActivatedRoute
-
-//   ) {
-//     translate.addLangs(['en', 'fr']); // Add other languages as needed
-//     translate.setDefaultLang('en');   // Set the default language
-//   }
-
-//   ngOnInit(): void {
-//      this.router.events
-//       .pipe(filter(event => event instanceof NavigationEnd))
-//       .subscribe((event: NavigationEnd) => {
-//         console.log('Route loaded:', event.urlAfterRedirects);
-//         // Do additional logic here if needed
-//       });
-
-//     // const user = sessionStorage.getItem('token');
-//     // if (!user) {
-//     // this.authguard.logout();
-//     // }
-
-//     this.cookieService.set('myCookie', 'cookieValue', { expires: 7, path: '/' });
-//     const myCookieValue = this.cookieService.get('myCookie');
-//     this.cookieService.delete('myCookie');
-
-//     this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-//     this.showChatButton = this.isLoggedIn;
-
-//     this.showWebsiteChat = localStorage.getItem('chatmessages') === 'true';
-//     this.reloadOnce();
-//     this.loadUserID();
-//    // this.inactivityService.startWatching();
-
-
-
-//   }
-
-//   onLogout(): void {
-//     this.logoutServices.logout().subscribe({
-//       next: () => {
-//         const showChat = JSON.stringify(false);
-//         const cookiesAccepted = JSON.stringify(true);
-//         sessionStorage.clear();
-//         localStorage.clear();
-//         localStorage.setItem('showWebsiteChat', showChat);
-//         localStorage.setItem('cookiesAccepted', cookiesAccepted);
-//         window.location.href = '/homepage';
-//       },
-//       error: (err) => console.error('Logout failed:', err)
-//     });
-//   }
-
-
-//   loadUserID() {
-//     this.authService.getData().subscribe(res => {
-//       this.userId = res.id; 
-//       if (this.userId !== null) {
-//         sessionStorage.setItem('userId', this.userId.toString());
-//       }
-//     });
-//     this.load();
-//   }
-
-//   notificationCounts: number = 0;
-
-//   load(){
-//     this.echoService.notificationCount$.subscribe(counts => {
-//       this.notificationCounts = counts;
-//       console.log(this.notificationCounts)
-//     });
-
-
-//  }
-
-
-//   reloadOnce() {
-//     if (!sessionStorage.getItem('hasReloaded')) {
-//       sessionStorage.setItem('hasReloaded', 'true');
-//       location.reload(); 
-//     }
-//   }
-
-//   switchLanguage(language: string) {
-//     this.translate.use(language);
-//   }
-
-//   openChat1() {
-//     this.dialog.open(ChatWebsitePopUPComponent, {
-//       width: '450px',
-//       position: { bottom: '20px', right: '20px' }, // Adjusted position for better visibility
-//       panelClass: 'custom-chat-popup',
-//     });
-//   }
-
-//   openChat() {
-//     const dialogRef = this.dialog.open(ChatPopupComponent, {
-//       width: '450px',
-//       position: { bottom: '20px', right: '20px' }, // Adjusted position for better visibility
-//       panelClass: 'custom-chat-popup',
-//     });
-
-//   }
-
-//   closeChat() {
-//     this.showChatButton = true; // Show floating button
-//     localStorage.setItem('showChatButton', JSON.stringify(true)); // Save to localStorage
-//   }
-// }
-
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { CookieService } from 'ngx-cookie-service';
 import { MatDialog } from '@angular/material/dialog';
 import { trigger, style, animate, transition } from '@angular/animations';
+import { interval, Subscription } from 'rxjs';
 import { ChatPopupComponent } from './ComponentUI/messages/chat-popup/chat-popup.component';
 import { ChatWebsitePopUPComponent } from './ComponentUI/messages/chat-website-pop-up/chat-website-pop-up.component';
 import { AuthService } from './services/auth.service';
 import { EchoService } from './services/echo.service';
 import { SigInService } from './services/signIn/sig-in.service';
-import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
 import { SubscriptionService } from './services/AccountPlan/subscription.service';
 import { FeatureService } from './services/AccountPlan/feature.service';
+import { UpgradeRequiredComponent } from './ComponentSharedUI/account-type-plan/upgrade-required/upgrade-required.component';
+import { Router } from '@angular/router';
+import { SharedRoutinesService } from './services/Function/shared-routines.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  template: `<div class="app-container"><router-outlet></router-outlet></div>`,
   animations: [
     trigger('fadeInUp', [
       transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(20px)' }),
-        animate('0.5s ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+        style({
+          opacity: 0,
+          transform: 'translateY(20px)'
+        }),
+        animate(
+          '0.5s ease-out',
+          style({
+            opacity: 1,
+            transform: 'translateY(0)'
+          })
+        )
       ])
     ])
   ]
 })
 export class AppComponent implements OnInit {
-  title(title: any) {
-    throw new Error('Method not implemented.');
-  }
 
-  isLoggedIn = false;
+  is_online = false;
   showChatButton = true;
   showWebsiteChat = true;
+
   userId: number | null = null;
   notificationCounts = 0;
+  private upgradeDialogTimer?: Subscription
 
   constructor(
-    private translate: TranslateService,
-    public dialog: MatDialog,
+    private translate: TranslateService, public sharedService: SharedRoutinesService,
     private cookieService: CookieService,
     private authService: AuthService,
     private echoService: EchoService,
     private logoutServices: SigInService,
-    private router: Router, private sub: SubscriptionService,
-    private feature: FeatureService
+    private subscriptionService: SubscriptionService,
+    private featureService: FeatureService,
+    public dialog: MatDialog,
+    private router: Router
   ) {
-    translate.addLangs(['en', 'fr']);
-    translate.setDefaultLang('en');
+
+    this.translate.addLangs(['en', 'fr']);
+    this.translate.setDefaultLang('en');
   }
 
   ngOnInit(): void {
-    this.sub.myFeatures().subscribe((res: any) => {
-      this.feature.set(res.features);
+
+    this.cookieService.set('myCookie', 'cookieValue', {
+      expires: 7,
+      path: '/'
     });
 
-    // Set default cookies safely
-    this.cookieService.set('myCookie', 'cookieValue', { expires: 7, path: '/' });
+    this.is_online = sessionStorage.getItem('is_online') === 'true';
 
-    this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    this.showChatButton = this.isLoggedIn;
+    this.showChatButton = this.is_online;
     this.showWebsiteChat = localStorage.getItem('chatmessages') === 'true';
 
-    // Load user info asynchronously without blocking
-    this.loadUserID();
+    if (this.is_online) {
+      this.loadFeatures();
+      this.loadUserID();
+    }
 
-    // Subscribe to notifications
-    this.echoService.notificationCount$.subscribe(counts => {
-      this.notificationCounts = counts;
+    this.echoService.notificationCount$
+      .subscribe(count => {
+        this.notificationCounts = count;
+      });
+  }
+
+
+  private stopUpgradePopup(): void {
+
+    if (this.upgradeDialogTimer) {
+      this.upgradeDialogTimer.unsubscribe();
+      this.upgradeDialogTimer = undefined;
+    }
+  }
+
+  private startUpgradePopup(): void {
+    if (this.upgradeDialogTimer) {
+      return;
+    }
+
+    this.upgradeDialogTimer = interval(3000).subscribe(() => {
+      const role = this.sharedService.getRole();
+      if (role === 'DEF-ADMIN' || role === 'DEF-MASTERADMIN' || role === 'DEF-CLIENT') {
+        return;
+      }
+      const route = `/${role}/subscription`;
+      if (this.router.url !== route) {
+        this.router.navigate([route]);
+      }
     });
+
+
+
+    // this.upgradeDialogTimer = interval(3000).subscribe(() => {
+    //   if (this.dialog.openDialogs.length === 0) {
+    //     // this.dialog.open(UpgradeRequiredComponent, {
+    //     //   width: '600px',
+    //     //   maxWidth: '95vw',
+    //     //   disableClose: true,
+    //     //   autoFocus: false,
+    //     //   panelClass: 'upgrade-dialog'
+    //     // });
+    //   }
+    // });
+
+  }
+
+  loadFeatures(): void {
+    this.subscriptionService.myFeatures().subscribe({
+      next: (res: any) => {
+        if (res.success) {
+          this.featureService.set(res.features);
+          // User has subscription
+          this.stopUpgradePopup();
+        }
+      },
+      error: (err) => {
+
+        this.featureService.set([]);
+
+        if (
+          err.status === 403 ||
+          err.status === 404 ||
+          err.error?.message === 'No active subscription found.'
+        ) {
+          this.startUpgradePopup();
+        }
+      }
+
+    });
+
+  }
+
+
+  loadUserID(): void {
+
+    this.authService.getData().subscribe({
+
+      next: (res: any) => {
+
+        this.userId = res.id;
+
+        if (this.userId) {
+          sessionStorage.setItem(
+            'userId',
+            this.userId.toString()
+          );
+        }
+
+      },
+
+      error: err => console.error(err)
+
+    });
+
   }
 
   onLogout(): void {
+
     this.logoutServices.logout().subscribe({
+
       next: () => {
+
         sessionStorage.clear();
         localStorage.clear();
-        localStorage.setItem('showWebsiteChat', 'false');
+
+        localStorage.setItem(
+          'showWebsiteChat',
+          'false'
+        );
+
         window.location.href = '/homepage';
+
       },
-      error: (err) => console.error('Logout failed:', err)
+
+      error: err => console.error(err)
+
     });
+
   }
 
-  loadUserID() {
-    this.authService.getData().subscribe(res => {
-      this.userId = res.id;
-      if (this.userId !== null) {
-        sessionStorage.setItem('userId', this.userId.toString());
-      }
-    });
-  }
-
-  switchLanguage(language: string) {
+  switchLanguage(language: string): void {
     this.translate.use(language);
   }
 
-  openChat1() {
+  openChat1(): void {
+
     this.dialog.open(ChatWebsitePopUPComponent, {
       width: '450px',
-      position: { bottom: '20px', right: '20px' },
+      position: {
+        bottom: '20px',
+        right: '20px'
+      },
       panelClass: 'custom-chat-popup'
     });
+
   }
 
-  openChat() {
+  openChat(): void {
+
     this.dialog.open(ChatPopupComponent, {
       width: '400px',
-      position: { bottom: '20px', right: '5px' },
+      position: {
+        bottom: '20px',
+        right: '5px'
+      },
       panelClass: 'custom-chat-popup'
     });
+
   }
 
-  closeChat() {
+  closeChat(): void {
+
     this.showChatButton = true;
     localStorage.setItem('showChatButton', 'true');
+
   }
+
 }
-
-
-
-// import { Component, OnInit } from '@angular/core';
-// import { TranslateService } from '@ngx-translate/core';
-// import { CookieService } from 'ngx-cookie-service';
-// import { MatDialog } from '@angular/material/dialog';
-// import { trigger, style, animate, transition } from '@angular/animations';
-// import { Router, NavigationEnd } from '@angular/router';
-// import { filter } from 'rxjs/operators';
-
-// import { ChatPopupComponent } from './ComponentUI/messages/chat-popup/chat-popup.component';
-// import { ChatWebsitePopUPComponent } from './ComponentUI/messages/chat-website-pop-up/chat-website-pop-up.component';
-
-// import { AuthService } from './services/auth.service';
-// import { EchoService } from './services/echo.service';
-// import { SigInService } from './services/signIn/sig-in.service';
-
-// import { SubscriptionService } from './services/AccountPlan/subscription.service';
-// import { FeatureService } from './services/AccountPlan/feature.service';
-
-// @Component({
-//   selector: 'app-root',
-//   templateUrl: './app.component.html',
-//   styleUrls: ['./app.component.css'],
-//   animations: [
-//     trigger('fadeInUp', [
-//       transition(':enter', [
-//         style({
-//           opacity: 0,
-//           transform: 'translateY(20px)'
-//         }),
-//         animate(
-//           '0.5s ease-out',
-//           style({
-//             opacity: 1,
-//             transform: 'translateY(0)'
-//           })
-//         )
-//       ])
-//     ])
-//   ]
-// })
-// export class AppComponent implements OnInit {
-
-//   isLoggedIn = false;
-//   showChatButton = true;
-//   showWebsiteChat = true;
-
-//   userId: number | null = null;
-//   notificationCounts = 0;
-
-//   constructor(
-//     private translate: TranslateService,
-//     public dialog: MatDialog,
-//     private cookieService: CookieService,
-//     private authService: AuthService,
-//     private echoService: EchoService,
-//     private logoutServices: SigInService,
-//     private router: Router,
-//     private subscriptionService: SubscriptionService,
-//     public feature: FeatureService
-//   ) {
-
-//     this.translate.addLangs(['en', 'fr']);
-//     this.translate.setDefaultLang('en');
-//   }
-
-//   ngOnInit(): void {
-
-//     this.router.events
-//       .pipe(filter(event => event instanceof NavigationEnd))
-//       .subscribe((event: NavigationEnd) => {
-//         console.log('Route Loaded:', event.urlAfterRedirects);
-//       });
-
-//     this.cookieService.set(
-//       'myCookie',
-//       'cookieValue',
-//       { expires: 7, path: '/' }
-//     );
-
-//     this.isLoggedIn =
-//       localStorage.getItem('isLoggedIn') === 'true';
-
-//     this.showChatButton = this.isLoggedIn;
-
-//     this.showWebsiteChat =
-//       localStorage.getItem('chatmessages') === 'true';
-
-//     if (this.isLoggedIn) {
-//       this.loadFeatures();
-//       this.loadUserID();
-//     }
-
-//     this.echoService.notificationCount$
-//       .subscribe(counts => {
-//         this.notificationCounts = counts;
-//       });
-//   }
-
-//   loadFeatures(): void {
-
-//     this.subscriptionService.myFeatures().subscribe({
-//       next: (res: any) => {
-
-//         if (res.success) {
-
-//           this.feature.set(res.features);
-
-//           console.log(
-//             'APPLY_JOBS:',
-//             this.feature.can('APPLY_JOBS')
-//           );
-
-//           console.log(
-//             'CONNECTION_LIMIT:',
-//             this.feature.getValue('CONNECTION_LIMIT')
-//           );
-//         }
-
-//       },
-//       error: (err) => {
-//         console.error('Failed to load features', err);
-//       }
-//     });
-//   }
-
-//   loadUserID(): void {
-
-//     this.authService.getData().subscribe({
-//       next: (res: any) => {
-
-//         this.userId = res.id;
-
-//         if (this.userId) {
-//           sessionStorage.setItem(
-//             'userId',
-//             this.userId.toString()
-//           );
-//         }
-//       },
-//       error: (err) => {
-//         console.error(err);
-//       }
-//     });
-//   }
-
-//   onLogout(): void {
-
-//     this.logoutServices.logout().subscribe({
-//       next: () => {
-
-//         sessionStorage.clear();
-//         localStorage.clear();
-
-//         localStorage.setItem(
-//           'showWebsiteChat',
-//           'false'
-//         );
-
-//         window.location.href = '/homepage';
-//       },
-//       error: (err) => {
-//         console.error('Logout failed:', err);
-//       }
-//     });
-//   }
-
-//   switchLanguage(language: string): void {
-//     this.translate.use(language);
-//   }
-
-//   openChat1(): void {
-
-//     this.dialog.open(ChatWebsitePopUPComponent, {
-//       width: '450px',
-//       position: {
-//         bottom: '20px',
-//         right: '20px'
-//       },
-//       panelClass: 'custom-chat-popup'
-//     });
-//   }
-
-//   openChat(): void {
-
-//     this.dialog.open(ChatPopupComponent, {
-//       width: '400px',
-//       position: {
-//         bottom: '20px',
-//         right: '5px'
-//       },
-//       panelClass: 'custom-chat-popup'
-//     });
-//   }
-
-//   closeChat(): void {
-
-//     this.showChatButton = true;
-
-//     localStorage.setItem(
-//       'showChatButton',
-//       'true'
-//     );
-//   }
-
-// }

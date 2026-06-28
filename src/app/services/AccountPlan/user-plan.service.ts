@@ -116,4 +116,26 @@ export class UserPlanService {
       { headers: this.createHeaders() }
     );
   }
+
+  //upgradeplan
+  upgradePlan(data: any) {
+    return this.http.post(
+      `${_url}account-plan/upgrade`,
+      data,
+      {
+        headers: this.createHeaders()
+      }
+    );
+  }
+
+  activateFreePlan() {
+    return this.http.post(
+      `${_url}account-plan/free-plan`,
+      {},
+      {
+        headers: this.createHeaders()
+      }
+    );
+  }
+
 }

@@ -200,3 +200,147 @@ mat-spinner {
   max-width: 100px; /* Maximum width for large screens */
   max-height: 100px; /* Maximum height for large screens */
 }
+
+
+
+/* ==========================================
+   Windows 11 Loading Screen
+========================================== */
+
+.windows-loading{
+    position:fixed;
+    inset:0;
+    z-index:999999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(255,255,255,.96);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    animation:fadeIn .25s ease;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.loading-box{
+    text-align:center;
+    user-select:none;
+}
+
+.loading-box h3{
+    margin:28px 0 8px;
+    font-size:24px;
+    font-weight:600;
+    color:#202124;
+}
+
+.loading-box p{
+    margin:0;
+    font-size:14px;
+    color:#5f6368;
+}
+
+/* ==========================================
+   Windows Spinner
+========================================== */
+
+.win-spinner{
+    position:relative;
+    width:72px;
+    height:72px;
+    margin:auto;
+    animation:spinnerRotate 1.4s linear infinite;
+}
+
+.win-spinner span{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:8px;
+    height:8px;
+    margin:-4px;
+    border-radius:50%;
+    background:#0078D4;
+    transform-origin:0 -28px;
+}
+
+.win-spinner span:nth-child(1){
+    transform:rotate(0deg) translateY(-28px);
+    opacity:1;
+}
+
+.win-spinner span:nth-child(2){
+    transform:rotate(45deg) translateY(-28px);
+    opacity:.9;
+}
+
+.win-spinner span:nth-child(3){
+    transform:rotate(90deg) translateY(-28px);
+    opacity:.8;
+}
+
+.win-spinner span:nth-child(4){
+    transform:rotate(135deg) translateY(-28px);
+    opacity:.7;
+}
+
+.win-spinner span:nth-child(5){
+    transform:rotate(180deg) translateY(-28px);
+    opacity:.6;
+}
+
+.win-spinner span:nth-child(6){
+    transform:rotate(225deg) translateY(-28px);
+    opacity:.5;
+}
+
+.win-spinner span:nth-child(7){
+    transform:rotate(270deg) translateY(-28px);
+    opacity:.4;
+}
+
+.win-spinner span:nth-child(8){
+    transform:rotate(315deg) translateY(-28px);
+    opacity:.3;
+}
+
+/* ==========================================
+   Animations
+========================================== */
+
+@keyframes spinnerRotate{
+    from{
+        transform:rotate(0deg);
+    }
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+    }
+    to{
+        opacity:1;
+    }
+}
+
+/* ==========================================
+   Responsive
+========================================== */
+
+@media (max-width:600px){
+
+    .loading-box h3{
+        font-size:20px;
+    }
+
+    .loading-box p{
+        font-size:13px;
+    }
+
+    .win-spinner{
+        width:64px;
+        height:64px;
+    }
+}

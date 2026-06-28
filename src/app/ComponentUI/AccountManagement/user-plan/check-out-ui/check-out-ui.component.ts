@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { finalize } from 'rxjs/operators';
+import { finalize, take } from 'rxjs/operators';
 
 import { UserPlanService } from 'src/app/services/AccountPlan/user-plan.service';
 import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
@@ -17,7 +17,9 @@ export class CheckOutUIComponent implements OnInit {
   planId: string | null = null;
 
   isLoading = false;
-  selectedPayment = 'gcash';
+  isSubmitting = false;
+
+  selectedPayment: 'gcash' | 'paypal' | 'card' = 'gcash';
 
   constructor(
     private route: ActivatedRoute,
@@ -29,36 +31,91 @@ export class CheckOutUIComponent implements OnInit {
   ngOnInit(): void {
     this.planId = this.route.snapshot.paramMap.get('planId');
 
-    if (this.planId) {
-      this.loadPlan(this.planId);
-    } else {
+    if (!this.planId) {
       this.notification.toastrError('Invalid plan.');
+      return;
     }
+
+    this.loadPlan(this.planId);
+  }
+
+  get price(): number {
+    return Number(this.plan?.price ?? 0);
   }
 
   get vat(): number {
-    return (Number(this.plan?.price) || 0) * 0.12;
+    return +(this.price * 0.12).toFixed(2);
   }
 
   get total(): number {
-    const price = Number(this.plan?.price) || 0;
-    return price + this.vat;
+    return +(this.price + this.vat).toFixed(2);
   }
 
   subscribe(): void {
+
+    if (this.isSubmitting) {
+      return;
+    }
 
     if (!this.plan) {
       this.notification.toastrError('Plan not found.');
       return;
     }
 
-    console.log({
-      planId: this.plan.planId,
-      payment: this.selectedPayment
-    });
+    this.isSubmitting = true;
 
-    // TODO:
-    // Call your subscription/payment API here.
+    const payload = {
+      planId: this.plan.planId,
+      payment_method: this.getPaymentMethod()
+    };
+
+    this.userPlanService.upgradePlan(payload)
+      .pipe(
+        take(1),
+        finalize(() => this.isSubmitting = false)
+      )
+      .subscribe({
+        next: (res: any) => {
+
+          if (res.success) {
+
+            this.notification.toastrSuccess(
+              res.message || 'Subscription upgraded successfully.'
+            );
+
+            // Optional: Navigate back after success
+            this.sharedService.goBack();
+
+          } else {
+
+            this.notification.toastrError(
+              res.message || 'Unable to upgrade plan.'
+            );
+
+          }
+
+        },
+        error: (err) => {
+
+          this.notification.toastrError(
+            err?.error?.message || 'Something went wrong. Please try again.'
+          );
+
+        }
+      });
+
+  }
+
+  private getPaymentMethod(): string {
+
+    const paymentMap: Record<string, string> = {
+      gcash: 'GCash',
+      paypal: 'PayPal',
+      card: 'Credit Card'
+    };
+
+    return paymentMap[this.selectedPayment] || 'GCash';
+
   }
 
   private loadPlan(planId: string): void {
@@ -67,6 +124,7 @@ export class CheckOutUIComponent implements OnInit {
 
     this.userPlanService.getById(planId)
       .pipe(
+        take(1),
         finalize(() => this.isLoading = false)
       )
       .subscribe({
@@ -75,12 +133,18 @@ export class CheckOutUIComponent implements OnInit {
           if (res.success) {
             this.plan = res.data;
           } else {
-            this.notification.toastrError(res.message);
+            this.notification.toastrError(
+              res.message || 'Plan not found.'
+            );
           }
 
         },
-        error: () => {
-          this.notification.toastrError('Unable to load plan.');
+        error: (err) => {
+
+          this.notification.toastrError(
+            err?.error?.message || 'Unable to load plan.'
+          );
+
         }
       });
 

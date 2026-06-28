@@ -15,6 +15,9 @@ body {
   font-family: Verdana;
   width: 100%;
 }
+body{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
 div {
   font-family: Verdana;
 }
@@ -2458,4 +2461,98 @@ button[mat-stroked-button] {
 .logo span {
   margin-top: 12px;
   line-height: 0.5;
+}
+
+.plan-box {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Desktop */
+.current-badge {
+    position: absolute;
+    top: 18px;
+    right: -40px;
+    width: 200px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transform: rotate(35deg);
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .25);
+    z-index: 10;
+    animation: badgeGlow 2s infinite;
+}
+.upgrade-dialog .mat-mdc-dialog-surface{
+    overflow:hidden !important;
+    border-radius:20px;
+}
+
+.upgrade-dialog .mat-mdc-dialog-container{
+    padding:0 !important;
+}
+.current-badge mat-icon {
+    font-size: 14px;
+    width: 18px;
+    height: 18px;
+}
+
+@keyframes badgeGlow {
+    0%,100% {
+        box-shadow: 0 0 8px rgba(34,197,94,.35);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(34,197,94,.8);
+    }
+}
+
+/* Tablet */
+@media (max-width: 992px) {
+    .current-badge {
+        top: 14px;
+        right: -45px;
+        width: 170px;
+        height: 32px;
+        font-size: 12px;
+    }
+
+    .current-badge mat-icon {
+        font-size: 16px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .current-badge {
+        top: 12px;
+        right: -42px;
+        width: 155px;
+        height: 30px;
+        font-size: 11px;
+    }
+
+    .current-badge mat-icon {
+        font-size: 15px;
+    }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+    .current-badge {
+        top: 10px;
+        right: -38px;
+        width: 145px;
+        height: 28px;
+        font-size: 10px;
+        gap: 4px;
+    }
+
+    .current-badge mat-icon {
+        font-size: 14px;
+    }
 }

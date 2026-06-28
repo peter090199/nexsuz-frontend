@@ -1,4 +1,24 @@
 <mat-sidenav-container class="section-container">
+  <div class="windows-loading" *ngIf="isPageLoading">
+    <div class="loading-content">
+
+      <div class="win-spinner">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <h2>Loading</h2>
+      <p>Please wait...</p>
+
+    </div>
+  </div>
+
   <!-- LEFT SIDENAV -->
   <mat-sidenav #leftSidenav class="side-nav-left" [mode]="isMobile ? 'over' : 'side'" [opened]="!isMobile"
     [fixedInViewport]="isMobile">

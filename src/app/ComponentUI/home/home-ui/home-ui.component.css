@@ -539,3 +539,75 @@ nav{
     height:42px;
   }
 }
+
+
+
+
+
+.windows-loading{
+    position:fixed;
+    inset:0;
+    z-index:999999;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#ffffff;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.loading-content{
+    text-align:center;
+}
+
+.loading-content h2{
+    margin-top:30px;
+    margin-bottom:10px;
+    font-size:26px;
+    font-weight:500;
+    color:#202124;
+}
+
+.loading-content p{
+    color:#5f6368;
+    font-size:14px;
+}
+
+/* Windows 11 spinner */
+
+.win-spinner{
+    width:70px;
+    height:70px;
+    position:relative;
+    margin:auto;
+    animation:rotate 1.2s linear infinite;
+}
+
+.win-spinner span{
+    position:absolute;
+    width:8px;
+    height:8px;
+    background:#0078D4;
+    border-radius:50%;
+    top:50%;
+    left:50%;
+    margin:-4px;
+    transform-origin:0 -28px;
+}
+
+.win-spinner span:nth-child(1){transform:rotate(0deg) translateY(-28px);opacity:1;}
+.win-spinner span:nth-child(2){transform:rotate(45deg) translateY(-28px);opacity:.9;}
+.win-spinner span:nth-child(3){transform:rotate(90deg) translateY(-28px);opacity:.8;}
+.win-spinner span:nth-child(4){transform:rotate(135deg) translateY(-28px);opacity:.7;}
+.win-spinner span:nth-child(5){transform:rotate(180deg) translateY(-28px);opacity:.6;}
+.win-spinner span:nth-child(6){transform:rotate(225deg) translateY(-28px);opacity:.5;}
+.win-spinner span:nth-child(7){transform:rotate(270deg) translateY(-28px);opacity:.4;}
+.win-spinner span:nth-child(8){transform:rotate(315deg) translateY(-28px);opacity:.3;}
+
+@keyframes rotate{
+    from{
+        transform:rotate(0deg);
+    }
+    to{
+        transform:rotate(360deg);
+    }
+}

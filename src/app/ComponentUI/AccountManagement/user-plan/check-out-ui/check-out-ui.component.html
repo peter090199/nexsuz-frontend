@@ -1,59 +1,36 @@
 <div class="checkout-page">
-
     <button mat-button class="back-btn" (click)="sharedService.goBack()">
         <mat-icon>arrow_back</mat-icon>
         Back
     </button>
 
-    <!-- ================= Skeleton ================= -->
-
-    <div class="checkout-container" *ngIf="isLoading">
-
+    <div class="checkout-container">
         <mat-card class="payment-card">
+            <h3>
+                <mat-icon>payments</mat-icon>
+                Payment Method
+            </h3>
 
-            <div class="skeleton skeleton-title"></div>
+            <mat-radio-group class="payment-list" [(ngModel)]="selectedPayment">
 
-            <div class="skeleton skeleton-radio"></div>
-            <div class="skeleton skeleton-radio"></div>
-            <div class="skeleton skeleton-radio"></div>
+                <mat-radio-button value="gcash" class="payment-option">
+                    <img src="assets/images/gcash.png" class="pay-logo">
+                    <span>GCash</span>
+                </mat-radio-button>
 
-            <div class="skeleton skeleton-input"></div>
-            <div class="skeleton skeleton-input"></div>
-            <div class="skeleton skeleton-input"></div>
+                <mat-radio-button value="paypal" class="payment-option">
+                    <img src="assets/images/paypal.png" class="pay-logo">
+                    <span>PayPal</span>
+                </mat-radio-button>
 
-        </mat-card>
+                <mat-radio-button value="card" class="payment-option">
+                    <mat-icon>credit_card</mat-icon>
+                    <span>Credit / Debit Card</span>
+                </mat-radio-button>
 
-        <mat-card class="payment-card">
-
-            <div class="skeleton skeleton-plan"></div>
-            <div class="skeleton skeleton-price"></div>
-
-            <div class="skeleton skeleton-feature" *ngFor="let item of [1,2,3,4,5,6]">
-            </div>
-
-            <div class="skeleton skeleton-total"></div>
-
-            <div class="skeleton skeleton-button"></div>
-
-        </mat-card>
-
-    </div>
-
-    <!-- ================= Actual Content ================= -->
-
-    <div class="checkout-container" *ngIf="!isLoading">
-
-        <!-- LEFT -->
-
-        <mat-card class="payment-card glass">
-            <h3>Choose Payment Method</h3>
-            <mat-radio-group class="payment-methods" [(ngModel)]="selectedPayment">
-                <mat-radio-button value="gcash">GCash</mat-radio-button>
-                <mat-radio-button value="maya">PayPal</mat-radio-button>
-                <mat-radio-button value="card">Card</mat-radio-button>
             </mat-radio-group>
-            <mat-divider></mat-divider>
-            <div class="card-form" *ngIf="selectedPayment==='card'">
+
+            <div *ngIf="selectedPayment=='card'" class="card-form">
 
                 <mat-form-field appearance="outline">
                     <mat-label>Card Number</mat-label>
@@ -78,60 +55,60 @@
 
         </mat-card>
 
-        <!-- RIGHT -->
-
-        <mat-card class="payment-card premium">
+        <!-- Summary Card -->
+        <mat-card class="summary-card">
 
             <div class="plan-header">
+
+                <span class="plan-badge">
+                    {{plan?.tag}}
+                </span>
 
                 <h2>{{plan?.plan_name}}</h2>
 
                 <div class="plan-price">
-                    ₱{{plan?.price}}/{{plan?.tagmonthYear}}
+                    ₱{{plan?.price}}
+                    <small>/{{plan?.tagmonthYear}}</small>
+                </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="feature-list">
+                <div class="feature-item" *ngFor="let feature of plan?.features">
+                    <mat-icon color="primary">check_circle</mat-icon>
+                    <span>{{feature.feature_name}}</span>
                 </div>
 
             </div>
-
-            <mat-divider></mat-divider>
-
-            <div class="feature-item" *ngFor="let feature of plan?.features">
-
-                <mat-icon color="primary">
-                    verified
-                </mat-icon>
-
-                {{feature.feature_name}}
-
-            </div>
-
-            <mat-divider></mat-divider>
-
             <div class="pricing">
-
                 <div class="price-row">
                     <span>Subscription</span>
-                    <span>₱{{plan?.price}}</span>
+                    <strong>₱{{plan?.price}}</strong>
                 </div>
-
                 <div class="price-row">
                     <span>VAT</span>
-                    <span>₱{{vat}}</span>
+                    <strong>₱{{vat}}</strong>
                 </div>
-
                 <div class="price-row total">
                     <span>Total</span>
-                    <span>₱{{total}}</span>
+                    <strong>₱{{total}}</strong>
                 </div>
-
             </div>
+            <button mat-raised-button color="primary" class="subscribe-btn" (click)="subscribe()"
+                [disabled]="isSubmitting || isLoading">
 
-            <button mat-raised-button color="primary" class="subscribe-btn" (click)="subscribe()">
+                <mat-spinner *ngIf="isSubmitting" diameter="20">
+                </mat-spinner>
 
-                <mat-icon>workspace_premium</mat-icon>
-
-                Subscribe Now
+                <ng-container *ngIf="!isSubmitting">
+                    <mat-icon>lock</mat-icon>
+                    Secure Checkout
+                </ng-container>
 
             </button>
+            <div class="secure-note">
+                <mat-icon color="primary">verified_user</mat-icon>
+                <span>Your payment is protected with SSL encryption.</span>
+            </div>
 
         </mat-card>
 

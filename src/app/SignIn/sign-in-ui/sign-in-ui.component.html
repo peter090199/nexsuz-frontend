@@ -1,76 +1,90 @@
 <div class="main-background">
 
-    <div class="login-container">
+  <div class="login-container">
 
-      <mat-card class="mat-card" style="border-radius: 10px;">
-        <div class="left-panel">
-          <div class="logo-container">
-            <img src="assets/images/logo2.png" alt="logo" class="logo"/>
-            <h2>exsuz</h2>
-          </div>
+    <div class="windows-loading" *ngIf="isRedirecting">
+      <div class="loading-box">
+
+        <div class="win-spinner">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
         </div>
-        <mat-card-content>
-          <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="primary"></mat-progress-bar>
-          <h2  style="text-align: left;">
-            Sign in
-        </h2>
-          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            <mat-form-field appearance="standard" class="full-width">
-              <mat-label>Email</mat-label>
-                <mat-icon matPrefix class="aligned-icon">email</mat-icon>
-              <input matInput placeholder="Enter your email" type="email" formControlName="email" required>
-              <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
-                Email is required.
-              </mat-error>
-              <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
-                Please enter a valid email address.
-              </mat-error>
-            </mat-form-field>
-            
-            <mat-form-field appearance="standard" class="full-width">
-              <mat-label>Password</mat-label>
-              <mat-icon class="aligned-icon"  matPrefix>lock</mat-icon>
-              <input
-                matInput
-                [type]="passwordVisible ? 'text' : 'password'"
-                formControlName="password"
-                placeholder="Enter your password"
-              />
-              <mat-icon
-                matSuffix
-                (click)="togglePasswordVisibility()"
-                style="cursor: pointer;"
-              >
-                {{ passwordVisible ? 'visibility_off' : 'visibility' }}
-              </mat-icon>
-            
-              <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
-                Password is required.
-              </mat-error>
-              <mat-error *ngIf="loginForm.get('password')?.hasError('pattern')">
-                Password must be at least 8 characters long, include uppercase, lowercase, a number, and a special character.
-              </mat-error>
 
-            </mat-form-field>
-            <div class="spacer-top"></div>
-            <button mat-raised-button color="primary" class="signin-button"
-              [disabled]="isLoading || !loginForm.valid" type="submit">
-              Sign in
-            </button>
-    
-          </form>
-        </mat-card-content>
-          <div class="links">
-              <a routerLink="/signUpUI">Don't have an account? Sign up</a><br>
-              <a routerLink="/forgetpassword">Forgot Password?</a>
-              <br><br>
-              <a routerLink="/">Back to home</a>
+        <h3>Signing you in...</h3>
+        <p>Preparing your workspace</p>
 
-        </div>
-      </mat-card>
+      </div>
     </div>
 
-    <!-- <div *ngIf="isLoading" class="overlay">
+
+    <mat-card class="mat-card" style="border-radius: 10px;">
+      <div class="left-panel">
+        <div class="logo-container">
+          <img src="assets/images/logo2.png" alt="logo" class="logo" />
+          <h2>exsuz</h2>
+        </div>
+      </div>
+      <mat-card-content>
+        <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="primary"></mat-progress-bar>
+        <h2 style="text-align: left;">
+          Sign in
+        </h2>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <mat-form-field appearance="standard" class="full-width">
+            <mat-label>Email</mat-label>
+            <mat-icon matPrefix class="aligned-icon">email</mat-icon>
+            <input matInput placeholder="Enter your email" type="email" formControlName="email" required>
+            <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+              Email is required.
+            </mat-error>
+            <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+              Please enter a valid email address.
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="standard" class="full-width">
+            <mat-label>Password</mat-label>
+            <mat-icon class="aligned-icon" matPrefix>lock</mat-icon>
+            <input matInput [type]="passwordVisible ? 'text' : 'password'" formControlName="password"
+              placeholder="Enter your password" />
+            <mat-icon matSuffix (click)="togglePasswordVisibility()" style="cursor: pointer;">
+              {{ passwordVisible ? 'visibility_off' : 'visibility' }}
+            </mat-icon>
+
+            <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+              Password is required.
+            </mat-error>
+            <mat-error *ngIf="loginForm.get('password')?.hasError('pattern')">
+              Password must be at least 8 characters long, include uppercase, lowercase, a number, and a special
+              character.
+            </mat-error>
+
+          </mat-form-field>
+          <div class="spacer-top"></div>
+          <button mat-raised-button color="primary" class="signin-button" [disabled]="isLoading || !loginForm.valid"
+            type="submit">
+            Sign in
+          </button>
+
+        </form>
+      </mat-card-content>
+      <div class="links">
+        <a routerLink="/signUpUI">Don't have an account? Sign up</a><br>
+        <a routerLink="/forgetpassword">Forgot Password?</a>
+        <br><br>
+        <a routerLink="/">Back to home</a>
+
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- <div *ngIf="isLoading" class="overlay">
       <div class="spinner-container">
         <div class="spinner-wrapper">
           <mat-spinner diameter="90"></mat-spinner>
@@ -80,7 +94,7 @@
     </div> -->
 
 
-    
+
 
 </div>
 
