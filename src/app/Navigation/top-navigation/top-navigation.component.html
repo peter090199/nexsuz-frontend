@@ -2,21 +2,18 @@
 <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
 <mat-sidenav-container class="layout-container">
   <mat-toolbar color="primary" class="premium-toolbar">
-    <section class="mobile-header" *ngIf="isMobile">
+    <div class="mobile-header" *ngIf="isMobile">
       <app-app-logo></app-app-logo>
 
-      <div class="mobile-actions">
-        <button mat-icon-button (click)="toggleSearch()">
-          <mat-icon>search</mat-icon>
-        </button>
+      <button mat-icon-button class="toolbar-icon" (click)="searchSidenav.open()">
+        <mat-icon>search</mat-icon>
+      </button>
 
-        <button mat-icon-button (click)="toggleSidebar()">
+      <!-- <button mat-icon-button class="toolbar-icon" (click)="toggleSidebar()">
           <mat-icon>{{ isSidebarOpen ? 'close' : 'menu' }}</mat-icon>
-        </button>
-      </div>
+        </button> -->
 
-    </section>
-
+    </div>
     <!-- DESKTOP HEADER -->
     <section class="desktop-header" *ngIf="!isMobile">
       <app-app-logo></app-app-logo>
@@ -50,10 +47,17 @@
 
       <div class="desktop-actions">
         <div class="glass-box">
-
+          <!-- 
           <button mat-icon-button class="toolbar-icon" (click)="searchSidenav.open()">
             <mat-icon>search</mat-icon>
+          </button> -->
+
+          <button mat-icon-button class="toolbar-icon" matTooltip="Notifications" [matBadge]="unreadCount"
+            [matBadgeHidden]="!unreadCount" matBadgeColor="warn"
+            (click)="feature.can('UNLIMITED_JOB') ? openSearch() : sharedRoutines.openUpgradeModal()">
+           <mat-icon>search</mat-icon>
           </button>
+        
           <!-- NOTIFICATIONS -->
           <button mat-icon-button class="toolbar-icon" matTooltip="Notifications" [matBadge]="unreadCount"
             [matBadgeHidden]="!unreadCount" matBadgeColor="warn"
@@ -63,7 +67,7 @@
 
           <button mat-button class="profile-btn" [matMenuTriggerFor]="userMenu">
             <ng-container *ngIf="profileservices?.photo_pic; else defaultProfile">
-              <img [src]="profileservices?.photo_pic" class="profile-pic" />
+              <img [src]="profileservices?.photo_pic" />
             </ng-container>
             <ng-template #defaultProfile>
               <mat-icon class="default-avatar">account_circle</mat-icon>
@@ -95,24 +99,19 @@
        MAIN AREA (FIX OVERFLOW)
   ========================= -->
   <div class="layout-body">
-
     <!-- SIDEBAR -->
     <aside class="sidebar" [class.active]="isSidebarOpen">
-
       <div class="side-header">NEXSUZ</div>
-
       <div class="side-menu">
 
         <ng-container *ngFor="let link of nav_module">
 
           <a *ngIf="!link.submenus?.length" class="menu-item" [routerLink]="link.route" (click)="toggleSidebar()">
-
             <i [class]="link.icon"></i>
             <span>{{ link.description }}</span>
           </a>
 
           <div *ngIf="link.submenus?.length" class="menu-group">
-
             <div class="menu-title">
               <i [class]="link.icon"></i>
               <span>{{ link.description }}</span>
@@ -120,11 +119,9 @@
 
             <a *ngFor="let sub of link.submenus" class="submenu-item" [routerLink]="sub.route"
               (click)="toggleSidebar()">
-
               <i [class]="sub.icon"></i>
               {{ sub.description }}
             </a>
-
           </div>
 
         </ng-container>
@@ -138,7 +135,7 @@
     </aside>
 
     <!-- CONTENT AREA -->
-    <main class="page-content">
+    <main class="page-content" [class.has-mobile-footer]="isMobile">
       <router-outlet></router-outlet>
     </main>
 
@@ -160,5 +157,42 @@
   <mat-sidenav #searchSidenav position="end" mode="over" class="search-sidenav">
     <app-search></app-search>
   </mat-sidenav>
+
+  <!-- MOBILE BOTTOM TAB -->
+  <nav class="mobile-footer" *ngIf="isMobile">
+
+    <a href="/DEF-USERS/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+      <mat-icon>home</mat-icon>
+      <span>Home</span>
+    </a>
+
+    <a href="/DEF-USERS/network" routerLinkActive="active">
+      <mat-icon>groups</mat-icon>
+      <span>Nexsuz</span>
+    </a>
+
+    <!-- <button class="add-post" type="button">
+      <mat-icon>add</mat-icon>
+    </button> -->
+
+    <a href="/DEF-USERS/message" routerLinkActive="active">
+      <mat-icon [matBadge]="messageCount" [matBadgeHidden]="!messageCount" matBadgeColor="warn">
+        chat
+      </mat-icon>
+      <span>Messages</span>
+    </a>
+
+    <a href="/DEF-USERS/profile" routerLinkActive="active">
+      <img *ngIf="profileservices?.photo_pic" [src]="profileservices.photo_pic" class="footer-avatar" alt="Your avatar">
+      <mat-icon *ngIf="!profileservices?.photo_pic">account_circle</mat-icon>
+      <span>Me</span>
+    </a>
+
+    <a (click)="onLogout()" routerLinkActive="active">
+      <mat-icon>logout</mat-icon>
+      <span>Logout</span>
+    </a>
+
+  </nav>
 
 </mat-sidenav-container>

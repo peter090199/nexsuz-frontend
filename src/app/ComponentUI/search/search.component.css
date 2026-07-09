@@ -1,30 +1,464 @@
 .search-container {
-  padding: 16px;
-  width: 100%;
-   width: 500px;
-  height: 200px;
-  margin: 12px;
+  --moss: #2F5D50;
+  --moss-dark: #21443B;
+  --amber: #E8A33D;
+  --ink: #23282B;
+  --mist: #DCE5E0;
+  --paper: #FAFAF8;
 }
 
-.results {
-  margin-top: 10px;
+.search-container,
+.search-container * {
+  box-sizing: border-box;
 }
 
-.result-item {
+/* ================= FILTER BAR ================= */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin: 14px 0 18px;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--mist);
+  max-width: 100%;
+}
+
+/* ---------- Sliding pill segmented control ---------- */
+.status-toggle {
+  --toggle-pad: 10px;
+  position: relative;
+  display: inline-flex;
+  background: var(--paper);
+  border: 1px solid var(--mist);
+  border-radius: 999px;
+  padding: var(--toggle-pad);
+}
+
+.status-toggle__option {
+  position: relative;
+  z-index: 1;
+  border: none;
+  background: transparent;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  cursor: pointer;
+  border-radius: 999px;
+  transition: color 0.25s ease;
+  min-height: 32px; /* comfortable tap target without inflating visual size on desktop */
+}
+
+.status-toggle__option.is-active {
+  color: #fff;
+}
+
+.status-toggle__option:focus-visible {
+  outline: 2px solid var(--moss);
+  outline-offset: 2px;
+}
+
+.status-toggle__thumb {
+  position: absolute;
+  top: var(--toggle-pad);
+  left: var(--toggle-pad);
+  height: calc(100% - (var(--toggle-pad) * 2));
+  width: calc(33.333% - (var(--toggle-pad) * 2 / 3));
+  background: var(--moss);
+  border-radius: 999px;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.status-toggle[data-active="online"] .status-toggle__thumb {
+  transform: translateX(100%);
+}
+
+.status-toggle[data-active="offline"] .status-toggle__thumb {
+  transform: translateX(200%);
+}
+
+/* ---------- Job chips (tag/index-card style) ---------- */
+.job-filter {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.job-filter__label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--moss-dark);
+  flex: 0 0 auto;
+}
+
+.job-filter__chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+  /* fade hint so a scrollable row doesn't look like a dead end on mobile */
+  mask-image: linear-gradient(to right, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%);
+}
+
+.job-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  border: 1px solid var(--mist);
+  background: #fff;
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+}
+
+.job-chip:focus-visible {
+  outline: 2px solid var(--moss);
+  outline-offset: 2px;
+}
+
+.job-chip__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--mist);
+  flex: 0 0 auto;
+}
+
+.job-chip.is-active {
+  border-color: var(--amber);
+  background: #FDF4E6;
+}
+
+.job-chip.is-active .job-chip__dot {
+  background: var(--amber);
+}
+
+/* ================= RESULT ROWS ================= */
+.result-item {
+  min-width: 0;
+}
+
+.result-info {
+  min-width: 0;
+  flex: 1 1 auto;
+  cursor: pointer;
+}
+
+.result-info:focus-visible {
+  outline: 2px solid var(--moss);
+  outline-offset: 2px;
+}
+
+/* ---------- Avatar (responsive icon) ---------- */
+.avatar-wrap {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.avatar-wrap img {
+  width: clamp(32px, 4vw, 48px);
+  aspect-ratio: 1 / 1;   /* locks square shape before/while the image loads */
+  height: auto;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  border: 1px solid var(--mist);
+  background: var(--paper);
+  display: block;
+}
+
+.presence-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 28%;          /* scales with avatar instead of a fixed size */
+  aspect-ratio: 1 / 1;
+  min-width: 7px;
+  max-width: 11px;
+  border-radius: 50%;
+  background: #B7BFC0;
+  border: 2px solid #fff;
+}
+
+.presence-dot.is-online {
+  background: var(--moss);
+}
+
+.result-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  min-width: 0; /* lets long names/job titles truncate instead of overflowing */
+}
+
+.result-text a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.result-job {
+  font-size: 11.5px;
+  color: #7A8481;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.view-profile-btn {
+  flex: 0 0 auto;
+}
+
+/* ================= RESPONSIVE ================= */
+
+/* Large desktop: avatar gets a touch bigger since it's the primary browsing context */
+@media (min-width: 1200px) {
+  .avatar-wrap img {
+    width: clamp(40px, 3vw, 52px);
+  }
+}
+
+/* Tablets / small laptops */
+@media (max-width: 768px) {
+  .filter-bar {
+    gap: 12px;
+  }
+
+  .avatar-wrap img {
+    width: clamp(34px, 5vw, 44px);
+  }
+}
+
+/* Phones */
+@media (max-width: 640px) {
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .status-toggle {
+    width: 100%;
+  }
+
+  .status-toggle__option {
+    flex: 1;
+    text-align: center;
+    padding: 8px 8px; /* keeps tap target near 44px with min-height above */
+  }
+
+  .job-filter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .job-filter__chips {
+    width: 100%;
+  }
+
+  .job-chip {
+    padding: 7px 12px; /* larger tap target on touch screens */
+  }
+
+  .avatar-wrap img {
+    width: 36px;
+  }
+
+  .view-profile-btn {
+    padding: 0 8px;
+    min-width: unset;
+    font-size: 12px;
+  }
+}
+
+/* Small phones — stack each result row instead of just shrinking it */
+@media (max-width: 400px) {
+  .result-item {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .result-info {
+    width: 100%;
+  }
+
+  .result-text a {
+    max-width: none; /* full width is available now, no need to truncate as aggressively */
+  }
+
+  .view-profile-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .avatar-wrap img {
+    width: 32px;
+  }
+
+  .presence-dot {
+    border-width: 1.5px;
+  }
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .status-toggle__thumb {
+    transition: none;
+  }
+}
+
+/* ---------- Result row layout (previously relied on Bootstrap utility classes) ---------- */
+.result-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--mist);
+}
+
+.result-item:last-of-type {
+  border-bottom: none;
+}
+
+.result-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1 1 auto;
   cursor: pointer;
   border-radius: 8px;
 }
 
-.result-item:hover {
-  background: #f3f6ff;
+.result-info:hover {
+  background: var(--paper);
 }
 
-.result-item img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+.result-info:focus-visible {
+  outline: 2px solid var(--moss);
+  outline-offset: 2px;
+}
+
+/* ---------- History block ---------- */
+.history-block h4 {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--moss-dark);
+  margin: 18px 4px 8px;
+}
+
+.clear-btn {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid var(--mist);
+  background: #fff;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.clear-btn:hover {
+  border-color: var(--amber);
+  background: #FDF4E6;
+}
+
+.clear-btn:focus-visible {
+  outline: 2px solid var(--moss);
+  outline-offset: 2px;
+}
+
+/* ---------- Responsive: history rows on mobile ---------- */
+@media (max-width: 400px) {
+  .result-item {
+    flex-wrap: wrap;
+  }
+
+  .result-info {
+    width: 100%;
+  }
+
+  .view-profile-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+
+.search-container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 20px auto;
+}
+
+/* Google Drive Style */
+.drive-search {
+    width: 100%;
+}
+
+.drive-search .mat-form-field-flex,
+.drive-search .mat-mdc-text-field-wrapper {
+    background: #303134 !important;
+    border-radius: 30px !important;
+    min-height: 58px;
+}
+
+.drive-search .mat-form-field-outline,
+.drive-search .mdc-notched-outline {
+    color: #5f6368 !important;
+}
+
+.drive-search.mat-focused .mdc-notched-outline,
+.drive-search.mat-focused .mat-form-field-outline {
+    color: #4d525b !important;
+}
+
+.drive-search input {
+    color: #202021 !important;
+    font-size: 18px;
+}
+
+.drive-search input::placeholder {
+    color: #0b0b0b;
+}
+
+.drive-search mat-icon {
+    color: #0050b2;
+}
+
+.drive-search button {
+    color: #171717;
+}
+
+.drive-search button:hover {
+    background: rgba(255,255,255,.08);
+    border-radius: 50%;
 }

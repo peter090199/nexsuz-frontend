@@ -1,4 +1,4 @@
-<div class="search-container">
+<!-- <div class="search-container">
   <mat-form-field appearance="outline" class="w-100">
     <mat-icon matPrefix>search</mat-icon>
     <input matInput placeholder="Search users..." [(ngModel)]="searchQuery"
@@ -8,49 +8,162 @@
     </button>
   </mat-form-field>
 
-
-  <!-- RESULTS -->
   <div class="results">
     <div *ngFor="let user of users" class="result-item d-flex align-items-center justify-content-between">
-      <div class="d-flex align-items-center gap-2" (click)="onViewUser(user)">
-        <img [src]="user.photo_pic || 'assets/images/default2.png'" />
-        <a [routerLink]="this.sharedService.getProfileRouteAll(user)" matTooltip="View Profile">
+      <div class="d-flex align-items-center gap-2 result-info" (click)="onViewUser(user)">
+        <img [src]="user.photo_pic || 'assets/images/default2.png'" alt="{{ user.fullname }}" />
+        <a [routerLink]="sharedService.getProfileRouteAll(user)" matTooltip="View Profile"
+          (click)="$event.stopPropagation()">
           {{ user.fullname }}
         </a>
       </div>
-      <!-- RIGHT SIDE: VIEW PROFILE -->
-      <button mat-button color="primary" [routerLink]="this.sharedService.getProfileRouteAll(user)"
+
+      <button mat-button color="primary" class="view-profile-btn" [routerLink]="sharedService.getProfileRouteAll(user)"
         matTooltip="View Profile">
         View Profile
       </button>
-
     </div>
 
-    <!-- HISTORY -->
+    <div *ngIf="searchQuery && !users.length" class="no-results">
+      No users found for "{{ searchQuery }}"
+    </div>
+
     <div *ngIf="!searchQuery && searchHistory.length">
       <h4>Recent Searches</h4>
-      <div *ngFor="let user of searchHistory" class="result-item d-flex align-items-center justify-content-between">
-        <!-- LEFT -->
-        <div class="d-flex align-items-center gap-2" (click)="searchFromHistory(user.fullname)">
-          <img [src]="user.photo_pic || 'assets/images/default2.png'" />
-          <a [routerLink]="this.sharedService.getProfileRouteAll(user)" matTooltip="View Profile">
-            {{ user.fullname }}
+      <div *ngFor="let historyUser of searchHistory; trackBy: trackByCode"
+        class="result-item d-flex align-items-center justify-content-between">
+
+        <div class="d-flex align-items-center gap-2 result-info" (click)="searchFromHistory(historyUser)">
+          <img [src]="historyUser.photo_pic || 'assets/images/default2.png'" alt="{{ historyUser.fullname }}" />
+          <a [routerLink]="sharedService.getProfileRouteAll(historyUser)" matTooltip="View Profile"
+            (click)="$event.stopPropagation()">
+            {{ historyUser.fullname }}
           </a>
         </div>
-        <!-- RIGHT -->
-        <button mat-button color="primary" [routerLink]="this.sharedService.getProfileRouteAll(user)"
-          matTooltip="View Profile">
+
+        <button mat-button color="primary" class="view-profile-btn"
+          [routerLink]="sharedService.getProfileRouteAll(historyUser)" matTooltip="View Profile">
           View Profile
         </button>
-
       </div>
 
       <button class="clear-btn" (click)="clearHistory()">
         Clear History
       </button>
-
     </div>
 
   </div>
+</div> -->
 
+<div class="search-container">
+  <mat-form-field appearance="outline" class="drive-search">
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput placeholder="Search in Nexsuz" [(ngModel)]="searchQuery"
+      (input)="feature.can('SEARCH_ACCESS') ? onSearch() : sharedRoutines.openUpgradeModal()">
+    <button mat-icon-button matSuffix *ngIf="searchQuery" (click)="clearSearch()">
+      <mat-icon>close</mat-icon>
+    </button>
+    <button mat-icon-button matSuffix>
+      <mat-icon>tune</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar" *ngIf="searchQuery && allUsers.length">
+    <!-- STATUS / USERS FILTER: sliding pill segmented control -->
+    <div class="status-toggle" [attr.data-active]="statusFilter">
+      <button type="button" class="status-toggle__option" [class.is-active]="statusFilter === 'all'"
+        (click)="setStatusFilter('all')">
+        All
+      </button>
+      <button type="button" class="status-toggle__option" [class.is-active]="statusFilter === 'online'"
+        (click)="setStatusFilter('online')">
+        Online
+      </button>
+      <button type="button" class="status-toggle__option" [class.is-active]="statusFilter === 'offline'"
+        (click)="setStatusFilter('offline')">
+        Offline
+      </button>
+      <span class="status-toggle__thumb"></span>
+    </div>
+
+    <!-- JOB FILTER: tag chips -->
+    <div class="job-filter" *ngIf="jobTitles.length">
+      <span class="job-filter__label">Job</span>
+      <div class="job-filter__chips">
+        <button type="button" class="job-chip" [class.is-active]="jobFilter === 'all'" (click)="setJobFilter('all')">
+          <span class="job-chip__dot"></span> All roles
+        </button>
+        <button type="button" class="job-chip" *ngFor="let job of jobTitles" [class.is-active]="jobFilter === job"
+          (click)="setJobFilter(job)">
+          <span class="job-chip__dot"></span> {{ job }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results">
+    <div *ngFor="let user of users; trackBy: trackByCode"
+      class="result-item d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-2 result-info" (click)="onViewUser(user)">
+        <span class="avatar-wrap">
+          <img [src]="user.photo_pic || 'assets/images/default2.png'" alt="{{ user.fullname }}" />
+          <span class="presence-dot" [class.is-online]="user._status === 'online'"></span>
+        </span>
+        <div class="result-text">
+          <a [routerLink]="sharedService.getProfileRouteAll(user)" matTooltip="View Profile"
+            (click)="$event.stopPropagation()">
+            {{ user.fullname }}
+          </a>
+          <span class="result-job" *ngIf="user.job_title">{{ user.job_title }}</span>
+        </div>
+      </div>
+
+      <button mat-button color="primary" class="view-profile-btn" [routerLink]="sharedService.getProfileRouteAll(user)"
+        matTooltip="View Profile">
+        View Profile
+      </button>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div *ngIf="searchQuery && allUsers.length && !users.length" class="no-results">
+      No matches for "{{ searchQuery }}" with the selected filters.
+    </div>
+    <div *ngIf="searchQuery && !allUsers.length" class="no-results">
+      No users found for "{{ searchQuery }}"
+    </div>
+
+    <!-- HISTORY -->
+    <div *ngIf="!searchQuery && searchHistory.length" class="history-block">
+      <h4>Recent Searches</h4>
+
+      <div *ngFor="let historyUser of searchHistory; trackBy: trackByCode" class="result-item">
+        <div class="result-info" tabindex="0" role="button"
+          [attr.aria-label]="'View ' + historyUser.fullname + ' from search history'"
+          (click)="searchFromHistory(historyUser)" (keydown.enter)="searchFromHistory(historyUser)"
+          (keydown.space)="$event.preventDefault(); searchFromHistory(historyUser)">
+          <div class="avatar-wrap">
+            <img [src]="historyUser.photo_pic || 'assets/images/default2.png'" alt="{{ historyUser.fullname }}" />
+          </div>
+          <div class="result-text">
+            <a [routerLink]="sharedService.getProfileRouteAll(historyUser)" matTooltip="View Profile"
+              (click)="$event.stopPropagation()">
+              {{ historyUser.fullname }}
+            </a>
+            <span class="result-job" *ngIf="historyUser.job_title">{{ historyUser.job_title }}</span>
+          </div>
+        </div>
+
+        <button mat-button color="primary" class="view-profile-btn"
+          [routerLink]="sharedService.getProfileRouteAll(historyUser)" matTooltip="View Profile">
+          View Profile
+        </button>
+      </div>
+
+      <button class="clear-btn" (click)="clearHistory()">
+        Clear History
+      </button>
+    </div>
+  </div>
 </div>

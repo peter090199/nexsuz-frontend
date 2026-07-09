@@ -62,7 +62,6 @@ export class AppComponent implements OnInit {
     this.translate.addLangs(['en', 'fr']);
     this.translate.setDefaultLang('en');
   }
-
   ngOnInit(): void {
 
     this.cookieService.set('myCookie', 'cookieValue', {
@@ -76,8 +75,12 @@ export class AppComponent implements OnInit {
     this.showWebsiteChat = localStorage.getItem('chatmessages') === 'true';
 
     if (this.is_online) {
-      this.loadFeatures();
       this.loadUserID();
+
+      // Delay slightly so the token/session is ready
+      setTimeout(() => {
+        this.loadFeatures();
+      }, 300);
     }
 
     this.echoService.notificationCount$
@@ -85,7 +88,6 @@ export class AppComponent implements OnInit {
         this.notificationCounts = count;
       });
   }
-
 
   private stopUpgradePopup(): void {
 

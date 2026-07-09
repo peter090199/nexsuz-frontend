@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationsService } from 'src/app/services/Global/notifications.service';
 import { SigInService } from 'src/app/services/signIn/sig-in.service';
 import { GoogleAuthService } from 'src/app/services/google/google-auth.service';
+import { FeatureService } from 'src/app/services/AccountPlan/feature.service';
+import { SubscriptionService } from 'src/app/services/AccountPlan/subscription.service';
 
 @Component({
   selector: 'app-sign-in-ui',
@@ -21,7 +23,8 @@ export class SignInUIComponent implements OnInit {
     private sigInService: SigInService,
     private notificationService: NotificationsService,
     private googleAuth: GoogleAuthService,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute, private subscriptionService: SubscriptionService,
+    private featureService: FeatureService
 
   ) { }
 
@@ -49,7 +52,7 @@ export class SignInUIComponent implements OnInit {
   }
 
   isRedirecting = false;
-  onSubmit(): void {
+  onSubmitcorrect(): void {
     if (this.loginForm.invalid) {
       return;
     }
@@ -70,14 +73,16 @@ export class SignInUIComponent implements OnInit {
         sessionStorage.setItem('role', res.role);
         sessionStorage.setItem('is_online', String(res.is_online ?? true));
         localStorage.setItem('chatmessages', 'true');
-      
+
         // No active subscription -> Show Activate Free Plan dialog
-        if (!res.has_subscription) {
-          const route = `/${res.role}/subscription`;
-          if (this.router.url !== route) {
-            this.router.navigate([route]);
+        if (res.role == "DEF-USERS") {
+          if (!res.has_subscription) {
+            const route = `/${res.role}/subscription`;
+            if (this.router.url !== route) {
+              this.router.navigate([route]);
+            }
+            return;
           }
-          return;
         }
         // Show Windows loading
         this.isRedirecting = true;
@@ -127,6 +132,109 @@ export class SignInUIComponent implements OnInit {
     });
 
   }
+
+ 
+  onSubmit(): void {
+    if (this.loginForm.invalid) {
+      return;
+    }
+    this.isLoading = true;
+    const { email, password } = this.loginForm.value;
+    this.sigInService.signin(email, password).subscribe({
+      next: (res: any) => {
+        this.isLoading = false;
+        if (!res || !res.success) {
+          this.notificationService.toastPopUpError(
+            res?.message || 'Login failed'
+          );
+          return;
+        }
+
+        // Save session
+        sessionStorage.setItem('token', res.token);
+        sessionStorage.setItem('role', res.role);
+        sessionStorage.setItem('is_online', String(res.is_online ?? true));
+        localStorage.setItem('chatmessages', 'true');
+
+        // User has no subscription
+        if (res.role === 'DEF-USERS' && !res.has_subscription) {
+          this.router.navigate([`/${res.role}/subscription`]);
+          return;
+        }
+        // Load subscription features before redirect
+        this.subscriptionService.myFeatures().subscribe({
+          next: (featureRes: any) => {
+            if (featureRes.success) {
+              this.featureService.set(featureRes.features);
+            } else {
+              this.featureService.set([]);
+            }
+            this.redirectUser(res.role);
+
+          },
+
+          error: () => {
+            // Continue login even if feature API fails
+            this.featureService.set([]);
+            this.redirectUser(res.role);
+          }
+
+        });
+
+      },
+
+      error: (err) => {
+
+        this.isLoading = false;
+
+        const errorMsg =
+          err.status === 401
+            ? err.error?.message || 'Invalid email or password'
+            : err.message || 'Something went wrong';
+
+        this.notificationService.toastPopUpError(errorMsg);
+
+      }
+
+    });
+
+  }
+
+  private redirectUser(role: string): void {
+
+    this.isRedirecting = true;
+
+    setTimeout(() => {
+
+      switch (role) {
+
+        case 'DEF-CLIENT':
+          this.router.navigate(['/DEF-CLIENT/client-dashboard']);
+          break;
+
+        case 'DEF-ADMIN':
+          this.router.navigate(['/DEF-ADMIN/admin-dashboard']);
+          break;
+
+        case 'DEF-MASTERADMIN':
+          this.router.navigate(['/DEF-MASTERADMIN/admin-dashboard']);
+          break;
+
+        case 'DEF-USERS':
+          this.router.navigate(['/DEF-USERS/home']);
+          break;
+
+        default:
+          this.router.navigate(['/homepage']);
+          break;
+
+      }
+
+    }, 1200);
+
+  }
+
+
 
   onSubmitxxx(): void {
     if (this.loginForm.invalid) return;

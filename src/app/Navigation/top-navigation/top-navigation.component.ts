@@ -19,6 +19,8 @@ import { SharedRoutinesService } from 'src/app/services/Function/shared-routines
 import { ProfileService } from 'src/app/services/Profile/profile.service';
 import { CurriculumVitaeService } from 'src/app/services/CV/curriculum-vitae.service';
 import { FeatureService } from 'src/app/services/AccountPlan/feature.service';
+import { SearchModalComponent } from 'src/app/ComponentUI/search/search-modal/search-modal.component';
+import { SearchComponent } from 'src/app/ComponentUI/search/search.component';
 
 export interface User {
   name: string;
@@ -398,6 +400,26 @@ refreshMenu(icon: string) {
   }
   
   
+  onAddPost(): void {
+  // e.g. open a modal, or navigate to a create-post route
+  this.router.navigate(['/post/new']);
+}
+
+searchKeyword = '';
+
+search(): void {
+  if (!this.searchKeyword.trim()) {
+    return;
+  }
+
+  console.log(this.searchKeyword);
+
+  // Example
+  // this.router.navigate(['/search'], {
+  //   queryParams: { q: this.searchKeyword }
+  // });
+}
+
   onLogout(): void {
     this.authService.logout().subscribe({
       next: () => {
@@ -440,6 +462,7 @@ refreshMenu(icon: string) {
   
   chatHistory: { [key: number]: any[] } = {};
 
+
   openNotifications() {
     const dialogRef = this.dialog.open(NotificationComponent, {
       width: '400px',
@@ -452,6 +475,20 @@ refreshMenu(icon: string) {
       this.loadRealtimeCounts();
     });
   }
+
+    openSearch() {
+    const dialogRef = this.dialog.open(SearchComponent, {
+      width: '650px',
+      minHeight: 'auto',
+      maxHeight: '90vh',
+      position: { top: '40px', right: '180px' }, 
+      panelClass: 'custom-notification-popup',
+    });
+    dialogRef.afterClosed().subscribe(() => {
+    //  this.loadRealtimeCounts();
+    });
+  }
+  
   
 
   

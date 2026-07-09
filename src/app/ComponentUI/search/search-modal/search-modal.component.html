@@ -1,9 +1,32 @@
-<h2 mat-dialog-title>{{ user.fullname }}</h2>
-<mat-dialog-content>
-    <img [src]="user.photo_pic" alt="Profile Picture" class="user-img" />
-    <p><strong>Status:</strong> {{ user.status }}</p>
-    <p><strong>Skills:</strong> {{ user.skills }}</p>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-    <button mat-button (click)="closeModal()">Close</button>
-</mat-dialog-actions>
+<!-- <mat-dialog-content class="search-dialog">
+    <div class="search-box">
+        <button mat-icon-button>
+            <mat-icon>search</mat-icon>
+        </button>
+        <input matInput placeholder="Search Nexsuz..." [(ngModel)]="searchKeyword" (keyup)="searchUsers()" />
+        <button mat-icon-button *ngIf="searchKeyword" (click)="clearSearch()">
+            <mat-icon>close</mat-icon>
+        </button>
+        <button mat-icon-button>
+            <mat-icon>tune</mat-icon>
+        </button>
+    </div>
+
+    <div class="result-list" *ngIf="filteredUsers.length">
+        <div class="result-item" *ngFor="let user of filteredUsers" (click)="selectUser(user)">
+            <img [src]="user.photo_pic" class="avatar">
+            <div class="details">
+                <h4>{{user.fullname}}</h4>
+                <p>{{user.status}}</p>
+                <small>{{user.skills}}</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="empty" *ngIf="!filteredUsers.length">
+        No results found
+    </div>
+
+</mat-dialog-content> -->
+
+<app-search></app-search>

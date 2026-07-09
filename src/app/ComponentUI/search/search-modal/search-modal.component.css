@@ -1,61 +1,87 @@
-/* Centering content */
-mat-dialog-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  
-  /* Responsive user image */
-  .user-img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 10px;
-  }
-  
-  /* Typography adjustments */
-  p {
-    margin: 5px 0;
-    font-size: 16px;
-    color: #333;
-  }
-  
-  /* Responsive button */
-  mat-dialog-actions {
-    display: flex;
-    justify-content: flex-end;
-    width: 100%;
-  }
-  
-  button {
-    background-color: #3f51b5;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  
-  button:hover {
-    background-color: #303f9f;
-  }
-  
-  /* Responsive for smaller screens */
-  @media (max-width: 480px) {
-    .user-img {
-      width: 80px;
-      height: 80px;
-    }
-  
-    p {
-      font-size: 14px;
-    }
-  
-    button {
-      padding: 6px 12px;
-    }
-  }
-  
+.search-dialog {
+  background: #fdfdfd;
+  color: #2304eb;
+  padding: 20px;
+  width: 700px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background: #f5eeee;
+  border-radius: 35px;
+  margin-bottom: 20px;
+}
+
+.search-box input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #0d0d0d;
+  font-size: 16px;
+  padding: 10px;
+
+}
+
+.search-box input::placeholder {
+  color: #050505;
+
+}
+
+.search-box mat-icon {
+  color: #ef3406;
+}
+
+.result-list {
+  max-height: 450px;
+  overflow: auto;
+
+}
+
+.result-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.result-item:hover {
+  background: #d2cfcf;
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 15px;
+}
+
+.details {
+  flex: 1;
+}
+
+.details h4 {
+  margin: 0;
+  font-size: 16px;
+  color: rgb(25, 24, 24);
+}
+
+.details p {
+  margin: 4px 0;
+  color: #0e0e0e;
+}
+
+.details small {
+  color: #0e0e0e;
+}
+
+.empty {
+  text-align: center;
+  color: #0e0e0e;
+  padding: 40px;
+
+}

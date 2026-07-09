@@ -71,9 +71,10 @@ export class AppliedQuestionsService {
   //appliedjob
     saveAppliedJob(formData: FormData): Observable<any> {
     const headers = this.createHeaders();
-    return this.http.post(`${_url}saveAppliedJob`, formData, { headers }).pipe(
-      catchError(error => this.handleAuthError(error))
-    );
+     return this.http.post(`${_url}saveAppliedJob`,formData,{headers});
+    //return this.http.post(`${_url}saveAppliedJob`, formData, { headers }).pipe(
+      // catchError(error => this.handleAuthError(error))
+    //);
   }
 
 }

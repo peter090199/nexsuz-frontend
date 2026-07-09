@@ -352,7 +352,7 @@ import { MatStepper } from '@angular/material/stepper';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { Observable, Subject } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { finalize, map, startWith } from 'rxjs/operators';
 
 import { CountryCodesService } from 'src/app/services/country-codes.service';
 import { NotificationsService } from 'src/app/services/Global/notifications.service';
@@ -404,8 +404,8 @@ export class ApplyJobComponent implements OnInit, OnDestroy {
     private profileService: ProfileService,
     private appliedService: AppliedQuestionsService,
     private countrycodeServices: CountryCodesService,
-    private route: ActivatedRoute,public sharedRoutines: SharedRoutinesService
-  ) {}
+    private route: ActivatedRoute, public sharedRoutines: SharedRoutinesService
+  ) { }
 
   // =========================
   // INIT
@@ -457,23 +457,35 @@ export class ApplyJobComponent implements OnInit, OnDestroy {
   // =========================
   fetchJobPosting(transNo: string): void {
     this.loading = true;
-
     this.appliedService.getJobPostingByTransNo(transNo).subscribe({
-      next: (res) => {
+      next: (res: any) => {
+        this.loading = false;
+        if (!res) {
+          this.notificationService.toastrError('No response from server.');
+          return;
+        }
         if (res.success) {
-          this.job = res.job;
-
-          // ✅ IMPORTANT: include answer_type
-          this.questions = (res.questions || []).map((q: any) => ({
+          this.job = res.job ?? {};
+          this.questions = (res.questions ?? []).map((q: any) => ({
             ...q,
             answer: '',
-            answer_type: q.answer_type || 'general'
+            answer_type: q.answer_type ?? 'general'
           }));
+        } else {
+          this.notificationService.toastrWarning(
+            res.message || 'Job not found.'
+          );
         }
-        this.loading = false;
       },
-      error: () => {
+
+      error: (err: any) => {
         this.loading = false;
+        this.notificationService.toastrError(
+          err?.error?.message ||
+          err?.message ||
+          'Unable to load job.'
+        );
+
       }
     });
   }
@@ -490,18 +502,25 @@ export class ApplyJobComponent implements OnInit, OnDestroy {
   // =========================
   loadProfile(): void {
     this.profileService.getProfileByUserOnly().subscribe({
-      next: (res) => {
-        if (res?.success) {
-          const profile = res.message;
+      next: (res: any) => {
+        if (!res) {
+          return;
+        }
+        if (res.success) {
+          const profile = res.message ?? {};
           this.profiles = profile;
-
           this.personalForm.patchValue({
-            email: profile.email || '',
-            phone_number: profile.contact_no || ''
+            email: profile.email ?? '',
+            phone_number: profile.contact_no ?? ''
           });
         }
+      },
+      error: (err: any) => {
+        console.error(err);
       }
+
     });
+
   }
 
   // =========================
@@ -509,20 +528,23 @@ export class ApplyJobComponent implements OnInit, OnDestroy {
   // =========================
   loadCountryCodes(): void {
     this.countrycodeServices.loadCountryCodes().subscribe({
-      next: (res) => {
-        if (res?.phones) {
-          this.countryCodes = Object.entries(res.phones).map(([code, dial]: any) => ({
-            label: `${code} (+${dial})`,
-            value: `+${dial}`
-          }));
+      next: (res: any) => {
+        if (!res || !res.phones) {
+          this.countryCodes = [];
+          return;
         }
+        this.countryCodes = Object.entries(res.phones).map(([code, dial]: any) => ({
+          label: `${code} (+${dial})`,
+          value: `+${dial}`
+        }));
       },
-      error: () => {
+      error: (err: any) => {
         this.countryCodes = [];
       }
-    });
-  }
 
+    });
+
+  }
   private _filter(value: string) {
     const filterValue = value.toLowerCase();
     return this.countryCodes.filter(c =>
@@ -584,19 +606,93 @@ export class ApplyJobComponent implements OnInit, OnDestroy {
   // =========================
   // SUBMIT
   // =========================
+
+
+  // onSubmit(): void {
+
+  //   if (this.personalForm.invalid) {
+  //     this.notificationService.toastrError("Complete personal information.");
+  //     return;
+  //   }
+
+  //   if (!this.selectedFile) {
+  //     this.notificationService.toastrError("Please upload your resume.");
+  //     return;
+  //   }
+
+  //   if (!this.areAllQuestionsAnswered()) {
+  //     this.notificationService.toastrError("Please answer all questions.");
+  //     return;
+  //   }
+  //   this.loading = true;
+  //   const formData = new FormData();
+  //   formData.append('resume_pdf', this.selectedFile);
+  //   formData.append('job_name', this.job?.job_name ?? '');
+  //   formData.append('email', this.personalForm.value.email ?? '');
+  //   formData.append('country_code', this.personalForm.value.country_code ?? '');
+  //   formData.append('phone_number', this.personalForm.value.phone_number ?? '');
+  //   formData.append('transNo', this.job?.transNo ?? '');
+
+  //   this.questions.forEach((q: any, index: number) => {
+
+  //     formData.append(
+  //       `answers[${index}][question_id]`,
+  //       String(q.question_id ?? '')
+  //     );
+
+  //     formData.append(
+  //       `answers[${index}][answer_text]`,
+  //       q.answer ?? ''
+  //     );
+
+  //     formData.append(
+  //       `answers[${index}][answer_type]`,
+  //       q.answer_type ?? 'general'
+  //     );
+
+  //   });
+  //   this.appliedService.saveAppliedJob(formData).subscribe({
+  //     next: (res: any) => {
+  //       this.loading = false;
+  //       if (res.success == false) {
+  //         this.notificationService.toastrError(res.message);
+  //         return;
+  //       }
+  //       if (res.success == true) {
+  //         this.notificationService.toastrSuccess(res.message);
+  //         if (res.transNo) {
+  //           this.router.navigate(['/recommended-jobs',res.transNo]);
+  //         }
+  //       } else {
+  //         this.notificationService.toastrError(
+  //           res.message ?? 'Application failed.'
+  //         );
+  //       }
+  //     },
+  //     error: (err: any) => {
+  //       this.loading = false;
+  //     }
+  //   });
+  // }
+
   onSubmit(): void {
+
+    if (this.loading) {
+      return;
+    }
+
     if (this.personalForm.invalid) {
-      this.notificationService.toastrError("Complete personal info");
+      this.notificationService.toastrError('Complete personal information.');
       return;
     }
 
     if (!this.selectedFile) {
-      this.notificationService.toastrError("Upload resume");
+      this.notificationService.toastrError('Please upload your resume.');
       return;
     }
 
     if (!this.areAllQuestionsAnswered()) {
-      this.notificationService.toastrError("Answer all questions");
+      this.notificationService.toastrError('Please answer all questions.');
       return;
     }
 
@@ -606,29 +702,93 @@ export class ApplyJobComponent implements OnInit, OnDestroy {
 
     formData.append('resume_pdf', this.selectedFile);
     formData.append('job_name', this.job?.job_name || '');
-    formData.append('email', this.personalForm.value.email);
-    formData.append('country_code', this.personalForm.value.country_code);
-    formData.append('phone_number', this.personalForm.value.phone_number);
+    formData.append('email', this.personalForm.get('email')?.value || '');
+    formData.append('country_code', this.personalForm.get('country_code')?.value || '');
+    formData.append('phone_number', this.personalForm.get('phone_number')?.value || '');
     formData.append('transNo', this.job?.transNo || '');
 
-    // ✅ SAVE ANSWERS + TYPE
-    this.questions.forEach((q, index) => {
-      formData.append(`answers[${index}][question_id]`, q.question_id);
-      formData.append(`answers[${index}][answer_text]`, q.answer);
-      formData.append(`answers[${index}][answer_type]`, q.answer_type);
+    this.questions.forEach((question: any, index: number) => {
+
+      formData.append(
+        `answers[${index}][question_id]`,
+        String(question.question_id)
+      );
+
+      formData.append(
+        `answers[${index}][answer_text]`,
+        question.answer ?? ''
+      );
+
+      formData.append(
+        `answers[${index}][answer_type]`,
+        question.answer_type ?? 'general'
+      );
+
     });
 
-    this.appliedService.saveAppliedJob(formData).subscribe({
-      next: (res: any) => {
-        this.notificationService.toastrSuccess(res.message);
-        this.loading = false;
-        this.router.navigate(['/recommended-jobs', res.transNo]);
-      },
-      error: () => {
-        this.notificationService.toastrError("Submission failed");
-        this.loading = false;
-      }
-    });
+    this.appliedService
+      .saveAppliedJob(formData)
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+        })
+      )
+      .subscribe({
+
+        next: (res: any) => {
+
+          if (!res.success) {
+            this.notificationService.toastrWarning(
+              res.message
+            );
+            return;
+          }
+
+          this.notificationService.toastrSuccess(res.message);
+
+          if (res.transNo) {
+            this.router.navigate(['/recommended-jobs', res.transNo]);
+          }
+
+        },
+
+        error: (err) => {
+
+          console.error(err);
+
+          if (err.status === 422) {
+
+            const errors = err.error.errors;
+
+            if (errors) {
+              Object.keys(errors).forEach(key => {
+                this.notificationService.toastrWarning(errors[key][0]);
+              });
+            } else {
+              this.notificationService.toastrWarning(err.error.message);
+            }
+
+            return;
+          }
+
+          if (err.status === 409) {
+            this.notificationService.toastrError(err.error.message);
+            return;
+          }
+
+          if (err.status === 403) {
+            this.notificationService.toastrError(err.error.message);
+            return;
+          }
+
+          this.notificationService.toastrError(
+            err.error?.message || 'Something went wrong. Please try again.'
+          );
+
+        }
+
+      });
+
   }
 
   ngOnDestroy(): void {
