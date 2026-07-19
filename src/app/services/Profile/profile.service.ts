@@ -80,10 +80,12 @@ getCompanyProfile(code: any): Observable<any> {
   }
   
   //follow users
-  AddFollow(code: any): Observable<any> {
+  AddFollow(code: string): Observable<any> {
     const headers = this.createHeaders();
     return this.http.put<any>(`${_url}follow/${code}`, {}, { headers });
   }
+
+
 
   Unfollow(id: number): Observable<any> {
     const headers = this.createHeaders();

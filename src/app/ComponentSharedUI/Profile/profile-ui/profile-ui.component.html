@@ -35,20 +35,25 @@
         </button>
 
         <button mat-flat-button [color]="
-          followStatus === 'accepted' ? 'accent' :
-          followStatus === 'pending' ? 'warn' : 'primary'" *ngIf="currentUserCode !== this.code"
-          (click)="AddFollow(code, followStatus, profiles.fname, profiles.lname)"
-          [disabled]="followStatus === 'pending'">
-          <mat-icon *ngIf="followStatus === 'none' || followStatus === 'cancelled'">person_add</mat-icon>
-          <mat-icon *ngIf="followStatus === 'pending'" class="hourglass-animated">hourglass_top</mat-icon>
-          <mat-icon *ngIf="followStatus === 'accepted'">check_circle</mat-icon>
+            followStatus === 'accepted'
+              ? 'accent'
+              : followStatus === 'pending'
+              ? 'warn'
+              : 'primary'
+          " *ngIf="currentUserCode !== code" (click)="AddFollow(code, profiles, followStatus)">
 
-          <ng-container [ngSwitch]="followStatus">
-            <span *ngSwitchCase="'none'">Connect</span>
-            <span *ngSwitchCase="'pending'">Pending</span>
+          <mat-icon [ngSwitch]="followStatus">
+            <ng-container *ngSwitchCase="'accepted'">check_circle</ng-container>
+            <ng-container *ngSwitchCase="'pending'">hourglass_top</ng-container>
+            <ng-container *ngSwitchDefault>person_add</ng-container>
+          </mat-icon>
+
+          <span [ngSwitch]="followStatus">
             <span *ngSwitchCase="'accepted'">Connected</span>
-            <span *ngSwitchCase="'cancelled'">Connect</span>
-          </ng-container>
+            <span *ngSwitchCase="'pending'">Pending</span>
+            <span *ngSwitchDefault>Connect</span>
+          </span>
+
         </button>
       </div>
     </div>

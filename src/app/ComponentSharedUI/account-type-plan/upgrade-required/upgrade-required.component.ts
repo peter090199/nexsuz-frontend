@@ -1,65 +1,5 @@
-// import { Component } from '@angular/core';
-// import { MatDialogRef } from '@angular/material/dialog';
-// import { Router } from '@angular/router';
-// import { UserPlanService } from 'src/app/services/AccountPlan/user-plan.service';
-// import { NotificationsService } from 'src/app/services/Global/notifications.service';
-// import { finalize } from 'rxjs/operators';
-
-// @Component({
-//   selector: 'app-upgrade-required',
-//   templateUrl: './upgrade-required.component.html',
-//   styleUrls: ['./upgrade-required.component.css']
-// })
-// export class UpgradeRequiredComponent {
-
-//   loading = false;
-
-//   constructor(
-//     private router: Router,
-//     private userPlanService: UserPlanService,
-//     private notification: NotificationsService,
-//     private dialogRef: MatDialogRef<UpgradeRequiredComponent>
-//   ) {}
-
-//   activateFreePlan(): void {
-//     if (this.loading) {
-//       return;
-//     }
-//     this.loading = true;
-//     this.userPlanService.activateFreePlan()
-//       .pipe(
-//         finalize(() => this.loading = false)
-//       )
-//       .subscribe({
-//         next: (res: any) => {
-//           if (res.success) {
-//             this.notification.toastrSuccess(res.message);
-//             this.dialogRef.close(true);
-//           } else {
-//             this.notification.toastrError(res.message);
-//           }
-//         },
-//         error: (err) => {
-//           this.notification.toastrError(
-//             err.error?.message || 'Unable to activate free plan.'
-//           );
-//         }
-//       });
-
-//   }
-
-//   viewPlans(): void {
-//     this.dialogRef.close();
-//     this.router.navigate(['DEF-USERS/settings']);
-
-//   }
-
-// }
-
-
 import { Component, OnInit, Optional } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 
 import { UserPlanService } from 'src/app/services/AccountPlan/user-plan.service';
@@ -73,38 +13,33 @@ import { NotificationsService } from 'src/app/services/Global/notifications.serv
 export class UpgradeRequiredComponent implements OnInit {
 
   loading = false;
+  activated = false;
 
   constructor(
-    private router: Router,
     private userPlanService: UserPlanService,
     private notification: NotificationsService,
-    @Optional() private dialogRef: MatDialogRef<UpgradeRequiredComponent>
-  ) {  }
-
+    @Optional() private dialogRef?: MatDialogRef<UpgradeRequiredComponent>
+  ) { }
 
   ngOnInit(): void {
-    this.loading = true;
-    setTimeout(() => {
-      this.loading = false;
-    }, 2000);
-
+    // Remove this if you don't want auto activation
+    // this.activateFreePlan();
   }
 
   activateFreePlan(): void {
-
-    if (this.loading) {
+    if (this.loading || this.activated) {
       return;
     }
-
     this.loading = true;
-
     this.userPlanService.activateFreePlan()
       .pipe(
-        finalize(() => this.loading = false)
+        finalize(() => {
+          this.loading = false;
+        })
       )
       .subscribe({
         next: (res: any) => {
-
+          console.log(res);
           if (!res.success) {
             this.notification.toastrError(
               res.message || 'Unable to activate free plan.'
@@ -112,26 +47,62 @@ export class UpgradeRequiredComponent implements OnInit {
             return;
           }
           this.notification.toastrSuccess(
-            res.message || 'Free plan activated successfully.'
+            res.message || 'Free Plan Activated Successfully.'
           );
-          this.dialogRef?.close(true);
-          if (res.redirect_url) {
-            this.router.navigateByUrl(res.redirect_url);
-          }
+          this.activated = true;
         },
+
         error: (err) => {
           this.notification.toastrError(
-            err?.error?.message || 'Unable to activate free plan.'
+            err.error?.message || 'Unable to activate free plan.'
           );
 
         }
+
       });
 
   }
 
+  refreshPage(): void {
+
+    this.dialogRef?.close(true);
+
+    const role = sessionStorage.getItem('role');
+
+    let url = '/';
+
+    switch (role) {
+
+      case 'DEF-USERS':
+        url = '/DEF-USERS/home';
+        break;
+
+      case 'DEF-CLIENT':
+        url = '/DEF-CLIENT/client-dashboard';
+        break;
+
+      case 'DEF-ADMIN':
+        url = '/DEF-ADMIN/admin-dashboard';
+        break;
+
+      case 'DEF-MASTERADMIN':
+        url = '/DEF-MASTERADMIN/admin-dashboard';
+        break;
+
+      default:
+        url = '/';
+    }
+
+    window.location.href = url;
+
+  }
+
   viewPlans(): void {
+
     this.dialogRef?.close();
-    this.router.navigate(['/DEF-USERS/settings']);
+
+    window.location.href = '/DEF-USERS/settings';
+
   }
 
 }

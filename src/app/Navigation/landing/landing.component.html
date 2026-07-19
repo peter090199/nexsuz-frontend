@@ -1,0 +1,118 @@
+<mat-sidenav-container class="landing-container">
+  <!-- Mobile Sidebar -->
+  <mat-sidenav #drawer mode="over" position="end" class="mobile-sidebar">
+    <div class="sidebar-header">
+      <app-app-logo></app-app-logo>
+      <div class="spacer"></div>
+      <button mat-icon-button (click)="drawer.close()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="sidebar-content">
+      <a class="sidebar-link" href="#home-section" (click)="scrollToSection($event,'home-section'); drawer.close()">
+        <mat-icon>home</mat-icon>
+        <span>Home</span>
+      </a>
+
+      <a class="sidebar-link" href="#about-section" (click)="scrollToSection($event,'about-section'); drawer.close()">
+        <mat-icon>info</mat-icon>
+        <span>About</span>
+      </a>
+
+      <a class="sidebar-link" href="#pricing-section"
+        (click)="scrollToSection($event,'pricing-section'); drawer.close()">
+        <mat-icon>payments</mat-icon>
+        <span>Pricing</span>
+      </a>
+
+      <a class="sidebar-link" href="#jobs-section" (click)="scrollToSection($event,'jobs-section'); drawer.close()">
+        <mat-icon>work</mat-icon>
+        <span>Jobs</span>
+      </a>
+
+      <a class="sidebar-link" href="#client-section" (click)="scrollToSection($event,'client-section'); drawer.close()">
+        <mat-icon>groups</mat-icon>
+        <span>Clients</span>
+      </a>
+
+      <div class="sidebar-divider"></div>
+
+      <button mat-raised-button color="primary" routerLink="/signin" (click)="drawer.close()">
+        Sign In
+      </button>
+
+      <button mat-raised-button routerLink="/signup" (click)="drawer.close()">
+        Sign Up
+      </button>
+
+      <div class="sidebar-language">
+        <app-translate></app-translate>
+      </div>
+    </div>
+  </mat-sidenav>
+
+  <!-- Main -->
+  <mat-sidenav-content>
+    <header class="fixed-header">
+      <mat-toolbar class="premium-toolbar">
+        <app-app-logo></app-app-logo>
+        <!-- Desktop -->
+        <nav class="desktop-nav" *ngIf="!isMobile">
+          <span class="example-spacer"></span>
+
+          <a href="#home-section" (click)="scrollToSection($event,'home-section')">
+            Home
+          </a>
+
+          <a href="#about-section" (click)="scrollToSection($event,'about-section')">
+            About
+          </a>
+
+          <a href="#pricing-section" (click)="scrollToSection($event,'pricing-section')">
+            Pricing
+          </a>
+
+          <a href="#jobs-section" (click)="scrollToSection($event,'jobs-section')">
+            Jobs
+          </a>
+
+          <a href="#client-section" (click)="scrollToSection($event,'client-section')">
+            Clients
+          </a>
+
+          <span class="example-spacer"></span>
+
+          <button mat-button class="btn-signin" routerLink="/signin">
+            {{ 'SIGN_IN' | translate }}
+          </button>
+
+          <button mat-button class="btn-signin" routerLink="/signup">
+            {{ 'SIGN_UP' | translate }}
+          </button>
+
+          <app-translate></app-translate>
+
+        </nav>
+
+        <!-- Mobile -->
+        <button *ngIf="isMobile" mat-icon-button (click)="drawer.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+
+      </mat-toolbar>
+
+    </header>
+
+    <!-- Page Content -->
+    <main class="page-content">
+      <app-homesection id="home-section"></app-homesection>
+      <app-about id="about-section"></app-about>
+      <app-pricing id="pricing-section"></app-pricing>
+      <app-jobsection id="jobs-section"></app-jobsection>
+      <app-clients id="client-section"></app-clients>
+    </main>
+
+    
+  </mat-sidenav-content>
+</mat-sidenav-container>

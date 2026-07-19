@@ -88,119 +88,104 @@ export class AppComponent implements OnInit {
         this.notificationCounts = count;
       });
   }
-
   private stopUpgradePopup(): void {
-
     if (this.upgradeDialogTimer) {
       this.upgradeDialogTimer.unsubscribe();
       this.upgradeDialogTimer = undefined;
     }
+
   }
 
   private startUpgradePopup(): void {
+
+    // Already started
     if (this.upgradeDialogTimer) {
       return;
     }
 
     this.upgradeDialogTimer = interval(3000).subscribe(() => {
+
       const role = this.sharedService.getRole();
-      if (role === 'DEF-ADMIN' || role === 'DEF-MASTERADMIN' || role === 'DEF-CLIENT') {
+
+      // Don't redirect these roles
+      if (
+        role === 'DEF-ADMIN' ||
+        role === 'DEF-MASTERADMIN' ||
+        role === 'DEF-CLIENT'
+      ) {
+        this.stopUpgradePopup();
         return;
       }
-      const route = `/${role}/subscription`;
-      if (this.router.url !== route) {
-        this.router.navigate([route]);
+
+      const subscriptionRoute = `/${role}/subscription`;
+
+      // Already on subscription page
+      if (this.router.url === subscriptionRoute) {
+        return;
       }
+
+      this.router.navigateByUrl(subscriptionRoute);
+
     });
-
-
-
-    // this.upgradeDialogTimer = interval(3000).subscribe(() => {
-    //   if (this.dialog.openDialogs.length === 0) {
-    //     // this.dialog.open(UpgradeRequiredComponent, {
-    //     //   width: '600px',
-    //     //   maxWidth: '95vw',
-    //     //   disableClose: true,
-    //     //   autoFocus: false,
-    //     //   panelClass: 'upgrade-dialog'
-    //     // });
-    //   }
-    // });
 
   }
 
   loadFeatures(): void {
     this.subscriptionService.myFeatures().subscribe({
       next: (res: any) => {
-        if (res.success) {
-          this.featureService.set(res.features);
-          // User has subscription
+        console.log('Features:', res);
+        if (res && res.success === true) {
+          this.featureService.set(res.features || []);
+          // Stop redirect timer
           this.stopUpgradePopup();
+        } else {
+          // No active subscription
+          this.featureService.set([]);
+          this.startUpgradePopup();
         }
       },
-      error: (err) => {
-
+      error: (err: any) => {
         this.featureService.set([]);
-
         if (
           err.status === 403 ||
           err.status === 404 ||
+          err.status === 401 ||
           err.error?.message === 'No active subscription found.'
         ) {
           this.startUpgradePopup();
         }
       }
-
     });
-
   }
 
-
   loadUserID(): void {
-
     this.authService.getData().subscribe({
-
       next: (res: any) => {
-
         this.userId = res.id;
-
         if (this.userId) {
           sessionStorage.setItem(
             'userId',
             this.userId.toString()
           );
         }
-
       },
-
       error: err => console.error(err)
-
     });
-
   }
 
   onLogout(): void {
-
     this.logoutServices.logout().subscribe({
-
       next: () => {
-
         sessionStorage.clear();
         localStorage.clear();
-
         localStorage.setItem(
           'showWebsiteChat',
           'false'
         );
-
         window.location.href = '/homepage';
-
       },
-
       error: err => console.error(err)
-
     });
-
   }
 
   switchLanguage(language: string): void {

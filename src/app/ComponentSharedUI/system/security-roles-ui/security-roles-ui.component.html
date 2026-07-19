@@ -1,76 +1,40 @@
-<div class="form-container">
-
-  <div *ngIf="error" class="alert alert-danger text-center">
-    {{ error }}
-  </div>
+<section class="roles-panel">
+  <div *ngIf="loading" class="state-msg loading">Loading permissions…</div>
+  <div *ngIf="error" class="state-msg error">{{ error }}</div>
 
   <form (ngSubmit)="submitData()" *ngIf="!loading && !error">
+    <div class="tree-section" *ngFor="let section of securityRoles">
+      <div class="section-head">
+        <span class="dot"></span>
+        <h4>{{ section.desc_code | titlecase }}</h4>
+        <span class="badge" *ngIf="selectedCount(section) as n">{{ n }} selected</span>
+      </div>
 
-    <ng-container *ngFor="let section of securityRoles">
-
-      <h4 class="text-primary mb-2">
-        {{ section.desc_code | titlecase }}
-      </h4>
-
-      <mat-expansion-panel *ngFor="let item of section.datas" class="mb-2">
-        <mat-expansion-panel-header>
-
-          <mat-checkbox 
-            [checked]="item.access" 
-            (change)="onMenuChange(item, $event)"
-            (click)="$event.stopPropagation()">
-            {{ item.description }}
-          </mat-checkbox>
-
-        </mat-expansion-panel-header>
-
-        <mat-list *ngIf="item.submenu?.length">
-          <mat-list-item *ngFor="let sub of item.submenu">
-            <mat-checkbox 
-              [checked]="sub.access" 
-              (change)="onSubmenuChange(item, sub, $event)">
-              {{ sub.description }}
+      <div class="menu-card" *ngFor="let item of section.datas">
+        <details [open]="item.access">
+          <summary>
+            <mat-checkbox [checked]="item.access" (change)="onMenuChange(item, $event)"
+              (click)="$event.stopPropagation()">
+              {{ item.description }}
             </mat-checkbox>
-          </mat-list-item>
-        </mat-list>
+            <span class="chevron" *ngIf="item.submenu?.length">▾</span>
+          </summary>
 
-      </mat-expansion-panel>
-
-    </ng-container>
-
-    <div *ngIf="securityRoles.length === 0" class="alert alert-info text-center">
-      No data available
+          <ul class="sub-list" *ngIf="item.submenu?.length">
+            <li *ngFor="let sub of item.submenu">
+              <mat-checkbox [checked]="sub.access" (change)="onSubmenuChange(item, sub, $event)">
+                {{ sub.description }}
+              </mat-checkbox>
+            </li>
+          </ul>
+        </details>
+      </div>
     </div>
 
-    <div mat-dialog-actions align="end">
-      <button mat-raised-button color="primary" type="submit">
-        Update
-      </button>
-    </div>
+    <div class="state-msg info" *ngIf="securityRoles.length === 0">No data available</div>
 
+    <div class="actions">
+      <button mat-raised-button color="primary" type="submit">Update Access</button>
+    </div>
   </form>
-</div>
-<!-- 
-
-
-<mat-card>
-  <h2>Role Access Menu</h2>
-  <div *ngFor="let menu of data.header; let i = index" class="menu-card">
-    <mat-checkbox [(ngModel)]="menu.checked" (change)="onMenuChange(menu)">
-      Menu ID: {{ menu.menus_id }} (Role: {{ menu.rolecode }})
-    </mat-checkbox>
-
-    <div class="submenu-list" *ngIf="menu.lines && menu.lines.length > 0">
-      <mat-checkbox
-        *ngFor="let sub of menu.lines"
-        [(ngModel)]="sub.checked"
-        (change)="onSubmenuChange(menu, sub)"
-      >
-        Submenu ID: {{ sub.submenus_id }}
-      </mat-checkbox>
-    </div>
-  </div>
-
-  <button mat-raised-button color="primary" (click)="saveData()">Save</button>
-
-</mat-card> -->
+</section>

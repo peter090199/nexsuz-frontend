@@ -1,0 +1,80 @@
+<button mat-icon-button class="close-button" [mat-dialog-close]="true">
+    <mat-icon class="close-icon" color="warn">close</mat-icon>
+</button>
+  <h2>Advanced Search</h2>
+<mat-divider></mat-divider>
+<div class="advanced-search">
+
+    <mat-dialog-content>
+        <div class="grid">
+            <!-- Job Type -->
+            <mat-form-field appearance="outline">
+                <mat-label>Job Type</mat-label>
+                <mat-select [(value)]="filters.jobType">
+                    <mat-option value="">Any</mat-option>
+                    <mat-option value="Full Time">Full Time</mat-option>
+                    <mat-option value="Part Time">Part Time</mat-option>
+                    <mat-option value="Contract">Contract</mat-option>
+                    <mat-option value="Internship">Internship</mat-option>
+                    <mat-option value="Freelance">Freelance</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <!-- Experience -->
+            <mat-form-field appearance="outline">
+                <mat-label>Experience</mat-label>
+                <mat-select [(value)]="filters.experience">
+                    <mat-option value="">Any</mat-option>
+                    <mat-option>Entry Level</mat-option>
+                    <mat-option>Junior</mat-option>
+                    <mat-option>Mid Level</mat-option>
+                    <mat-option>Senior</mat-option>
+                    <mat-option>Lead</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Work Setup</mat-label>
+                <mat-select [(value)]="filters.setup">
+                    <mat-option value="">Any</mat-option>
+                    <mat-option>Remote</mat-option>
+                    <mat-option>Hybrid</mat-option>
+                    <mat-option>Onsite</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Minimum Salary</mat-label>
+                <input matInput type="number"
+                       [(ngModel)]="filters.salary">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Location</mat-label>
+                <input matInput
+                       [(ngModel)]="filters.location">
+            </mat-form-field>
+            <!-- Company -->
+            <mat-form-field appearance="outline">
+                <mat-label>Company</mat-label>
+                <input matInput
+                       [(ngModel)]="filters.company">
+            </mat-form-field>
+            <!-- Skills -->
+            <mat-form-field appearance="outline" class="full">
+                <mat-label>Skills</mat-label>
+                <input matInput
+                       [(ngModel)]="filters.skills"
+                       placeholder="Angular, Laravel, Java">
+            </mat-form-field>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-stroked-button color="warn"
+                (click)="clear()">
+            Clear
+        </button>
+        <button mat-flat-button
+                color="primary"
+                (click)="search()">
+            Search
+        </button>
+    </mat-dialog-actions>
+</div>

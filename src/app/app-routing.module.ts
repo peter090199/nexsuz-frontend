@@ -50,15 +50,18 @@ import { ClientPlanComponent } from './ComponentUI/AccountManagement/client-plan
 import { FeaturesPlanListComponent } from './ComponentUI/AccountManagement/features-plan-list/features-plan-list.component';
 import { CheckOutUIComponent } from './ComponentUI/AccountManagement/user-plan/check-out-ui/check-out-ui.component';
 import { UpgradeRequiredComponent } from './ComponentSharedUI/account-type-plan/upgrade-required/upgrade-required.component';
+import { LandingComponent } from './Navigation/landing/landing.component';
+import { TopheaderComponent } from './Users/userhomepage/topheader/topheader.component';
 
 const routes: Routes = [
   // Public routes
   { path: '', redirectTo: '/homepage', pathMatch: 'full' }, // Default redirect
-  { path: 'homepage', component: UserhomepageComponent },
-  { path: 'signUpUI', component: SignUpUIComponent },
+  // { path: 'homepage', component: UserhomepageComponent },
+  { path: 'homepage', component: LandingComponent },
+  { path: 'signup', component: SignUpUIComponent },
   { path: 'clientsignup', component: ClientUIComponent },
-  { path: 'signInUI', component: SignInUIComponent },
-  { path: 'signInUI/:email', component: SignInUIComponent },
+  { path: 'signin', component: SignInUIComponent },
+  { path: 'signin/:email', component: SignInUIComponent },
   { path: 'forgetpassword', component: ForgotPasswordUIComponent },
   { path: 'reset-password/:email/:token', component: ResetPasswordUIComponent },
   { path: 'activation/:email', component: ActivationUIComponent },
@@ -68,6 +71,7 @@ const routes: Routes = [
   { path: 'upload-cv', component: UploadProfileComponent, canActivate: [AuthGuard] },
   { path: 'print-cv', component: PrintCVComponent, canActivate: [AuthGuard] },
   { path: 'socket', component: ChatUIComponent },
+
 
   {
     path: 'DEF-USERS',

@@ -31,11 +31,13 @@ p {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-
 .section {
   width: 100%;
-  overflow: visible !important;
-  margin: auto;
+  max-width: 1200px;
+  margin: 10px auto;
+  padding: 0 16px;
+  box-sizing: border-box;
+  overflow: visible;
 }
 
 /* Responsive adjustments */
@@ -412,16 +414,11 @@ app-right-sidebar {
   padding-top: 10px;
   margin: auto;
   height: auto;
-  max-height: 90vh;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  -webkit-overflow-scrolling: touch;
 }
 
 .right-panel {
   overflow-y: auto;
   /* allows independent scrolling */
-  max-height: 90vh;
 }
 
 .overflow {

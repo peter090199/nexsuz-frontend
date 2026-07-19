@@ -1,0 +1,66 @@
+.advanced-search{
+    width:100%;
+    color:#000000;
+}
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.header h2{
+
+    margin:0;
+    font-size:30px;
+    font-weight:600;
+}
+
+.grid{
+
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+}
+
+.full{
+
+    grid-column:1/-1;
+}
+
+mat-form-field{
+
+    width:100%;
+}
+
+::ng-deep .mat-mdc-text-field-wrapper{
+
+    border-radius:10px;
+}
+
+mat-dialog-actions{
+
+    margin-top:25px;
+}
+
+button{
+
+    min-width:120px;
+}
+
+@media(max-width:768px){
+
+.grid{
+
+grid-template-columns:1fr;
+
+}
+
+.header h2{
+
+font-size:22px;
+
+}
+
+}

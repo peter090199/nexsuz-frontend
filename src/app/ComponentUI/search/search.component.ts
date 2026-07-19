@@ -212,6 +212,7 @@ import { NotificationsService } from 'src/app/services/Global/notifications.serv
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
 import { FeatureService } from 'src/app/services/AccountPlan/feature.service';
+import { AdvancedSearchComponent } from './advanced-search/advanced-search.component';
 
 type StatusFilter = 'all' | 'online' | 'offline';
 
@@ -279,6 +280,21 @@ export class SearchComponent implements OnInit {
     });
   }
 
+  openFilters() {
+    const dialogRef = this.dialog.open(AdvancedSearchComponent, {
+      width: '600px',
+      minHeight: 'auto',
+      maxHeight: '90vh',
+      position: { top: '40px', right: '90px' },
+      panelClass: 'custom-notification-popup',
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      //  this.loadRealtimeCounts();
+    });
+  }
+
+
+
   // ================= SEARCH INPUT =================
   onSearch(): void {
     const query = this.searchQuery.trim();
@@ -288,7 +304,7 @@ export class SearchComponent implements OnInit {
       this.loadHistory();
       return;
     }
-
+    this.loadHistory();
     this.searchSubject.next(query);
   }
 

@@ -1,0 +1,442 @@
+/* =========================================================
+   HERO SECTION
+========================================================= */
+
+.hero-section-1 {
+    padding: 100px 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #3359e6, #05e6c8);
+}
+
+.hero-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.hero-title {
+    color: #fff;
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.hero-subtitle {
+    color: rgba(255,255,255,.9);
+    font-size: 18px;
+    max-width: 650px;
+    margin: auto;
+}
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.plan-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(280px, 1fr));
+    gap: 30px;
+    align-items: stretch;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.plan-box {
+
+    background: #fff;
+
+    border-radius: 18px;
+
+    padding: 30px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    height: 100%;
+
+    box-shadow: 0 12px 35px rgba(0,0,0,.08);
+
+    transition: .3s ease;
+
+    position: relative;
+
+    overflow: hidden;
+
+    border-top: 5px solid transparent;
+}
+
+.plan-box:hover {
+
+    transform: translateY(-8px);
+
+    box-shadow: 0 25px 50px rgba(0,0,0,.15);
+
+}
+
+/* =========================================================
+   PLAN COLORS
+========================================================= */
+
+.free-plan{
+    border-top-color:#9e9e9e;
+}
+
+.basic-plan{
+    border-top-color:#2196f3;
+}
+
+.premium-plan{
+    border-top-color:#ff9800;
+}
+
+.business-unlimited-plan{
+    border-top-color:#9c27b0;
+}
+
+/* =========================================================
+   CURRENT PLAN
+========================================================= */
+
+.current-badge{
+
+    position:absolute;
+
+    top:18px;
+
+    right:18px;
+
+    background:#4caf50;
+
+    color:#fff;
+
+    padding:6px 12px;
+
+    border-radius:30px;
+
+    font-size:12px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:5px;
+
+}
+
+/* =========================================================
+   BADGE
+========================================================= */
+
+.plan-badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:7px 15px;
+
+    border-radius:30px;
+
+    font-size:12px;
+
+    font-weight:700;
+
+    margin-bottom:20px;
+
+    width:max-content;
+
+}
+
+.basic{
+    background:#e3f2fd;
+    color:#1976d2;
+}
+
+.primary{
+    background:#e8eaf6;
+    color:#3f51b5;
+}
+
+.accent{
+    background:#f3e5f5;
+    color:#9c27b0;
+}
+
+.warn{
+    background:#fff3e0;
+    color:#ef6c00;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.plan-header{
+    margin-bottom:20px;
+}
+
+.plan-header h2{
+
+    font-size:28px;
+
+    font-weight:700;
+
+    margin:10px 0;
+
+}
+
+.plan-header p{
+
+    color:#666;
+
+    line-height:1.7;
+
+    min-height:72px;
+
+}
+
+/* =========================================================
+   PRICE
+========================================================= */
+
+.price-card{
+
+    text-align:center;
+
+    margin:20px 0 25px;
+
+}
+
+.currency{
+
+    font-size:24px;
+
+    vertical-align:top;
+
+}
+
+.amount{
+
+    font-size:42px;
+
+    font-weight:700;
+
+}
+
+.month{
+
+    color:#777;
+
+    font-size:14px;
+
+}
+
+/* =========================================================
+   FEATURES
+========================================================= */
+
+.feature-list{
+
+    flex:1;
+
+    margin:20px 0;
+
+}
+
+.feature{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:10px;
+
+    margin-bottom:14px;
+
+}
+
+.feature span{
+
+    color:#555;
+
+    line-height:1.5;
+
+    font-size:14px;
+
+}
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+.plan-box button{
+
+    margin-top:auto;
+
+    width:100%;
+
+    height:48px;
+
+    border-radius:30px !important;
+
+    font-weight:600;
+
+}
+
+/* =========================================================
+   SKELETON
+========================================================= */
+
+.skeleton{
+
+    border-radius:6px;
+
+    background:linear-gradient(
+        90deg,
+        #ececec 25%,
+        #f7f7f7 50%,
+        #ececec 75%
+    );
+
+    background-size:200%;
+
+    animation:loading 1.4s infinite;
+
+}
+
+.skeleton-badge{
+    width:90px;
+    height:28px;
+    margin-bottom:20px;
+}
+
+.skeleton-title{
+    width:70%;
+    height:32px;
+    margin-bottom:15px;
+}
+
+.skeleton-desc{
+    height:60px;
+    margin-bottom:20px;
+}
+
+.skeleton-price{
+    width:140px;
+    height:45px;
+    margin:20px auto;
+}
+
+.skeleton-feature{
+    height:18px;
+    margin:12px 0;
+}
+
+.skeleton-button{
+    height:48px;
+    margin-top:25px;
+}
+
+@keyframes loading{
+
+    from{
+        background-position:200% 0;
+    }
+
+    to{
+        background-position:-200% 0;
+    }
+
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width:1200px){
+
+    .plan-grid{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+}
+
+@media (max-width:768px){
+
+    .hero-section-1{
+
+        padding:80px 15px;
+
+    }
+
+    .hero-title{
+
+        font-size:36px;
+
+    }
+
+    .hero-subtitle{
+
+        font-size:16px;
+
+    }
+
+    .plan-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .plan-box{
+
+        padding:25px;
+
+    }
+
+    .plan-header h2{
+
+        font-size:24px;
+
+    }
+
+    .amount{
+
+        font-size:34px;
+
+    }
+
+}
+
+@media (max-width:480px){
+
+    .hero-title{
+
+        font-size:30px;
+
+    }
+
+    .hero-subtitle{
+
+        font-size:14px;
+
+    }
+
+    .plan-box{
+
+        padding:20px;
+
+    }
+
+    .amount{
+
+        font-size:30px;
+
+    }
+
+}

@@ -42,6 +42,11 @@ export class UserPlanService {
     );
   }
 
+  getPlan(): Observable<any> {
+    return this.http.get(`${_url}getPlanpublic`);
+  }
+
+
   /**
    * READ SINGLE
    */
@@ -101,6 +106,13 @@ export class UserPlanService {
       { headers: this.createHeaders() }
     );
   }
+
+  getFeatures2(planId: string) {
+    return this.http.get(
+      `${_url}getByPlanpublic/${planId}`,
+    );
+  }
+
 
   updateFeature(id: number, data: any) {
     return this.http.put(

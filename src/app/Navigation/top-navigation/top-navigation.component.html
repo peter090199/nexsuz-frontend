@@ -54,7 +54,7 @@
 
           <button mat-icon-button class="toolbar-icon" matTooltip="Notifications" [matBadge]="unreadCount"
             [matBadgeHidden]="!unreadCount" matBadgeColor="warn"
-            (click)="feature.can('UNLIMITED_JOB') ? openSearch() : sharedRoutines.openUpgradeModal()">
+            (click)="feature.can('ADVANCED_JOB_SEARCH') ? openSearch() : sharedRoutines.openUpgradeModal()">
            <mat-icon>search</mat-icon>
           </button>
         

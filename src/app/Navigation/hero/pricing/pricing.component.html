@@ -1,0 +1,102 @@
+<section class="hero-section-1">
+
+    <div class="container">
+
+        <div class="hero-header">
+            <h1 class="hero-title">Choose Your Plan</h1>
+            <p class="hero-subtitle">
+                Select the best plan that suits your needs.
+            </p>
+        </div>
+
+        <!-- Loading -->
+        <div class="plan-grid" *ngIf="isLoading">
+
+            <div class="plan-box skeleton-card" *ngFor="let item of [1,2,3,4]">
+
+                <div class="skeleton skeleton-badge"></div>
+                <div class="skeleton skeleton-title"></div>
+                <div class="skeleton skeleton-desc"></div>
+                <div class="skeleton skeleton-price"></div>
+
+                <div class="skeleton skeleton-feature" *ngFor="let i of [1,2,3,4]">
+                </div>
+
+                <div class="skeleton skeleton-button"></div>
+
+            </div>
+
+        </div>
+
+        <!-- Plans -->
+
+        <div class="plan-grid" *ngIf="!isLoading">
+
+            <div class="plan-box" *ngFor="let plan of plans"
+                [ngClass]="plan.plan_name.toLowerCase().replace(' ','-') + '-plan'">
+
+                <div class="current-badge" *ngIf="plan.button_name==='Current Plan'">
+
+                    <mat-icon>verified</mat-icon>
+
+                    Current Plan
+
+                </div>
+
+                <span class="plan-badge" [ngClass]="plan.button_color">
+
+                    {{plan.tag}}
+
+                </span>
+
+                <h2>{{plan.plan_name}}</h2>
+
+                <p class="plan-desc">
+                    {{plan.description}}
+                </p>
+
+                <div class="price-card">
+
+                    <span class="currency">₱</span>
+
+                    <span class="amount">
+                        {{plan.price}}
+                    </span>
+
+                    <span class="month">
+                        /{{plan.tagmonthYear}}
+                    </span>
+
+                </div>
+
+                <mat-divider></mat-divider>
+
+                <div class="feature-list">
+
+                    <div class="feature" *ngFor="let feature of planFeatures?.[plan.planId]">
+
+                        <mat-icon color="primary">
+                            check_circle
+                        </mat-icon>
+
+                        <span>
+                            {{feature.feature_name}}
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <button mat-raised-button [color]="plan.button_color === 'basic' ? 'primary' : plan.button_color"
+                  (click)="goToCheckout(plan)">
+                    {{plan.button_name}}
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

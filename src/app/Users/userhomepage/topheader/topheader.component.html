@@ -1,14 +1,162 @@
-<!-- app.component.html -->
-<mat-toolbar color="primary" class="navbar">
-  <span style="flex: 1 1 auto;">
-    <button mat-button routerLink="#home">Home</button>
-    <button mat-button routerLink="#news">News</button>
-    <button mat-button routerLink="#contact">Contact</button>
-  </span>
-</mat-toolbar>
+<div class="container-fixed">
+  <mat-toolbar class="header" [ngClass]="{'header-hidden': !isHeaderVisible}">
+    <app-app-logo></app-app-logo>
 
-<div class="main">
-  <h1>Fixed Top Menu - Angular Material</h1>
-  <h2>Scroll this page to see the effect</h2>
-  <p *ngFor="let i of [].constructor(30)">Some text some text some text some text..</p>
+    <div class="container search-container" *ngIf="!isMobile">
+      <div class="input-group custom-search-bar">
+        <div class="input-group-prepend">
+          <span class="input-group-text bg-white border-0"><i class="fas fa-search"></i></span>
+        </div>
+        <input type="text" class="form-control" placeholder="{{ 'SEARCH' | translate }}" [(ngModel)]="searchQuery"
+          (input)="filterData()">
+
+        <div *ngIf="filteredData.length > 0" class="dropdown-menu show">
+          <a *ngFor="let item of filteredData" class="dropdown-item" href="#">{{ item }}</a>
+        </div>
+      </div>
+    </div>
+
+    <nav class="nav" [ngClass]="{'d-none d-md-flex': isDesktop}">
+      <div class="padding-userpage" *ngIf="!isMobile">
+        <button mat-button [routerLink]="['/signInUI']">{{ 'SIGN_IN' | translate }}</button>
+        <button mat-button [routerLink]="['/signUpUI']">{{ 'SIGN_UP' | translate }}</button>
+        <app-translate></app-translate>
+      </div>
+    </nav>
+
+    <button class="navbar-toggler" type="button" (click)="toggleSidebar()" aria-label="Toggle navigation"
+      *ngIf="isMobile">
+      <mat-icon>{{ isSidebarOpen ? 'close' : 'menu' }}</mat-icon>
+    </button>
+
+    <!-- Sidebar for mobile -->
+    <div class="sidebar" [ngClass]="{'active': isSidebarOpen}">
+      <div class="sidebar-header">
+        <app-app-logo></app-app-logo>
+        <app-translate></app-translate>
+      </div>
+      <ul class="list-unstyled">
+        <li><button mat-button [routerLink]="['/signInUI']">{{ 'SIGN_IN' | translate }}</button></li>
+        <li><button mat-button [routerLink]="['/signUpUI']">{{ 'SIGN_UP' | translate }}</button></li>
+      </ul>
+    </div>
+  </mat-toolbar>
+
+
+
+  <section class="hero-section-1">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h1 [@slideUp] *ngIf="fadeIn">{{ 'WELCOME' | translate }}</h1>
+          <h2 [@slideFade] *ngIf="fadeIn">{{ 'HOME' | translate }}</h2>
+        </div>
+        <div class="col-md-6">
+          <div class="img-box">
+            <img src="/assets/images/gif.gif" alt="Nexsuz platform preview">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="hero-section-2">
+    <div class="container">
+      <div class="row align-items-center">
+
+        <!-- Left Content -->
+        <div class="col-lg-6 col-md-6 hero-content">
+          <span class="hero-badge">
+            <i class="fas fa-bolt"></i> Professional Networking Platform
+          </span>
+
+          <h1>
+            Connect. Grow.<br>
+            Build Your Career with <span>Nexsuz</span>
+          </h1>
+
+          <p class="hero-description">
+            Nexsuz is your all-in-one professional networking platform where
+            professionals, companies, recruiters, freelancers, and job seekers
+            connect, collaborate, discover opportunities, and grow together.
+          </p>
+
+          <ul class="hero-features">
+            <li class="feature">
+              <span class="feature-icon"><mat-icon>groups</mat-icon></span>
+              Build your professional network
+            </li>
+            <li class="feature">
+              <span class="feature-icon"><mat-icon>work</mat-icon></span>
+              Find jobs &amp; career opportunities
+            </li>
+            <li class="feature">
+              <span class="feature-icon"><mat-icon>business_center</mat-icon></span>
+              Connect with companies &amp; recruiters
+            </li>
+            <li class="feature">
+              <span class="feature-icon"><mat-icon>forum</mat-icon></span>
+              Share ideas &amp; collaborate
+            </li>
+          </ul>
+
+          <div class="hero-buttons">
+            <button mat-raised-button color="primary" class="btn-cta" routerLink="/signUpUI">
+              Join Nexsuz
+            </button>
+            <button mat-stroked-button color="accent" class="btn-ghost" routerLink="/signInUI">
+              Sign In
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: signature animated network graphic -->
+        <div class="col-lg-6 col-md-6">
+          <div class="hero-image">
+            <img src="/assets/images/gif.gif" alt="img">
+
+            
+            <!-- <svg class="network-graphic" viewBox="0 0 520 460" xmlns="http://www.w3.org/2000/svg" role="img"
+              aria-label="Animated diagram of connected professional network nodes">
+              <defs>
+                <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="var(--signal-gold)" stop-opacity="0.9" />
+                  <stop offset="100%" stop-color="var(--signal-gold)" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+
+              <g class="net-lines" stroke="var(--steel-blue)" stroke-width="1.5" fill="none">
+                <path class="line line-1" d="M260,230 L120,110" />
+                <path class="line line-2" d="M260,230 L400,90" />
+                <path class="line line-3" d="M260,230 L90,300" />
+                <path class="line line-4" d="M260,230 L420,320" />
+                <path class="line line-5" d="M260,230 L260,60" />
+                <path class="line line-6" d="M260,230 L260,410" />
+                <path class="line line-7" d="M120,110 L260,60" />
+                <path class="line line-8" d="M400,90 L260,60" />
+                <path class="line line-9" d="M90,300 L260,410" />
+                <path class="line line-10" d="M420,320 L260,410" />
+              </g>
+
+              <g class="net-nodes">
+                <circle class="node node-center" cx="260" cy="230" r="26" fill="url(#nodeGlow)" />
+                <circle class="node node-center-core" cx="260" cy="230" r="12" />
+
+                <circle class="node satellite" cx="120" cy="110" r="14" />
+                <circle class="node satellite" cx="400" cy="90" r="10" />
+                <circle class="node satellite" cx="90" cy="300" r="11" />
+                <circle class="node satellite" cx="420" cy="320" r="14" />
+                <circle class="node satellite" cx="260" cy="60" r="9" />
+                <circle class="node satellite" cx="260" cy="410" r="12" />
+              </g>
+            </svg> -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+
 </div>

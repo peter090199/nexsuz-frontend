@@ -1,0 +1,466 @@
+html {
+  scroll-behavior: smooth;
+}
+
+
+/* Container */
+
+.landing-container {
+  height: 100vh;
+  background: #fff;
+}
+
+/* ======================================================
+   FIXED HEADER
+====================================================== */
+
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 9999;
+
+  display: flex;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  transition: all 0.3s ease;
+}
+
+/* Toolbar */
+
+.premium-toolbar {
+  width: 100%;
+  background: linear-gradient(to right, rgba(11, 203, 174, 0.852), rgba(47, 44, 225, 0.748));
+}
+
+/* ======================================================
+   LOGO
+====================================================== */
+
+app-app-logo {
+  cursor: pointer;
+  transition: .3s;
+}
+
+app-app-logo:hover {
+  transform: scale(1.05);
+}
+
+/* ======================================================
+   DESKTOP NAV
+====================================================== */
+
+.desktop-nav {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-left: 70px;
+}
+
+.desktop-nav a {
+  position: relative;
+  text-decoration: none;
+  color: #f0eded;
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 18px;
+  transition: .35s;
+}
+
+.desktop-nav a:hover {
+  color: #2962ff;
+}
+
+/* Animated underline */
+
+.desktop-nav a::after {
+
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+
+  bottom: -8px;
+
+  width: 0;
+
+  height: 3px;
+
+  border-radius: 20px;
+
+  background: linear-gradient(90deg, #2962ff, #00d4ff);
+
+  transition: .35s;
+}
+
+.desktop-nav a:hover::after {
+  width: 100%;
+}
+
+/* Spacer */
+
+.example-spacer {
+  flex: 1;
+}
+
+/* ======================================================
+   BUTTONS
+====================================================== */
+
+.desktop-nav button {
+
+  margin-left: 12px;
+
+  border-radius: 30px !important;
+
+  padding: 0 28px !important;
+
+  height: 46px;
+
+  font-weight: 600;
+
+  transition: .3s;
+}
+
+.desktop-nav button:hover {
+
+  transform: translateY(-3px);
+
+  box-shadow: 0 10px 25px rgba(41, 98, 255, .25);
+}
+
+/* ===========================
+   Header Buttons
+=========================== */
+
+.btn-signin,
+.btn-signup {
+  min-width: 80px;
+  height: 46px;
+  margin-left: 12px !important;
+  border-radius: 50px !important;
+
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: .4px;
+  text-transform: none !important;
+
+  transition: all .3s ease;
+}
+
+/* Sign In */
+
+.btn-signin {
+  color: #ffffff !important;
+  background: transparent;
+  box-shadow: 0 10px 25px rgba(37, 99, 235, .25);
+}
+
+.btn-signin:hover {
+  background: rgba(37, 99, 235, .08);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, .18);
+}
+
+/* Sign Up */
+
+.btn-signup {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #2563eb, #4f46e5) !important;
+  box-shadow: 0 10px 25px rgba(37, 99, 235, .25);
+}
+
+.btn-signup:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(37, 99, 235, .35);
+}
+
+/* Click Effect */
+
+.btn-signin:active,
+.btn-signup:active {
+  transform: scale(.96);
+}
+
+/* Focus */
+
+.btn-signin:focus,
+.btn-signup:focus {
+  outline: none;
+}
+
+/* ===========================
+   Responsive
+=========================== */
+
+@media (max-width: 992px) {
+
+  .btn-signin,
+  .btn-signup {
+    min-width: 105px;
+    height: 42px;
+    font-size: 14px;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .btn-signin,
+  .btn-signup {
+    width: 100%;
+    margin: 8px 0 !important;
+  }
+
+}
+
+
+/* ======================================================
+   MOBILE SIDEBAR
+====================================================== */
+
+.mobile-sidebar {
+
+  width: 300px;
+
+  background: #fff;
+
+  border-radius: 0;
+
+}
+
+.sidebar-header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 18px;
+
+  border-bottom: 1px solid #eee;
+}
+
+.sidebar-content {
+
+  display: flex;
+
+  flex-direction: column;
+
+  padding: 20px;
+}
+
+.sidebar-link {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 65px;
+
+  padding: 15px;
+
+  border-radius: 12px;
+
+  text-decoration: none;
+
+  color: #444;
+
+  font-weight: 600;
+
+  transition: .3s;
+}
+
+.sidebar-link:hover {
+
+  background: #2962ff;
+
+  color: #fff;
+
+  transform: translateX(6px);
+}
+
+.sidebar-link mat-icon {
+  transition: .3s;
+}
+
+.sidebar-link:hover mat-icon {
+  transform: rotate(-10deg);
+}
+
+.sidebar-divider {
+
+  height: 1px;
+
+  background: #ececec;
+
+  margin: 25px 0;
+}
+
+.sidebar-language {
+  margin-top: 20px;
+}
+
+/* ======================================================
+   MOBILE MENU ICON
+====================================================== */
+
+button[mat-icon-button] {
+
+  border-radius: 50%;
+
+  transition: .3s;
+}
+
+button[mat-icon-button]:hover {
+
+  background: #f1f5ff;
+
+  transform: rotate(90deg);
+}
+
+/* ======================================================
+   SECTION SPACING
+====================================================== */
+
+section,
+app-homesection,
+app-about,
+app-pricing,
+app-jobsection,
+app-clients {
+
+  display: block;
+
+  scroll-margin-top: 110px;
+}
+
+/* ======================================================
+   TABLET
+====================================================== */
+
+@media (max-width:991px) {
+
+  .fixed-header {
+
+    width: calc(100% - 20px);
+
+    top: 10px;
+  }
+
+  .premium-toolbar {
+
+    height: 68px !important;
+
+    padding: 0 18px;
+
+    border-radius: 15px;
+  }
+
+  .page-content {
+    padding-top: 95px;
+  }
+
+}
+
+/* ======================================================
+   MOBILE
+====================================================== */
+
+@media (max-width:768px) {
+
+  .fixed-header {
+
+    width: calc(100% - 12px);
+
+    top: 6px;
+  }
+
+  .premium-toolbar {
+
+    height: 64px !important;
+
+    padding: 0 14px;
+
+    border-radius: 14px;
+  }
+
+  .page-content {
+
+    padding-top: 84px;
+  }
+
+  .mobile-sidebar {
+
+    width: 280px;
+  }
+
+}
+
+/* ======================================================
+   SMALL MOBILE
+====================================================== */
+
+@media (max-width:480px) {
+
+  .premium-toolbar {
+
+    height: 60px !important;
+
+    padding: 0 12px;
+  }
+
+  .page-content {
+
+    padding-top: 78px;
+  }
+
+  .sidebar-link {
+    font-size: 14px;
+    padding: 13px;
+    gap: 65px;
+  }
+
+}
+
+/* ======================================================
+   HEADER ANIMATION
+====================================================== */
+
+.fixed-header {
+
+  animation: headerFade .7s ease;
+}
+
+@keyframes headerFade {
+
+  from {
+
+    opacity: 0;
+
+    transform: translate(-50%, -30px);
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform: translate(-50%, 0);
+  }
+
+}
+
+/* Floating Effect */
+
+.premium-toolbar:hover {
+
+  transform: translateY(-2px);
+
+  transition: .35s;
+}

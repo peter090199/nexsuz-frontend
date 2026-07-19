@@ -142,7 +142,15 @@ import { UpdatePlanUIComponent } from './ComponentUI/AccountManagement/user-plan
 import { FeaturesPlanUI2Component } from './ComponentUI/AccountManagement/user-plan/features-plan-ui2/features-plan-ui2.component';
 import { CheckOutUIComponent } from './ComponentUI/AccountManagement/user-plan/check-out-ui/check-out-ui.component';
 import { UpgradeRequiredComponent } from './ComponentSharedUI/account-type-plan/upgrade-required/upgrade-required.component';
+import { AdvancedSearchComponent } from './ComponentUI/search/advanced-search/advanced-search.component';
+import { LandingComponent } from './Navigation/landing/landing.component';
 
+import { ToolbarComponent } from './Navigation/toolbar/toolbar.component';
+import { AboutComponent } from './Navigation/hero/about/about.component';
+import { ClientsComponent } from './Navigation/hero/clients/clients.component';
+import { HomesectionComponent } from './Navigation/hero/homesection/homesection.component';
+import { PricingComponent } from './Navigation/hero/pricing/pricing.component';
+import { JobsectionComponent } from './Navigation/hero/jobsection/jobsection.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -277,6 +285,14 @@ export function HttpLoaderFactory(http: HttpClient) {
     FeaturesPlanUI2Component,
     CheckOutUIComponent,
     UpgradeRequiredComponent,
+    AdvancedSearchComponent,
+    LandingComponent,
+    ToolbarComponent,
+    AboutComponent,
+    ClientsComponent,
+    HomesectionComponent,
+    PricingComponent,
+    JobsectionComponent
   ],
   imports: [
     BrowserModule,
@@ -297,18 +313,18 @@ export function HttpLoaderFactory(http: HttpClient) {
         useFactory: HttpLoaderFactory,
         deps: [HttpClient]
       }
-     }),
+    }),
   ],
   providers: [
-  CookieService,
-  DatePipe,
-  // {
-  //   // provide: APP_INITIALIZER,
-  //   // // useFactory: preloadNavigationData,
-  //   // deps: [TNavigationService],
-  //   // multi: true
-  // }
-],
+    CookieService,
+    DatePipe,
+    // {
+    //   // provide: APP_INITIALIZER,
+    //   // // useFactory: preloadNavigationData,
+    //   // deps: [TNavigationService],
+    //   // multi: true
+    // }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

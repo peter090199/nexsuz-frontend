@@ -57,7 +57,7 @@ export class ProfileUIComponent implements OnInit {
   ];
 
   constructor(
-    private profile: ProfileService,
+    private followServices: ProfileService,
     private postDataservices: PostUploadImagesService,
     private comment: CommentService,
     private alert: NotificationsService,
@@ -66,7 +66,7 @@ export class ProfileUIComponent implements OnInit {
     private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
-    public dialog: MatDialog,public feature: FeatureService, public sharedRoutines: SharedRoutinesService
+    public dialog: MatDialog, public feature: FeatureService, public sharedRoutines: SharedRoutinesService
   ) { }
 
   // =========================
@@ -151,21 +151,21 @@ export class ProfileUIComponent implements OnInit {
   // PROFILE DATA
   // =========================
   loadUserData(): void {
-    this.profile.getProfileByUserOnly().subscribe({
+    this.followServices.getProfileByUserOnly().subscribe({
       next: (res) => this.users = res?.message?.[0],
       error: (err) => this.error = err.message
     });
   }
 
   loadProfileCV(): void {
-    this.profile.getProfileByUser(this.code!).subscribe({
+    this.followServices.getProfileByUser(this.code!).subscribe({
       next: (res) => this.profiles = res?.message,
       error: (err) => this.error = err.message
     });
   }
 
   loadProfileCoverPhoto(): void {
-    this.profile.getCompanyProfile(this.code!).subscribe({
+    this.followServices.getCompanyProfile(this.code!).subscribe({
       next: (res) => this.coverphoto = res?.message,
       error: (err) => this.error = err.message
     });
@@ -187,7 +187,306 @@ export class ProfileUIComponent implements OnInit {
     });
   }
 
-  AddFollow(code: any, status: string, first: string, last: string): void {
+  // AddFollowxx(code: any, status: string, first: string, last: string): void {
+  //   if (!code) {
+  //     return;
+  //   }
+  //   const fullname = `${first} ${last}`;
+  //   let confirmMessage = '';
+  //   switch (status) {
+  //     case 'none':
+  //       confirmMessage = 'Send follow request?';
+  //       break;
+
+  //     case 'pending':
+  //       confirmMessage = 'Cancel follow request?';
+  //       break;
+
+  //     case 'accepted':
+  //       confirmMessage = 'Unfollow user?';
+  //       break;
+
+  //     default:
+  //       confirmMessage = 'Continue?';
+  //       break;
+  //   }
+
+  //   this.alert.popupWarning(fullname, confirmMessage).then(result => {
+  //     if (!result.value) {
+  //       return;
+  //     }
+  //     const request$ =
+  //       status === 'accepted'
+  //         ? this.profile.Unfollow(code)
+  //         : this.profile.AddFollow(code);
+
+  //     request$.subscribe({
+  //       next: (res: any) => {
+  //         console.log('API Response:', res);
+  //         return;
+  //         // No response returned
+  //         if (!res) {
+  //           this.alert.toastrError('Empty response from server.');
+  //           return;
+  //         }
+
+  //         // Connection limit or other warning
+  //         if (res.status === false) {
+  //           this.alert.toastrWarning(
+  //             res.message || 'Unable to follow this user.'
+  //           );
+  //           return;
+  //         }
+
+  //         // Success
+  //         this.followStatus = res.follow_status ?? this.followStatus;
+
+  //         this.alert.toastrSuccess(
+  //           res.message || 'Success'
+  //         );
+  //       },
+
+  //       error: (err) => {
+
+  //         console.error(err);
+
+  //         if (err.status === 403 || err.status === 404) {
+  //           this.alert.toastrWarning(
+  //             err.error?.message || 'Connection limit reached.'
+  //           );
+  //           return;
+  //         }
+
+  //         this.alert.toastrError(
+  //           err.error?.message || 'Something went wrong.'
+  //         );
+  //       }
+
+  //     });
+
+  //   });
+
+  // }
+
+  // AddFollow(code: any, data: any, followStatus: string): void {
+  //   if (!code) {
+  //     return;
+  //   }
+  //   const fullname = data.fname + ' ' + data.lname;
+  //   console.log('Follow Status:', followStatus);
+  //   let confirmMessage = '';
+  //   switch (followStatus) {
+  //     case 'none':
+  //       confirmMessage = 'Send follow request?';
+  //       break;
+
+  //     case 'pending':
+  //       confirmMessage = 'Cancel follow request?';
+  //       break;
+
+  //     case 'accepted':
+  //       confirmMessage = 'Unfollow user?';
+  //       break;
+
+  //     default:
+  //       confirmMessage = 'Continue?';
+  //       break;
+  //   }
+
+  //   this.alert.popupWarning(fullname, confirmMessage).then((result) => {
+  //     if (!result.value) {
+  //       return;
+  //     }
+  //    // this.isloading = true;
+  //     this.followServices.AddFollow(code).subscribe({
+  //       next: (res: any) => {
+  //         console.log('Follow response:', res);
+  //         return;
+
+  //         this.isloading = false;
+  //         if (!res) {
+  //           this.alert.toastrError('No response from server.');
+  //           return;
+  //         }
+  //         // Warning (e.g. connection limit)
+  //         if (!res.status) {
+  //           this.alert.toastrWarning(res.message);
+  //           return;
+  //         }
+  //         // Success
+  //         this.alert.toastrSuccess(res.message);
+  //         // Update follow status
+  //         data.follow_status = res.follow_status;
+  //         // Reload list if needed
+  //         // this.get();
+  //       },
+
+  //       error: (error: any) => {
+  //       //  this.isloading = false;
+  //         this.alert.toastrError(
+  //           error.error?.message || 'Something went wrong.'
+  //         );
+
+  //       }
+  //     });
+  //   });
+
+  // }
+
+
+  AddFollow(code: any, data: any, followStatus: string): void {
+    if (!code) {
+      return;
+    }
+    const fullname = `${data.fname} ${data.lname}`;
+    let confirmMessage = '';
+    switch (followStatus) {
+      case 'none':
+        confirmMessage = 'Send follow request?';
+        break;
+
+      case 'pending':
+        confirmMessage = 'Cancel follow request?';
+        break;
+
+      case 'accepted':
+        confirmMessage = `Unfollow ${fullname}?`;
+        break;
+
+      default:
+        confirmMessage = 'Continue?';
+    }
+    this.alert.popupWarning(fullname, confirmMessage).then(result => {
+      if (!result.value) {
+        return;
+      }
+      this.followServices.AddFollow(code).subscribe({
+        next: (res: any) => {
+          this.isloading = false;
+          if (!res) {
+            this.alert.toastrError('No response from server.');
+            return;
+          }
+          if (!res.status) {
+            this.alert.toastrWarning(res.message);
+            return;
+          }
+          this.alert.toastrSuccess(res.message);
+          // Update UI immediately
+          data.follow_status = res.follow_status;
+        },
+
+        error: (err: any) => {
+          if (err.error.status == false) {
+            this.alert.toastrWarning(err.error?.message || 'Connection limit reached.');
+            return;
+          }
+          this.alert.toastrError(err.error?.message || 'Something went wrong.');
+        },
+      });
+
+    });
+
+  }
+
+
+  AddFollowxx(code: any, profiles: any, followStatus: any): void {
+    if (!code) {
+      return;
+    }
+    const fullname = `${profiles.fname} ${profiles.lname}`;
+    let confirmMessage = '';
+    switch (followStatus) {
+      case 'none':
+        confirmMessage = 'Send follow request?';
+        break;
+
+      case 'pending':
+        confirmMessage = 'Cancel follow request?';
+        break;
+
+      case 'accepted':
+        confirmMessage = `Unfollow ${fullname}?`;
+        break;
+
+      default:
+        confirmMessage = 'Continue?';
+        break;
+    }
+
+
+    this.alert.popupWarning(code, " " + "Are you sure to delete this role?").then((result) => {
+      if (result.value) {
+        this.followServices.AddFollow(code).subscribe({
+          next: (res) => {
+
+            if (res.success === true) {
+              this.alert.toastrSuccess(res.message);
+              this.isloading = false;
+            }
+            else {
+              this.alert.toastrError(res.message);
+              this.isloading = false;
+            }
+            // this.get();
+          },
+          error: (error) => {
+            this.alert.toastrError(error.error);
+            this.isloading = false;
+          }
+
+        });
+      }
+
+
+    });
+
+  }
+
+  AddFollowxxx1(code: any, first: string, last: string): void {
+    if (!code) {
+      return;
+    }
+    const fullname = `${first} ${last}`;
+    this.alert.popupWarning(fullname, 'Send follow request?').then(result => {
+      if (!result.value) {
+        return;
+      }
+      this.followServices.AddFollow(code).subscribe({
+        next: (res: any) => {
+          console.log('Follow response:', res);
+          return;
+          if (!res) {
+            this.alert.toastrError('No response from server.');
+            return;
+          }
+
+          // Warning from API (e.g. connection limit)
+          if (res.status === false) {
+            this.alert.toastrWarning(res.message);
+            return;
+          }
+
+          // Success
+          this.followStatus = res.follow_status ?? 'pending';
+          this.alert.toastrSuccess(res.message ?? 'Follow request sent.');
+        },
+
+        error: (err: any) => {
+
+          if (err.error?.message) {
+            this.alert.toastrWarning(err.error.message);
+          } else {
+            this.alert.toastrError('Something went wrong.');
+          }
+
+        }
+
+      });
+    });
+  }
+
+  AddFollowxxxx(code: any, status: string, first: string, last: string): void {
     if (!code) return;
 
     const fullname = `${first} ${last}`;
@@ -195,19 +494,21 @@ export class ProfileUIComponent implements OnInit {
     let confirmMessage = '';
 
     if (status === 'none') confirmMessage = 'Send follow request?';
-    if (status === 'pending') confirmMessage = 'Cancel request?';
-    if (status === 'accepted') confirmMessage = 'Unfollow user?';
+    if (status === 'pending') confirmMessage = `Cancel follow request to ${fullname}?`;
+    if (status === 'accepted') confirmMessage = `Unfollow ${fullname}?`;
 
     this.alert.popupWarning(fullname, confirmMessage).then(result => {
       if (!result.value) return;
 
       const request$ =
         status === 'accepted'
-          ? this.profile.Unfollow(this.followId)
-          : this.profile.AddFollow(code);
+          ? this.followServices.Unfollow(this.followId)
+          : this.followServices.AddFollow(code);
 
       request$.subscribe({
         next: (res: any) => {
+          // console.log('Follow/Unfollow response:', res);
+          // return;
           this.followStatus = res.follow_status || 'none';
           this.alert.toastrSuccess(res.message || 'Success');
         },

@@ -8,6 +8,7 @@ import { ReactionPostComponent } from 'src/app/ComponentSharedUI/ReactionEmoji/r
 import { FeatureService } from '../AccountPlan/feature.service';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
+import { ProfileService } from '../Profile/profile.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class SharedRoutinesService {
   constructor(
     private postDataservices: PostUploadImagesService, private location: Location,
     private alert: NotificationsService, private router: Router,
-    private comment: CommentService,
+    private comment: CommentService, private profile: ProfileService,
     private authService: AuthService,
     private notificationsService: NotificationsService,
     private dialog: MatDialog, public feature: FeatureService
@@ -68,6 +69,55 @@ export class SharedRoutinesService {
       }
     });
   }
+
+
+
+  followStatus: string = 'none';
+  followId: number = 0;
+  AddFollow(code: any, status: string, first: string, last: string): void {
+    if (!code) return;
+
+    const fullname = `${first} ${last}`;
+
+    let confirmMessage = '';
+
+    if (status === 'none') confirmMessage = 'Send follow request?';
+    if (status === 'pending') confirmMessage = 'Cancel request?';
+    if (status === 'accepted') confirmMessage = 'Unfollow user?';
+
+    this.alert.popupWarning(fullname, confirmMessage).then(result => {
+      if (!result.value) return;
+
+      const request$ =
+        status === 'accepted'
+          ? this.profile.Unfollow(this.followId)
+          : this.profile.AddFollow(code);
+
+      request$.subscribe({
+        next: (res: any) => {
+          console.log('Follow/Unfollow response:', res);
+          return;
+          // Show warning if connection limit is reached
+          if (!res.status) {
+               this.alert.toastrWarning(res.message || 'Connection limit reached. Cannot follow more users.');
+            return;
+          }
+
+          this.followStatus = res.follow_status || 'none';
+          this.alert.toastrSuccess(res.message || 'Success');
+        },
+
+        error: (err) => {
+          // this.alert.toastrError(
+          //   err.error?.message || 'Something went wrong.'
+          // );
+        }
+      });
+    });
+  }
+
+
+
 
   // =========================
   // LOAD POSTS
@@ -299,7 +349,7 @@ export class SharedRoutinesService {
     return this.getStatusText(this.getButtonStatus(job));
   }
   openUpgradeModal() {
-    this.notificationsService.toastrWarning('Please upgrade your plan.');
+    this.notificationsService.toastrInfo('Please upgrade your plan.');
   }
 
   onApplyClick(): void {
