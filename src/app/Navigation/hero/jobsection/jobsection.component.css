@@ -78,12 +78,12 @@
     left: 0;
     width: 100%;
     height: 5px;
-    background: linear-gradient(90deg,#3f51b5,#06d6a0);
+    background: linear-gradient(90deg, #3f51b5, #06d6a0);
 }
 
 .job-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 18px 40px rgba(0,0,0,.08);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .08);
 }
 
 /* ==========================================
@@ -183,12 +183,12 @@
     font-size: 15px;
     font-weight: 600;
     transition: .3s;
-    background: linear-gradient(135deg,#3f51b5,#06d6a0);
+    background: linear-gradient(135deg, #3f51b5, #06d6a0);
 }
 
 .apply-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(63,81,181,.3);
+    box-shadow: 0 10px 20px rgba(63, 81, 181, .3);
 }
 
 .browse-btn {
@@ -200,13 +200,13 @@
     color: white;
     font-size: 16px;
     font-weight: 600;
-    background: linear-gradient(135deg,#3f51b5,#06d6a0);
+    background: linear-gradient(135deg, #3f51b5, #06d6a0);
     transition: .3s;
 }
 
 .browse-btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 15px 30px rgba(63,81,181,.3);
+    box-shadow: 0 15px 30px rgba(63, 81, 181, .3);
 }
 
 .text-center {
@@ -220,7 +220,7 @@
 @media (max-width: 992px) {
 
     .jobs-grid {
-        grid-template-columns: repeat(2,1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
 
 }
@@ -263,6 +263,178 @@
     .job-type {
         font-size: 11px;
         padding: 6px 12px;
+    }
+
+
+
+}
+
+
+
+/* Container */
+
+.search-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    max-width: 850px;
+    margin: 40px auto;
+    padding: 15px;
+    flex-wrap: wrap;
+}
+
+/* Material Field */
+
+.premium-search {
+    flex: 1;
+    min-width: 320px;
+}
+
+/* Glass Effect */
+
+.premium-search .mat-form-field-flex {
+    background: rgba(255, 255, 255, .92);
+    backdrop-filter: blur(18px);
+    border-radius: 60px;
+    transition: .35s;
+    border: 2px solid transparent;
+    padding: 4px 18px;
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, .08),
+        0 0 0 rgba(63, 81, 181, .25);
+}
+
+/* Hover */
+
+.premium-search:hover .mat-form-field-flex {
+    transform: translateY(-2px);
+    box-shadow:
+        0 12px 30px rgba(63, 81, 181, .18);
+}
+
+/* Focus */
+
+.premium-search.mat-focused .mat-form-field-flex {
+
+    border: 2px solid #4f46e5;
+
+    box-shadow:
+        0 0 0 8px rgba(79, 70, 229, .12),
+        0 20px 45px rgba(79, 70, 229, .25);
+}
+
+/* Outline */
+
+.premium-search .mat-form-field-outline {
+    color: transparent;
+}
+
+.premium-search .mat-form-field-outline-start,
+.premium-search .mat-form-field-outline-end,
+.premium-search .mat-form-field-outline-gap {
+    border: none !important;
+}
+
+/* Input */
+
+.premium-search input {
+    font-size: 17px;
+    font-weight: 500;
+    color: #222;
+}
+
+.premium-search input::placeholder {
+    color: #8b8b8b;
+}
+
+/* Icons */
+
+.premium-search mat-icon {
+    color: #4f46e5;
+    transition: .3s;
+}
+
+.premium-search.mat-focused mat-icon {
+    transform: scale(1.15);
+}
+
+/* Button */
+
+.search-btn {
+
+    height: 56px;
+
+    padding: 0 30px;
+
+    border-radius: 50px;
+
+    background: linear-gradient(135deg, #4f46e5, #06b6d4);
+
+    color: #fff;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    transition: .35s;
+
+    box-shadow: 0 10px 25px rgba(79, 70, 229, .3);
+}
+
+.search-btn:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow: 0 18px 40px rgba(79, 70, 229, .4);
+}
+
+/* Mobile */
+
+@media(max-width:768px) {
+
+    .search-container {
+
+        flex-direction: column;
+
+        padding: 10px;
+
+    }
+
+    .premium-search {
+
+        width: 100%;
+
+        min-width: 100%;
+
+    }
+
+    .search-btn {
+
+        width: 100%;
+
+    }
+
+}
+
+/* Floating animation */
+
+.search-container {
+    animation: floatSearch 5s ease-in-out infinite;
+}
+
+@keyframes floatSearch {
+
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+
+    100% {
+        transform: translateY(0);
     }
 
 }

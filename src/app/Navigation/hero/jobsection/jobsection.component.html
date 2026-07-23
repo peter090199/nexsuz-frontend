@@ -1,212 +1,73 @@
-<!-- ===============================
-     Featured Jobs Section
-================================ -->
-<section class="jobs-section" id="jobs-section">
-
+<section class="jobs-section">
     <div class="container">
 
+        <!-- Section Title -->
         <div class="section-title">
             <span>Latest Opportunities</span>
             <h2>Featured Jobs</h2>
             <p>Discover your next career opportunity from top companies hiring today.</p>
         </div>
 
+        <!-- Search -->
+        <div class="search-container">
+            <mat-form-field appearance="outline" class="premium-search">
+                <mat-icon matPrefix>search</mat-icon>
+                <input matInput placeholder="Search jobs..." [(ngModel)]="searchText" (keyup)="onSearch()"
+                    (keyup.enter)="onEnter()">
+                <button *ngIf="searchText" matSuffix mat-icon-button (click)="clearSearch()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </mat-form-field>
+        </div>
+
+        <!-- Jobs -->
         <div class="jobs-grid">
-
-            <!-- Job Card -->
-            <div class="job-card">
-
+            <div class="job-card" *ngFor="let job of filteredJobs">
                 <div class="job-header">
-                    <img src="assets/images/company1.png" alt="Company Logo">
-                    <span class="job-type full-time">Full Time</span>
+                    <img [src]="job.image" [alt]="job.company">
+                    <span class="job-type" [ngClass]="job.typeClass">
+                        {{ job.type }}
+                    </span>
                 </div>
-
-                <h3>Senior Laravel Developer</h3>
-
+                <h3>{{ job.title }}</h3>
                 <p class="company">
                     <i class="fas fa-building"></i>
-                    Tech Solutions Inc.
+                    {{ job.company }}
                 </p>
-
                 <p class="location">
                     <i class="fas fa-map-marker-alt"></i>
-                    Cebu City, Philippines
+                    {{ job.location }}
                 </p>
 
                 <p class="salary">
                     <i class="fas fa-money-bill-wave"></i>
-                    ₱60,000 - ₱90,000
+                    {{ job.salary }}
                 </p>
 
                 <div class="job-footer">
-                    <button class="apply-btn">Apply Now</button>
-                </div>
-
-            </div>
-
-            <!-- Job Card -->
-            <div class="job-card">
-
-                <div class="job-header">
-                    <img src="assets/images/company2.png" alt="Company Logo">
-                    <span class="job-type remote">Remote</span>
-                </div>
-
-                <h3>Angular Frontend Developer</h3>
-
-                <p class="company">
-                    <i class="fas fa-building"></i>
-                    NexTech Solutions
-                </p>
-
-                <p class="location">
-                    <i class="fas fa-map-marker-alt"></i>
-                    Remote
-                </p>
-
-                <p class="salary">
-                    <i class="fas fa-money-bill-wave"></i>
-                    ₱50,000 - ₱80,000
-                </p>
-
-                <div class="job-footer">
-                    <button class="apply-btn">Apply Now</button>
-                </div>
-
-            </div>
-
-            <!-- Job Card -->
-            <div class="job-card">
-
-                <div class="job-header">
-                    <img src="assets/images/company3.png" alt="Company Logo">
-                    <span class="job-type hybrid">Hybrid</span>
-                </div>
-
-                <h3>UI / UX Designer</h3>
-
-                <p class="company">
-                    <i class="fas fa-building"></i>
-                    Creative Studio
-                </p>
-
-                <p class="location">
-                    <i class="fas fa-map-marker-alt"></i>
-                    Manila
-                </p>
-
-                <p class="salary">
-                    <i class="fas fa-money-bill-wave"></i>
-                    ₱35,000 - ₱55,000
-                </p>
-
-                <div class="job-footer">
-                    <button class="apply-btn">Apply Now</button>
-                </div>
-
-            </div>
-
-            <!-- Job Card -->
-            <div class="job-card">
-
-                <div class="job-header">
-                    <img src="assets/images/company4.png" alt="Company Logo">
-                    <span class="job-type part-time">Part Time</span>
-                </div>
-
-                <h3>Marketing Specialist</h3>
-
-                <p class="company">
-                    <i class="fas fa-building"></i>
-                    Digital Marketing Hub
-                </p>
-
-                <p class="location">
-                    <i class="fas fa-map-marker-alt"></i>
-                    Davao City
-                </p>
-
-                <p class="salary">
-                    <i class="fas fa-money-bill-wave"></i>
-                    ₱30,000 - ₱45,000
-                </p>
-
-                <div class="job-footer">
-                    <button class="apply-btn">Apply Now</button>
-                </div>
-
-            </div>
-
-            <!-- Job Card -->
-            <div class="job-card">
-
-                <div class="job-header">
-                    <img src="assets/images/company5.png" alt="Company Logo">
-                    <span class="job-type internship">Internship</span>
-                </div>
-
-                <h3>Software Engineer Intern</h3>
-
-                <p class="company">
-                    <i class="fas fa-building"></i>
-                    Future Labs
-                </p>
-
-                <p class="location">
-                    <i class="fas fa-map-marker-alt"></i>
-                    Makati City
-                </p>
-
-                <p class="salary">
-                    <i class="fas fa-money-bill-wave"></i>
-                    ₱15,000 Allowance
-                </p>
-
-                <div class="job-footer">
-                    <button class="apply-btn">Apply Now</button>
-                </div>
-
-            </div>
-
-            <!-- Job Card -->
-            <div class="job-card">
-
-                <div class="job-header">
-                    <img src="assets/images/company6.png" alt="Company Logo">
-                    <span class="job-type full-time">Full Time</span>
-                </div>
-
-                <h3>HR Officer</h3>
-
-                <p class="company">
-                    <i class="fas fa-building"></i>
-                    Global Business Corp.
-                </p>
-
-                <p class="location">
-                    <i class="fas fa-map-marker-alt"></i>
-                    Quezon City
-                </p>
-
-                <p class="salary">
-                    <i class="fas fa-money-bill-wave"></i>
-                    ₱28,000 - ₱40,000
-                </p>
-
-                <div class="job-footer">
-                    <button class="apply-btn">Apply Now</button>
+                    <button class="apply-btn">
+                        Apply Now
+                    </button>
                 </div>
 
             </div>
 
         </div>
 
-        <div class="text-center mt-5">
+        <!-- No Result -->
+        <div class="text-center mt-5" *ngIf="filteredJobs.length === 0">
+            <h3>No jobs found.</h3>
+            <p>Try searching with another keyword.</p>
+        </div>
+
+        <!-- Browse Button -->
+        <div class="text-center mt-5" *ngIf="filteredJobs.length > 0">
+
             <button class="browse-btn">
                 Browse All Jobs
             </button>
+
         </div>
 
     </div>
-
 </section>
