@@ -690,40 +690,31 @@ export class ApplyJobComponent implements OnInit, OnDestroy {
       this.notificationService.toastrError('Please upload your resume.');
       return;
     }
-
     if (!this.areAllQuestionsAnswered()) {
       this.notificationService.toastrError('Please answer all questions.');
       return;
     }
-
     this.loading = true;
-
     const formData = new FormData();
-
     formData.append('resume_pdf', this.selectedFile);
     formData.append('job_name', this.job?.job_name || '');
     formData.append('email', this.personalForm.get('email')?.value || '');
     formData.append('country_code', this.personalForm.get('country_code')?.value || '');
     formData.append('phone_number', this.personalForm.get('phone_number')?.value || '');
     formData.append('transNo', this.job?.transNo || '');
-
     this.questions.forEach((question: any, index: number) => {
-
       formData.append(
         `answers[${index}][question_id]`,
         String(question.question_id)
       );
-
       formData.append(
         `answers[${index}][answer_text]`,
         question.answer ?? ''
       );
-
       formData.append(
         `answers[${index}][answer_type]`,
         question.answer_type ?? 'general'
       );
-
     });
 
     this.appliedService
@@ -734,32 +725,23 @@ export class ApplyJobComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe({
-
         next: (res: any) => {
-
           if (!res.success) {
             this.notificationService.toastrWarning(
               res.message
             );
             return;
           }
-
           this.notificationService.toastrSuccess(res.message);
-
           if (res.transNo) {
             this.router.navigate(['/recommended-jobs', res.transNo]);
           }
-
         },
 
         error: (err) => {
-
           console.error(err);
-
           if (err.status === 422) {
-
             const errors = err.error.errors;
-
             if (errors) {
               Object.keys(errors).forEach(key => {
                 this.notificationService.toastrWarning(errors[key][0]);
@@ -767,20 +749,16 @@ export class ApplyJobComponent implements OnInit, OnDestroy {
             } else {
               this.notificationService.toastrWarning(err.error.message);
             }
-
             return;
           }
-
           if (err.status === 409) {
-            this.notificationService.toastrError(err.error.message);
+            this.notificationService.toastrWarning(err.error.message);
             return;
           }
-
           if (err.status === 403) {
-            this.notificationService.toastrError(err.error.message);
+            this.notificationService.toastrWarning(err.error.message);
             return;
           }
-
           this.notificationService.toastrError(
             err.error?.message || 'Something went wrong. Please try again.'
           );

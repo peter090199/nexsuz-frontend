@@ -1,4 +1,4 @@
-<button mat-icon-button class="close-button" [mat-dialog-close]="true">
+<!-- <button mat-icon-button class="close-button" [mat-dialog-close]="true">
   <mat-icon class="close-icon" color="warn">close</mat-icon>
 </button>
 
@@ -7,7 +7,6 @@
 <mat-card-content>
 <section class="section">
 
-  <!-- ASIDE (LEFT PANEL) -->
   <aside class="sidebar">
     <div class="user-info">
       <h3 class="name">{{ user.fullname }}</h3>
@@ -21,7 +20,6 @@
         </b>
       </p>
 
-      <!-- SCORE -->
       <div class="score-card">
         <div class="score-title">Evaluation Score</div>
 
@@ -46,11 +44,8 @@
     </div>
   </aside>
 
-
-  <!-- MAIN CONTENT (RIGHT SIDE) -->
   <div class="main-content">
 
-    <!-- RESUME PREVIEW -->
     <div class="preview-box" *ngIf="selectedResume; else emptyState">
       <ng-container *ngIf="isImage(selectedResume.url); else pdfView">
         <img [src]="selectedResume.url" />
@@ -89,4 +84,101 @@
 
   </div>
 
-</section>
+</section> -->
+<div class="applicant-dialog">
+
+  <button mat-icon-button class="close-button" (click)="close()">
+    <mat-icon color="warn">close</mat-icon>
+  </button>
+
+  <h2 mat-dialog-title>{{ user?.job_name }}</h2>
+  <mat-divider></mat-divider>
+
+  <mat-card-content>
+    <section class="applicant-layout">
+
+      <!-- LEFT PANEL -->
+      <aside class="sidebar">
+        <div class="avatar-ring">
+          <span>{{ (user?.fullname || '?').charAt(0) }}</span>
+        </div>
+
+        <h3 class="name">{{ user?.fullname }}</h3>
+        <p class="meta-line"><mat-icon>work</mat-icon> {{ user?.job_name }}</p>
+        <p class="meta-line"><mat-icon>mail</mat-icon> {{ user?.email }}</p>
+        <p class="meta-line" *ngIf="user?.phone_number">
+          <mat-icon>call</mat-icon> +{{ user?.country_code }} {{ user?.phone_number }}
+        </p>
+
+        <b class="status-pill" [ngClass]="getStatusClass(user?.applied_status)">
+          {{ (user?.applied_status || 'pending') | titlecase }}
+        </b>
+
+        <!-- SCORE -->
+        <div class="score-card" *ngIf="scorableQuestions > 0">
+          <div class="score-title">Screening Score</div>
+          <div class="circle">
+            <svg viewBox="0 0 130 130">
+              <circle class="bg" r="45" cx="65" cy="65"></circle>
+              <circle class="progress" r="45" cx="65" cy="65" [style.strokeDasharray]="circumference"
+                [style.strokeDashoffset]="strokeDashoffset">
+              </circle>
+            </svg>
+            <div class="score-text">
+              <strong>{{ score }}/{{ scorableQuestions }}</strong>
+              <small>{{ percentage }}%</small>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- RIGHT PANEL -->
+      <div class="main-content">
+
+        <div class="resume-tabs" *ngIf="gallery.length > 1">
+          <button *ngFor="let r of gallery; let i = index" [class.active]="selectedResume?.url === r.url"
+            (click)="setSelected(r)">
+            Resume {{ i + 1 }}
+          </button>
+        </div>
+
+        <div class="preview-box" *ngIf="selectedResume; else emptyState">
+          <ng-container *ngIf="isImage(selectedResume.url); else pdfView">
+            <img [src]="selectedResume.url" alt="resume preview" />
+          </ng-container>
+          <ng-template #pdfView>
+            <iframe [src]="selectedResume.safeUrl"></iframe>
+          </ng-template>
+        </div>
+
+        <ng-template #emptyState>
+          <div class="empty-state">
+            <mat-icon>insert_drive_file</mat-icon>
+            <p>No resume submitted</p>
+          </div>
+        </ng-template>
+
+        <div class="qa-list" *ngIf="answers.length; else noAnswers">
+          <div class="qa-item" *ngFor="let item of answers">
+            <div class="q-info">
+              <p>{{ item.question_text }}</p>
+            </div>
+
+            <span class="badge" [ngClass]="{
+                'yes': item.answer_text === 'yes',
+                'no': item.answer_text === 'no',
+                'general': item.answer_type === 'general'
+              }">
+              {{ item.answer_text }}
+            </span>
+          </div>
+        </div>
+
+        <ng-template #noAnswers>
+          <p class="no-answers-msg">No screening answers submitted.</p>
+        </ng-template>
+
+      </div>
+    </section>
+  </mat-card-content>
+</div>

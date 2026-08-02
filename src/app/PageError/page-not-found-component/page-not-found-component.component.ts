@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-page-not-found-component',
@@ -6,13 +7,16 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
   styleUrls: ['./page-not-found-component.component.css']
 })
 export class PageNotFoundComponentComponent implements OnInit, OnDestroy {
-  days: number = 0;
-  hours: number = 0;
-  minutes: number = 0;
-  seconds: number = 0;
+  days = 0;
+  hours = 0;
+  minutes = 0;
+  seconds = 0;
 
   private countdownInterval: any;
-  private targetDate: Date = new Date('2025-12-31T23:59:59'); // 🎯 Set launch date
+  // ⚠️ This date is in the past relative to today — update to your real launch date
+  private targetDate: Date = new Date('2026-12-31T23:59:59');
+
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.startCountdown();
@@ -40,5 +44,18 @@ export class PageNotFoundComponentComponent implements OnInit, OnDestroy {
       }
     }, 1000);
   }
-}
 
+  // Hard browser-level navigation to the homepage (bypasses Angular router entirely)
+  goHome(): void {
+    window.location.href = '/homepage';
+  }
+
+  // Go back one step in browser history, falling back to homepage if no history exists
+  goBack(): void {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = '/homepage';
+    }
+  }
+}

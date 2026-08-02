@@ -1,0 +1,370 @@
+.applicant-dialog {
+  position: relative;
+  font-family: 'Inter', sans-serif;
+}
+
+.close-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+}
+
+.applicant-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  padding: 16px 0;
+}
+
+/* SIDEBAR */
+.sidebar {
+  background: linear-gradient(160deg, #1e293b, #0f172a);
+  border-radius: 16px;
+  padding: 24px 18px;
+  color: #fff;
+  text-align: center;
+}
+
+.avatar-ring {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #ec4899);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.name {
+  margin: 4px 0;
+  font-size: 18px;
+}
+
+.meta-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #cbd5e1;
+  margin: 4px 0;
+}
+
+.meta-line mat-icon {
+  font-size: 16px;
+  height: 16px;
+  width: 16px;
+}
+
+.status-pill {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: #334155;
+}
+
+.status-pill.pending   { background: #f59e0b; color: #1e1b0b; }
+.status-pill.approved,
+.status-pill.accepted  { background: #22c55e; color: #052e12; }
+.status-pill.rejected  { background: #ef4444; color: #2b0505; }
+
+.score-card {
+  margin-top: 20px;
+}
+
+.score-title {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.circle {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  margin: 0 auto;
+}
+
+.circle svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+
+.circle .bg {
+  fill: none;
+  stroke: #334155;
+  stroke-width: 10;
+}
+
+.circle .progress {
+  fill: none;
+  stroke: #22d3ee;
+  stroke-width: 10;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+.score-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-text strong { font-size: 16px; }
+.score-text small { color: #94a3b8; font-size: 11px; }
+
+/* MAIN CONTENT */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.resume-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.resume-tabs button {
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #475569;
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resume-tabs button.active {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: #fff;
+}
+
+.preview-box {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  height: 260px;
+  background: #f8fafc;
+}
+
+.preview-box img,
+.preview-box iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  object-fit: contain;
+}
+
+.empty-state {
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+}
+
+.qa-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.qa-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  transition: box-shadow 0.2s ease;
+}
+
+.qa-item:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.q-info p {
+  margin: 0;
+  font-size: 14px;
+  color: #1e293b;
+}
+
+.q-info small {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.no-answers-msg {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 13px;
+  padding: 24px 0;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.badge.yes     { background: #dcfce7; color: #166534; }
+.badge.maybe   { background: #fef9c3; color: #854d0e; }
+.badge.no      { background: #fee2e2; color: #991b1b; }
+.badge.general { background: #e0e7ff; color: #3730a3; }
+
+/* ================= RESPONSIVE ================= */
+
+/* Tablets */
+@media (max-width: 900px) {
+  .applicant-layout {
+    grid-template-columns: 220px 1fr;
+    gap: 18px;
+  }
+
+  .preview-box {
+    height: 220px;
+  }
+}
+
+/* Small tablets / large phones — stack sidebar on top */
+@media (max-width: 700px) {
+  .applicant-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 12px 0;
+  }
+
+  .sidebar {
+    padding: 20px 16px;
+  }
+
+  .avatar-ring {
+    width: 56px;
+    height: 56px;
+    font-size: 20px;
+  }
+
+  .score-card {
+    margin-top: 16px;
+  }
+
+  .circle {
+    width: 96px;
+    height: 96px;
+  }
+}
+
+/* Phones */
+@media (max-width: 480px) {
+  .close-button {
+    top: 4px;
+    right: 4px;
+  }
+
+  h2[mat-dialog-title] {
+    font-size: 16px;
+    padding-right: 32px;
+  }
+
+  .applicant-layout {
+    padding: 8px 0;
+  }
+
+  .sidebar {
+    padding: 16px 12px;
+    border-radius: 12px;
+  }
+
+  .name {
+    font-size: 16px;
+  }
+
+  .meta-line {
+    font-size: 12px;
+  }
+
+  .status-pill {
+    font-size: 11px;
+    padding: 3px 10px;
+  }
+
+  .preview-box {
+    height: 180px;
+    border-radius: 10px;
+  }
+
+  .empty-state {
+    height: 160px;
+  }
+
+  .resume-tabs button {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+
+  .qa-list {
+    max-height: 260px;
+  }
+
+  .qa-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 10px 12px;
+  }
+
+  .badge {
+    align-self: flex-end;
+  }
+
+  .q-info p {
+    font-size: 13px;
+  }
+
+  .score-title {
+    font-size: 12px;
+  }
+
+  .score-text strong {
+    font-size: 14px;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 340px) {
+  .circle {
+    width: 84px;
+    height: 84px;
+  }
+
+  .avatar-ring {
+    width: 48px;
+    height: 48px;
+    font-size: 18px;
+  }
+}

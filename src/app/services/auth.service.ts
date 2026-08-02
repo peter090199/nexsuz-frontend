@@ -14,6 +14,12 @@ export class AuthService {
     return sessionStorage.getItem('token') || ''; // Fetch the token from localStorage or other storage
   }
 
+  // ---- CHECK LOGIN STATUS ----
+  isLoggedIn(): boolean {
+    const token = this.getAuthToken();
+    return !!token; // true if a token exists in sessionStorage, false otherwise
+  }
+
   getAuthCode(): string {
     return sessionStorage.getItem('code') || '';
   }

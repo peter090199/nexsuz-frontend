@@ -151,6 +151,7 @@ import { ClientsComponent } from './Navigation/hero/clients/clients.component';
 import { HomesectionComponent } from './Navigation/hero/homesection/homesection.component';
 import { PricingComponent } from './Navigation/hero/pricing/pricing.component';
 import { JobsectionComponent } from './Navigation/hero/jobsection/jobsection.component';
+import { MatChipsModule } from '@angular/material/chips';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -306,6 +307,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatTabsModule,
     MatIconModule,
     MatDialogModule,
+    MatIconModule,
+    MatChipsModule,
     ToastrModule.forRoot(), // Correctly placed ToastrModule
     TranslateModule.forRoot({
       loader: {

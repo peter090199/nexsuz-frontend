@@ -45,7 +45,7 @@ export class JobsectionComponent implements OnInit {
     private router: Router,
     private sharedService: SharedService,
     private sharedRoutineService: SharedRoutinesService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.currentUserCode = this.authService.getAuthCode();
@@ -100,11 +100,11 @@ export class JobsectionComponent implements OnInit {
     this.filteredJobs = !keyword
       ? [...this.jobs]
       : this.jobs.filter(job =>
-          job.job_name?.toLowerCase().includes(keyword) ||
-          job.job_position?.toLowerCase().includes(keyword) ||
-          job.location?.toLowerCase().includes(keyword) ||
-          job.work_type?.toLowerCase().includes(keyword)
-        );
+        job.job_name?.toLowerCase().includes(keyword) ||
+        job.job_position?.toLowerCase().includes(keyword) ||
+        job.location?.toLowerCase().includes(keyword) ||
+        job.work_type?.toLowerCase().includes(keyword)
+      );
   }
 
   onEnter(): void {
@@ -127,7 +127,20 @@ export class JobsectionComponent implements OnInit {
     return `${symbol}${job.min_salary ?? ''} - ${symbol}${job.max_salary ?? ''}`;
   }
 
-  openJobApply(job: Job): void {
+  openJobApply(job: any) {
+    const transNo = job.transNo;
+    if (this.authService.isLoggedIn()) {
+      const role = sessionStorage.getItem('role'); // already logged in, role is known
+      this.router.navigate([`/${role}/apply-job`, transNo]);
+    } else {
+      // Don't guess the role yet — just pass the transNo
+      this.router.navigate(['/signin'], {
+        queryParams: { applyTransNo: transNo }
+      });
+    }
+  }
+
+  openJobApplyxx(job: Job): void {
     this.router.navigate(
       [...this.sharedRoutineService.getApplyJobRoute(), job.transNo],
       { queryParams: { code: this.currentUserCode } }

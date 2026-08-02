@@ -1,40 +1,51 @@
-<!-- <div class="not-found-container">
-    <h1>404</h1><br>
-    <p style="text-align: center;">Page Not Found</p>
-     <a href="/homepage">Go Back..</a>
-
-    
-  </div>
-   -->
-
 <div class="coming-soon-container">
-  <h1 class="fade-in">🚧 Coming Soon 🚧</h1>
-  <p class="fade-in delay-1">
-    We’re working hard to give you the best experience.<br>
-    Stay tuned for updates!
-  </p>
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
 
-  <div class="countdown fade-in delay-2">
-    <div class="time-box bounce">
-      <span>{{ days }}</span>
-      <small>Days</small>
+  <div class="content-box fade-in">
+    <div class="badge">
+      <mat-icon>construction</mat-icon>
+      <span>Under Construction</span>
     </div>
-    <div class="time-box bounce delay-1">
-      <span>{{ hours }}</span>
-      <small>Hours</small>
+
+    <h1 class="title">Coming Soon</h1>
+
+    <p class="subtitle">
+      We're working hard to give you the best experience.<br>
+      Stay tuned for updates!
+    </p>
+
+    <div class="countdown">
+      <div class="time-box">
+        <span class="time-value">{{ days }}</span>
+        <small>Days</small>
+      </div>
+      <span class="time-sep">:</span>
+      <div class="time-box">
+        <span class="time-value">{{ hours }}</span>
+        <small>Hours</small>
+      </div>
+      <span class="time-sep">:</span>
+      <div class="time-box">
+        <span class="time-value">{{ minutes }}</span>
+        <small>Minutes</small>
+      </div>
+      <span class="time-sep">:</span>
+      <div class="time-box">
+        <span class="time-value">{{ seconds }}</span>
+        <small>Seconds</small>
+      </div>
     </div>
-    <div class="time-box bounce delay-2">
-      <span>{{ minutes }}</span>
-      <small>Minutes</small>
-    </div>
-    <div class="time-box bounce delay-3">
-      <span>{{ seconds }}</span>
-      <small>Seconds</small>
+
+    <div class="action-row">
+      <!-- <button mat-flat-button color="primary" (click)="goHome()">
+        <mat-icon>home</mat-icon>
+        Go Back Home
+      </button> -->
+      <button mat-raised-button color="basic" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Go Back
+      </button>
     </div>
   </div>
-
-
-  <button mat-flat-button color="primary" routerLink="/home" class="pulse">
-    Go Back Home
-  </button>
 </div>

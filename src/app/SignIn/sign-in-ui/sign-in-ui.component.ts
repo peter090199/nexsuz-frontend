@@ -15,17 +15,21 @@ import { SubscriptionService } from 'src/app/services/AccountPlan/subscription.s
 export class SignInUIComponent implements OnInit {
   loginForm!: FormGroup;
   isLoading = false;
-  hide = true;
-  passwordVisible: boolean = false;
+  isRedirecting = false;
+  passwordVisible = false;
+
+  returnUrl: string | null = null;
+  applyTransNo: string | null = null;
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private sigInService: SigInService,
     private notificationService: NotificationsService,
     private googleAuth: GoogleAuthService,
-    private route: ActivatedRoute, private subscriptionService: SubscriptionService,
+    private subscriptionService: SubscriptionService,
     private featureService: FeatureService
-
   ) { }
 
   ngOnInit(): void {
@@ -35,6 +39,9 @@ export class SignInUIComponent implements OnInit {
         localStorage.setItem('auth_token', token);
         this.router.navigate(['/dashboard']);
       }
+
+      this.returnUrl = params['returnUrl'] || null;
+      this.applyTransNo = params['applyTransNo'] || null;
     });
 
     this.loginForm = this.fb.group({
@@ -42,201 +49,15 @@ export class SignInUIComponent implements OnInit {
       password: ['', [
         Validators.required,
         Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/)
-        // Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$')
-        //  Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/)
       ]]
     });
   }
-  togglePasswordVisibility() {
+
+  togglePasswordVisibility(): void {
     this.passwordVisible = !this.passwordVisible;
   }
 
-  isRedirecting = false;
-  onSubmitcorrect(): void {
-    if (this.loginForm.invalid) {
-      return;
-    }
-    this.isLoading = true;
-    const { email, password } = this.loginForm.value;
-    this.sigInService.signin(email, password).subscribe({
-      next: (res: any) => {
-        this.isLoading = false;
-
-        if (!res || !res.success) {
-          this.notificationService.toastPopUpError(
-            res?.message || 'Login failed'
-          );
-          return;
-        }
-
-        sessionStorage.setItem('token', res.token);
-        sessionStorage.setItem('role', res.role);
-        sessionStorage.setItem('is_online', String(res.is_online ?? true));
-        localStorage.setItem('chatmessages', 'true');
-
-        // No active subscription -> Show Activate Free Plan dialog
-        if (res.role == "DEF-USERS") {
-          if (!res.has_subscription) {
-            const route = `/${res.role}/subscription`;
-            if (this.router.url !== route) {
-              this.router.navigate([route]);
-            }
-            return;
-          }
-        }
-        // Show Windows loading
-        this.isRedirecting = true;
-
-        setTimeout(() => {
-
-          switch (res.role) {
-
-            case 'DEF-CLIENT':
-              this.router.navigate(['/DEF-CLIENT/client-dashboard']);
-              break;
-
-            case 'DEF-ADMIN':
-              this.router.navigate(['/DEF-ADMIN/admin-dashboard']);
-              break;
-
-            case 'DEF-MASTERADMIN':
-              this.router.navigate(['/DEF-MASTERADMIN/admin-dashboard']);
-              break;
-
-            case 'DEF-USERS':
-              this.router.navigate(['/DEF-USERS/home']);
-              break;
-
-            default:
-              this.router.navigate(['/homepage']);
-
-          }
-
-        }, 1200); // Windows loading duration
-
-      },
-
-      error: (err) => {
-
-        this.isLoading = false;
-
-        const errorMsg =
-          err.status === 401
-            ? err.error?.message || 'Invalid email or password'
-            : err.message || 'Something went wrong';
-
-        this.notificationService.toastPopUpError(errorMsg);
-
-      }
-
-    });
-
-  }
-
- 
   onSubmit(): void {
-    if (this.loginForm.invalid) {
-      return;
-    }
-    this.isLoading = true;
-    const { email, password } = this.loginForm.value;
-    this.sigInService.signin(email, password).subscribe({
-      next: (res: any) => {
-        this.isLoading = false;
-        if (!res || !res.success) {
-          this.notificationService.toastPopUpError(
-            res?.message || 'Login failed'
-          );
-          return;
-        }
-
-        // Save session
-        sessionStorage.setItem('token', res.token);
-        sessionStorage.setItem('role', res.role);
-        sessionStorage.setItem('is_online', String(res.is_online ?? true));
-        localStorage.setItem('chatmessages', 'true');
-
-        // User has no subscription
-        if (res.role === 'DEF-USERS' && !res.has_subscription) {
-          this.router.navigate([`/${res.role}/subscription`]);
-          return;
-        }
-        // Load subscription features before redirect
-        this.subscriptionService.myFeatures().subscribe({
-          next: (featureRes: any) => {
-            if (featureRes.success) {
-              this.featureService.set(featureRes.features);
-            } else {
-              this.featureService.set([]);
-            }
-            this.redirectUser(res.role);
-
-          },
-
-          error: () => {
-            // Continue login even if feature API fails
-            this.featureService.set([]);
-            this.redirectUser(res.role);
-          }
-
-        });
-
-      },
-
-      error: (err) => {
-
-        this.isLoading = false;
-
-        const errorMsg =
-          err.status === 401
-            ? err.error?.message || 'Invalid email or password'
-            : err.message || 'Something went wrong';
-
-        this.notificationService.toastPopUpError(errorMsg);
-
-      }
-
-    });
-
-  }
-
-  private redirectUser(role: string): void {
-
-    this.isRedirecting = true;
-
-    setTimeout(() => {
-
-      switch (role) {
-
-        case 'DEF-CLIENT':
-          this.router.navigate(['/DEF-CLIENT/client-dashboard']);
-          break;
-
-        case 'DEF-ADMIN':
-          this.router.navigate(['/DEF-ADMIN/admin-dashboard']);
-          break;
-
-        case 'DEF-MASTERADMIN':
-          this.router.navigate(['/DEF-MASTERADMIN/admin-dashboard']);
-          break;
-
-        case 'DEF-USERS':
-          this.router.navigate(['/DEF-USERS/home']);
-          break;
-
-        default:
-          this.router.navigate(['/homepage']);
-          break;
-
-      }
-
-    }, 1200);
-
-  }
-
-
-
-  onSubmitxxx(): void {
     if (this.loginForm.invalid) return;
 
     this.isLoading = true;
@@ -246,99 +67,74 @@ export class SignInUIComponent implements OnInit {
       next: (res: any) => {
         this.isLoading = false;
 
-        if (!res || res.success !== true) {
-          this.notificationService.toastPopUpError(
-            res?.message || 'Login failed'
-          );
+        if (!res || !res.success) {
+          this.notificationService.toastPopUpError(res?.message || 'Login failed');
           return;
         }
 
-        /* 🔐 STORE AUTH DATA */
+        // Save session
         sessionStorage.setItem('token', res.token);
         sessionStorage.setItem('role', res.role);
         sessionStorage.setItem('is_online', String(res.is_online ?? true));
         localStorage.setItem('chatmessages', 'true');
 
-        /* 🚦 REDIRECT BY ROLE */
-        if (res.role === 'DEF-CLIENT') {
-          this.router.navigate(['/DEF-CLIENT/client-dashboard']);
+        // Came from "Apply Now" -> go straight back to that job
+        if (this.applyTransNo) {
+          this.redirectTo([`/${res.role}/apply-job`, this.applyTransNo]);
           return;
         }
 
-        if (res.role === 'DEF-ADMIN') {
-          this.router.navigate(['/DEF-ADMIN/admin-dashboard']);
+        // Came from some other protected page -> go back there
+        if (this.returnUrl) {
+          this.redirectTo([this.returnUrl]);
           return;
         }
 
-        if (res.role === 'DEF-MASTERADMIN') {
-          this.router.navigate(['/DEF-MASTERADMIN/admin-dashboard']);
+        // No subscription -> prompt to activate plan
+        if (res.role === 'DEF-USERS' && !res.has_subscription) {
+          this.router.navigate([`/${res.role}/subscription`]);
           return;
         }
 
-        if (res.role === 'DEF-USERS') {
-          this.router.navigate(['/DEF-USERS/home']);
-          return;
-        }
-
-        /* ❌ FALLBACK */
-        //  this.router.navigate(['/homepage']);
+        // Load features, then redirect by role
+        this.subscriptionService.myFeatures().subscribe({
+          next: (featureRes: any) => {
+            this.featureService.set(featureRes.success ? featureRes.features : []);
+            this.redirectUser(res.role);
+          },
+          error: () => {
+            this.featureService.set([]);
+            this.redirectUser(res.role);
+          }
+        });
       },
 
       error: (err) => {
         this.isLoading = false;
-
-        const errorMsg =
-          err.status === 401
-            ? err.error?.message || 'Invalid email or password'
-            : err.message || 'Something went wrong';
-
+        const errorMsg = err.status === 401
+          ? err.error?.message || 'Invalid email or password'
+          : err.message || 'Something went wrong';
         this.notificationService.toastPopUpError(errorMsg);
       }
     });
   }
 
-  // onSubmit(): void {
-  //   if (this.loginForm.invalid) return;
-
-  //   this.isLoading = true;
-  //   const { email, password } = this.loginForm.value;
-  //   console.log(this.loginForm.value)
-  //   this.sigInService.signin(email, password).subscribe({
-  //     next: (res) => {
-
-  //       this.isLoading = false;
-  //       if (res.success == true) {
-  //         console.log(res)
-  //         sessionStorage.setItem('token', res.token);
-  //         localStorage.setItem("chatmessages", "true");
-  //         if (res.message == 0) {
-  //           // this.router.navigateByUrl("profile/705");
-  //           // this.router.navigate(['/profile', this]);
-  //               this.router.navigateByUrl("/client")
-  //           // this.router.navigateByUrl("/home").then(() => {
-  //           //   window.location.reload(); // Only if absolutely necessary
-  //           // });
-  //         }
-  //         if (res.message == 1) {
-  //           this.router.navigateByUrl("/user-cv")
-  //         }
-
-  //         // const targetRoute = res.message === 1 ? '/home' : '/user-cv';
-  //         // this.router.navigate([targetRoute]).then(() => location.reload());
-  //       } else {
-  //         this.notificationService.toastPopUpError(res.message);
-  //       }
-  //     },
-  //     error: (err) => {
-  //       this.isLoading = false;
-  //       const errorMsg = err.status === 401 ? err.error : err.message;
-  //       this.notificationService.toastPopUpError(errorMsg);
-  //     }
-  //   });
-  // }
-
-  signInWithGoogle() {
-    this.googleAuth.loginWithGoogle();
+  private redirectUser(role: string): void {
+    const routes: Record<string, string> = {
+      'DEF-CLIENT': '/DEF-CLIENT/client-dashboard',
+      'DEF-ADMIN': '/DEF-ADMIN/admin-dashboard',
+      'DEF-MASTERADMIN': '/DEF-MASTERADMIN/admin-dashboard',
+      'DEF-USERS': '/DEF-USERS/home'
+    };
+    this.redirectTo([routes[role] || '/homepage']);
   }
 
+  private redirectTo(commands: any[]): void {
+    this.isRedirecting = true;
+    setTimeout(() => this.router.navigate(commands), 1200);
+  }
+
+  signInWithGoogle(): void {
+    this.googleAuth.loginWithGoogle();
+  }
 }
