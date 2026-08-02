@@ -1,73 +1,54 @@
-<section class="jobs-section">
-    <div class="container">
+<section class="section">
+    <div class="search-container">
+        <mat-form-field appearance="outline" class="premium-search">
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput placeholder="Search jobs..." [(ngModel)]="searchText" (keyup)="onSearch()"
+                (keyup.enter)="onEnter()">
+            <button *ngIf="searchText" matSuffix mat-icon-button (click)="clearSearch()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-form-field>
+    </div>
 
-        <!-- Section Title -->
-        <div class="section-title">
-            <span>Latest Opportunities</span>
-            <h2>Featured Jobs</h2>
-            <p>Discover your next career opportunity from top companies hiring today.</p>
-        </div>
+    <div class="text-center mt-5" *ngIf="isLoading">
+        <p style="text-align: center;">Loading jobs...</p>
+    </div>
 
-        <!-- Search -->
-        <div class="search-container">
-            <mat-form-field appearance="outline" class="premium-search">
-                <mat-icon matPrefix>search</mat-icon>
-                <input matInput placeholder="Search jobs..." [(ngModel)]="searchText" (keyup)="onSearch()"
-                    (keyup.enter)="onEnter()">
-                <button *ngIf="searchText" matSuffix mat-icon-button (click)="clearSearch()">
-                    <mat-icon>close</mat-icon>
-                </button>
-            </mat-form-field>
-        </div>
+    <div class="jobs-grid" *ngIf="!isLoading">
+        <div class="job-card" *ngFor="let job of filteredJobs" (click)="selectJob(job)">
+            <div class="card-top-bar"></div>
 
-        <!-- Jobs -->
-        <div class="jobs-grid">
-            <div class="job-card" *ngFor="let job of filteredJobs">
+            <div class="card-body">
                 <div class="job-header">
-                    <img [src]="job.image" [alt]="job.company">
-                    <span class="job-type" [ngClass]="job.typeClass">
-                        {{ job.type }}
-                    </span>
+                    <div class="job-logo">
+                        <img [src]="job.image" [alt]="job.job_position" (error)="job.image = placeholderImg">
+                    </div>
+                    <span class="work-type-badge" [ngClass]="job.typeClass">{{ job.work_type }}</span>
                 </div>
-                <h3>{{ job.title }}</h3>
-                <p class="company">
-                    <i class="fas fa-building"></i>
-                    {{ job.company }}
-                </p>
-                <p class="location">
-                    <i class="fas fa-map-marker-alt"></i>
-                    {{ job.location }}
-                </p>
 
-                <p class="salary">
-                    <i class="fas fa-money-bill-wave"></i>
-                    {{ job.salary }}
-                </p>
+                <h3 class="job-name">{{ job.job_name }}</h3>
+
+                <p class="job-position"><i class="fas fa-building"></i> {{ job.job_position }}</p>
+                <p class="location"><i class="fas fa-map-marker-alt"></i> {{ job.location }}</p>
+                <p class="salary"><i class="fas fa-money-bill-wave"></i> {{ formatSalary(job) }}</p>
 
                 <div class="job-footer">
-                    <button class="apply-btn">
+                    <button class="apply-btn" (click)="openJobApply(job); $event.stopPropagation()">
                         Apply Now
                     </button>
                 </div>
-
             </div>
-
         </div>
+    </div>
 
-        <!-- No Result -->
-        <div class="text-center mt-5" *ngIf="filteredJobs.length === 0">
-            <h3>No jobs found.</h3>
-            <p>Try searching with another keyword.</p>
-        </div>
+    <div class="text-center mt-5" *ngIf="!isLoading && filteredJobs.length === 0">
+        <h3>No jobs found.</h3>
+        <p>Try searching with another keyword.</p>
+    </div>
 
-        <!-- Browse Button -->
-        <div class="text-center mt-5" *ngIf="filteredJobs.length > 0">
-
-            <button class="browse-btn">
-                Browse All Jobs
-            </button>
-
-        </div>
-
+    <div class="text-center mt-5" *ngIf="!isLoading && hasMore && !searchText">
+        <button class="browse-btn" (click)="loadMore()" [disabled]="isLoadingMore">
+            {{ isLoadingMore ? 'Loading...' : 'Load More Jobs' }}
+        </button>
     </div>
 </section>

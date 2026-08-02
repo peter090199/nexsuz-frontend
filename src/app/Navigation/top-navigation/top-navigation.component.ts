@@ -476,7 +476,13 @@ search(): void {
     });
   }
 
-    openSearch() {
+
+  openSearch(): void {
+    const role = this.sharedRoutines.getRole();
+    this.router.navigate([`/${role}/search`]);
+  }
+  
+    openSearchxx() {
     const dialogRef = this.dialog.open(SearchComponent, {
       width: '650px',
       minHeight: 'auto',

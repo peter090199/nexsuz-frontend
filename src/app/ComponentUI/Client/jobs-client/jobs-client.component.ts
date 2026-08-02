@@ -1,91 +1,68 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { JobListService } from 'src/app/services/Jobs/job-list.service';
 import { SharedService } from 'src/app/services/SharedServices/shared.service';
-import { environment } from 'src/environments/environment';
+import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
 
 interface Job {
-  job_id: number;
-  transNo: string;
-  code: number;
-  company: string;
-  role_code: string;
   job_name: string;
-  location: string;
-  benefits: string;
   job_position: string;
-  job_description: string;
-  job_about: string;
-  qualification: string;
+  location: string;
+  currency?: string;
+  min_salary?: number;
+  max_salary?: number;
   work_type: string;
-  job_image?: string;
-  fullname: string;
-  created_at: string;
-  updated_at: string;
-  recordstatus: string;
-  is_online: number;
-  // Add more fields if needed
+  typeClass: string;
+  image: string;
 }
 
 @Component({
   selector: 'app-jobs-client',
   templateUrl: './jobs-client.component.html',
-  styleUrls: ['./jobs-client.component.css']
+  styleUrls: ['./jobs-client.component.scss']
 })
 export class JobsClientComponent implements OnInit {
-
-  jobs: Job[] = [];
-  isLoading: boolean = false;
-  selectedTabIndex: number = 2;
+  searchText = '';
+  jobs: any[] = [];
+  filteredJobs: any[] = [];
+  isLoading = false;
   code: any;
   currentUserCode: any;
+  placeholderImg = 'assets/images/logo2.png';
 
-
-
-  constructor(private jobService: JobListService, private route: ActivatedRoute,
-    private authServiceCode: AuthService,private sharedService:SharedService
+  constructor(
+    private jobService: JobListService,
+    private route: ActivatedRoute,
+    private authService: AuthService,
+    private router: Router,
+    private sharedService: SharedService,
+    private sharedRoutineService: SharedRoutinesService
   ) { }
 
-  getJobImageUrl(imagePath?: string): string {
-    if (!imagePath) return 'assets/images/default-job.png';
-    const publicPath = imagePath.replace(/^\/storage\/app\/public/, '/storage');
-    return publicPath;
-  }
-
-
   ngOnInit(): void {
-    this.currentUserCode = this.authServiceCode.getAuthCode();
-    console.log(this.currentUserCode)
+    this.currentUserCode = this.authService.getAuthCode();
     this.code = this.route.snapshot.paramMap.get('code') || window.location.href.split('/').pop() || '';
-    this.loadTabData(this.selectedTabIndex);
-
+    this.getActiveJobsByCode();
   }
-
-  private loadTabData(index: number): void {
-    if (index === 2) {
-      this.getActiveJobsByCode();
-    }
-  }
-
-
 
   async getActiveJobsByCode(): Promise<void> {
     try {
       this.isLoading = true;
-
-      const res = await firstValueFrom(
-        this.jobService.getActiveJobsByCode(this.code)
-      );
+      const res = await firstValueFrom(this.jobService.getActiveJobsByCode(this.code));
 
       if (res?.success) {
         this.jobs = res.data.map((job: any) => ({
           ...job,
-          job_image: this.sharedService.cleanImageUrl(job.job_image)
+          job_name: job.job_name ?? 'Untitled Job',
+          location: job.location ?? 'Not specified',
+          work_type: job.work_type,
+          image: job.job_image ? this.sharedService.cleanImageUrl(job.job_image) : this.placeholderImg,
+          typeClass: this.getTypeClass(job.work_type)
         }));
+        this.filteredJobs = [...this.jobs];
       }
-
     } catch (error) {
       console.error('Error fetching jobs:', error);
     } finally {
@@ -93,18 +70,61 @@ export class JobsClientComponent implements OnInit {
     }
   }
 
-  openJobApply(job: Job): void {
-    if (job.work_type && job.work_type.toLowerCase() === 'remote') {
-      // Optional: handle remote jobs differently
-    }
-    if (job.job_image) {
-      // Optional: preview image
-    }
-    // Open application URL if available
-    const applyUrl = (job as any).applyUrl; // if backend provides
-    if (applyUrl) {
-      window.open(applyUrl, '_blank');
-    }
+  onSearch(): void {
+    const keyword = (this.searchText ?? '').trim().toLowerCase();
+    this.filteredJobs = !keyword
+      ? [...this.jobs]
+      : this.jobs.filter(job =>
+        job.job_name?.toLowerCase().includes(keyword) ||
+        job.job_position?.toLowerCase().includes(keyword) ||
+        job.location?.toLowerCase().includes(keyword) ||
+        job.work_type?.toLowerCase().includes(keyword)
+      );
   }
 
+  onEnter(): void {
+    this.onSearch();
+  }
+
+  clearSearch(): void {
+    this.searchText = '';
+    this.filteredJobs = [...this.jobs];
+  }
+
+  selectJob(job: Job): void {
+    this.searchText = job.job_name ?? '';
+    this.onSearch();
+  }
+
+  formatSalary(job: Job): string {
+    if (job.min_salary == null && job.max_salary == null) return 'Salary not specified';
+    const symbol = this.getCurrencySymbol(job.currency);
+    return `${symbol}${job.min_salary ?? ''} - ${symbol}${job.max_salary ?? ''}`;
+  }
+
+  openJobApply(job: any): void {
+    this.router.navigate(
+      [...this.sharedRoutineService.getApplyJobRoute(), job.transNo],
+      { queryParams: { code: this.currentUserCode } }
+    );
+  }
+
+  private getTypeClass(type?: string): string {
+    if (!type) return 'default';
+    const normalized = type.toLowerCase().trim();
+
+    if (normalized.includes('remote') || normalized.includes('home')) return 'remote';
+    if (normalized.includes('hybrid')) return 'hybrid';
+    if (normalized.includes('onsite') || normalized.includes('on-site') || normalized.includes('office')) return 'onsite';
+    if (normalized.includes('freelance') || normalized.includes('contract')) return 'freelance';
+    if (normalized.includes('part')) return 'parttime';
+    if (normalized.includes('full')) return 'fulltime';
+
+    return 'default'; // fallback for anything unmatched
+  }
+
+  private getCurrencySymbol(code?: string): string {
+    const map: Record<string, string> = { PHP: '₱', USD: '$', EUR: '€', GBP: '£', JPY: '¥' };
+    return code ? (map[code] ?? code + ' ') : '';
+  }
 }

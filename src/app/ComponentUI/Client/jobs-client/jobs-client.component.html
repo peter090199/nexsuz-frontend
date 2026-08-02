@@ -1,22 +1,52 @@
-<section class="connections-section" *ngIf="jobs.length > 0">
-  <span class="section-title">List of Jobs</span>
-  <div class="job-grid">
-    <mat-card class="job-card" *ngFor="let job of jobs">
-      <div class="job-header">
-        <img class="company-logo"  [src]="getJobImageUrl(job.job_image)"  alt="Company Logo">
-        <div class="company-info">
-          <h4>{{ job.company }}</h4>
-          <p>{{ job.job_position }}</p>
+<section class="section">
+  <div class="search-container">
+    <mat-form-field appearance="outline" class="premium-search">
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput placeholder="Search jobs..." [(ngModel)]="searchText"
+        (keyup)="onSearch()" (keyup.enter)="onEnter()">
+      <button *ngIf="searchText" matSuffix mat-icon-button (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+
+  <div class="text-center mt-5" *ngIf="isLoading">
+    <p style="text-align: center;">Loading jobs...</p>
+  </div>
+
+  <div class="jobs-grid" *ngIf="!isLoading">
+    <div class="job-card" *ngFor="let job of filteredJobs" (click)="selectJob(job)">
+      <div class="card-top-bar"></div>
+
+      <div class="card-body">
+        <div class="job-header">
+          <div class="job-logo">
+            <img [src]="job.image" [alt]="job.job_position" (error)="job.image = placeholderImg">
+          </div>
+          <span class="work-type-badge" [ngClass]="job.typeClass">{{ job.work_type }}</span>
+        </div>
+
+        <h3 class="job-name">{{ job.job_name }}</h3>
+
+        <p class="job-position"><i class="fas fa-building"></i> {{ job.job_position }}</p>
+        <p class="location"><i class="fas fa-map-marker-alt"></i> {{ job.location }}</p>
+        <p class="salary"><i class="fas fa-money-bill-wave"></i> {{ formatSalary(job) }}</p>
+
+        <div class="job-footer">
+          <button class="apply-btn" (click)="openJobApply(job); $event.stopPropagation()">
+            Apply Now
+          </button>
         </div>
       </div>
-      <div class="job-details">
-        <p class="job-location"><mat-icon>location_on</mat-icon> {{ job.location }}</p>
-        <p class="job-type">{{ job.work_type }}</p>
-        <p class="job-posted">Posted {{ job.created_at | date:'shortDate' }}</p>
-      </div>
-      <div class="job-footer">
-          <button mat-flat-button color="primary" [routerLink]="['/apply-job', job.transNo]">Apply Now</button>
-      </div>
-    </mat-card>
+    </div>
+  </div>
+
+  <div class="text-center mt-5" *ngIf="!isLoading && filteredJobs.length === 0">
+    <h3>No jobs found.</h3>
+    <p>Try searching with another keyword.</p>
+  </div>
+
+  <div class="text-center mt-5" *ngIf="!isLoading && filteredJobs.length > 0">
+    <button class="browse-btn">Browse All Jobs</button>
   </div>
 </section>

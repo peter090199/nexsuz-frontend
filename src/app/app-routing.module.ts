@@ -52,6 +52,7 @@ import { CheckOutUIComponent } from './ComponentUI/AccountManagement/user-plan/c
 import { UpgradeRequiredComponent } from './ComponentSharedUI/account-type-plan/upgrade-required/upgrade-required.component';
 import { LandingComponent } from './Navigation/landing/landing.component';
 import { TopheaderComponent } from './Users/userhomepage/topheader/topheader.component';
+import { JobsectionComponent } from './Navigation/hero/jobsection/jobsection.component';
 
 const routes: Routes = [
   // Public routes
@@ -86,7 +87,8 @@ const routes: Routes = [
       { path: 'message', component: MessagesComponent },
       { path: 'network', component: NetworkingComponent },
       { path: 'settings', component: SettingsComponent },
-      { path: 'search', component: UserListComponent },
+       { path: 'search', component: JobsectionComponent },
+      // { path: 'search', component: UserListComponent },
       { path: 'user-cv', component: UserCVComponent },
       { path: 'jobs', component: JobsComponent },
       { path: 'recommended-jobs/:transNo', component: JobsProfileComponent },

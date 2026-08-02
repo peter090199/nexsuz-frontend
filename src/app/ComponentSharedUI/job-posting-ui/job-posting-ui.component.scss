@@ -1,0 +1,156 @@
+/* Container */
+.container {
+  position: relative;
+  margin: 40px auto;
+  padding: 15px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  max-height: 90vh;
+  width: 100%;
+  overflow-wrap: normal;
+}
+
+/* Close button */
+.close-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+}
+
+/* Page Header */
+.page-header h2 {
+  font-size: 20px;
+  margin: 10px;
+  text-align: center;
+}
+
+/* Generic form layout */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.form-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.w-20 {
+  width: 20%;
+  min-width: 140px;
+}
+
+/* Salary range */
+.salary-range-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.salary-min,
+.salary-max {
+  flex: 1;
+}
+
+.range-separator {
+  margin: 0 4px;
+  padding-bottom: 20px; /* aligns with input, offsetting the mat-label */
+}
+
+.form-field2 {
+  width: 650px;
+  max-width: 100%;
+}
+
+.no-questions {
+  text-align: center;
+  color: #777;
+  font-style: italic;
+  margin: 10px 0;
+}
+
+.error-text {
+  color: #f44336;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+/* Image Preview */
+.image-preview-container {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.preview-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Questions */
+.questions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.question-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.result {
+  font-weight: 600;
+}
+
+.result .correct {
+  color: #2e7d32;
+}
+
+.result .wrong {
+  color: #c62828;
+}
+
+/* Buttons */
+.button-end {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .page-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .form-field2 {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .questions-list .question-item {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+}

@@ -5,7 +5,7 @@
     <div class="mobile-header" *ngIf="isMobile">
       <app-app-logo></app-app-logo>
 
-      <button mat-icon-button class="toolbar-icon" (click)="searchSidenav.open()">
+      <button mat-icon-button class="toolbar-icon" (click)="openSearch()">
         <mat-icon>search</mat-icon>
       </button>
 
@@ -52,16 +52,13 @@
             <mat-icon>search</mat-icon>
           </button> -->
 
-          <button mat-icon-button class="toolbar-icon" matTooltip="Notifications" [matBadge]="unreadCount"
-            [matBadgeHidden]="!unreadCount" matBadgeColor="warn"
-            (click)=openSearch()>
-           <mat-icon>search</mat-icon>
+          <button mat-icon-button class="toolbar-icon" matTooltip="Search.." (click)=openSearch()>
+            <mat-icon>search</mat-icon>
           </button>
-        
+
           <!-- NOTIFICATIONS -->
           <button mat-icon-button class="toolbar-icon" matTooltip="Notifications" [matBadge]="unreadCount"
-            [matBadgeHidden]="!unreadCount" matBadgeColor="warn"
-            (click)="openNotifications()">
+            [matBadgeHidden]="!unreadCount" matBadgeColor="warn" (click)="openNotifications()">
             <mat-icon>notifications</mat-icon>
           </button>
 

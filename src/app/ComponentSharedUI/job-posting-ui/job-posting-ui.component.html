@@ -44,11 +44,6 @@
             <mat-label>Job Name</mat-label>
             <input matInput formControlName="job_name" required />
           </mat-form-field>
-
-          <mat-form-field class="form-field">
-            <mat-label>Position</mat-label>
-            <input matInput formControlName="job_position" required />
-          </mat-form-field>
         </div>
 
         <div class="form-row">
@@ -59,17 +54,65 @@
         </div>
 
         <div class="form-row">
+          <div class="salary-range-container" formGroupName="salaryRange">
+
+            <!-- Currency / Country selector -->
+            <mat-form-field class="form-field currency-select">
+              <mat-label>Currency</mat-label>
+              <mat-select formControlName="currency" [(value)]="selectedCurrency">
+                <mat-option *ngFor="let c of currencies" [value]="c.code">
+                  {{ c.symbol }} —  ({{ c.code }})
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="form-field salary-min">
+              <mat-label>Min Salary</mat-label>
+              <span matPrefix>{{ getCurrencySymbol() }}&nbsp;</span>
+              <input matInput type="number" formControlName="minSalary" required min="0" />
+            </mat-form-field>
+
+            <span class="range-separator">-</span>
+
+            <mat-form-field class="form-field salary-max">
+              <mat-label>Max Salary</mat-label>
+              <span matPrefix>{{ getCurrencySymbol() }}&nbsp;</span>
+              <input matInput type="number" formControlName="maxSalary" required min="0" />
+            </mat-form-field>
+
+          </div>
+        </div>
+
+        <!-- Position belongs to jobForm directly, not the salaryRange group -->
+        <div class="form-row">
+          <mat-form-field class="form-field w-100">
+            <mat-label>Position</mat-label>
+            <input matInput formControlName="job_position" required />
+          </mat-form-field>
+        </div>
+
+
+        <div class="form-row">
           <mat-form-field class="form-field">
             <mat-label>Benefits</mat-label>
-            <textarea matInput rows="3" formControlName="benefits" required></textarea>
+            <textarea matInput rows="3" formControlName="benefits" required maxlength="255"></textarea>
+            <mat-hint align="end">{{ jobForm.get('benefits')?.value?.length || 0 }}/255</mat-hint>
+            <mat-error *ngIf="jobForm.get('benefits')?.hasError('maxlength')">
+              Benefits cannot exceed 255 characters
+            </mat-error>
           </mat-form-field>
         </div>
 
         <div class="form-row">
           <mat-form-field class="form-field">
             <mat-label>About the Job</mat-label>
-            <textarea matInput rows="2" formControlName="job_about" required></textarea>
+            <textarea matInput rows="3" formControlName="job_about" required maxlength="255"></textarea>
+            <mat-hint align="end">{{ jobForm.get('job_about')?.value?.length || 0 }}/255</mat-hint>
+            <mat-error *ngIf="jobForm.get('job_about')?.hasError('maxlength')">
+              job_about cannot exceed 255 characters
+            </mat-error>
           </mat-form-field>
+
         </div>
 
         <div class="form-row">
@@ -163,62 +206,19 @@
                 </mat-select>
               </mat-form-field>
 
-              <!-- ========================= -->
-              <!-- CORRECT ANSWER -->
-              <!-- ========================= -->
-
-              <!-- <ng-container
-                *ngIf="question.get('answer_type')?.value === 'yes' || question.get('answer_type')?.value === 'no'">
-                <mat-form-field appearance="fill">
-                  <mat-label>Correct Answer</mat-label>
-                  <mat-select formControlName="correct_answer">
-                    <mat-option value="yes">Yes</mat-option>
-                    <mat-option value="no">No</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </ng-container> -->
-
-              <!-- <ng-container *ngIf="question.get('answer_type')?.value === 'general'">
-                <mat-form-field appearance="fill">
-                  <mat-label>Correct Answer</mat-label>
-                  <input matInput formControlName="correct_answer" />
-                </mat-form-field>
-              </ng-container> -->
-
-              <!-- ========================= -->
-              <!-- USER ANSWER -->
-              <!-- ========================= -->
-
-              <!-- <ng-container
-                *ngIf="question.get('answer_type')?.value === 'yes' || question.get('answer_type')?.value === 'no'">
-                <mat-form-field appearance="outline">
-                  <mat-label>User Answer</mat-label>
-                  <mat-select formControlName="user_answer">
-                    <mat-option value="yes">Yes</mat-option>
-                    <mat-option value="no">No</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </ng-container> -->
-
-              <!-- <ng-container *ngIf="question.get('answer_type')?.value === 'general'">
-                <mat-form-field appearance="outline">
-                  <mat-label>User Answer</mat-label>
-                  <input matInput formControlName="user_answer" />
-                </mat-form-field>
-              </ng-container> -->
-
               <!-- RESULT -->
-              <div class="result" *ngIf="question.value?.user_answer && question.value?.correct_answer">
+              <div *ngIf="question.value?.user_answer && question.value?.correct_answer">
                 <span [ngClass]="{
-                correct: question.value.user_answer === question.value.correct_answer,
-                wrong: question.value.user_answer !== question.value.correct_answer
-              }">
+            correct: question.value.user_answer === question.value.correct_answer,
+            wrong: question.value.user_answer !== question.value.correct_answer
+          }">
                   {{
                   question.value.user_answer === question.value.correct_answer
                   ? 'Correct'
                   : 'Wrong'
                   }}
                 </span>
+
               </div>
 
               <!-- DELETE -->
@@ -227,8 +227,6 @@
               </button>
 
               <mat-divider></mat-divider>
-              <br />
-
             </ng-container>
 
           </div>
@@ -246,37 +244,37 @@
     </mat-step>
 
     <!-- <mat-step [stepControl]="appliedQuestionForm">
-      <form [formGroup]="appliedQuestionForm">
-        <ng-template matStepLabel>Applied Questions</ng-template>
+  <form [formGroup]="appliedQuestionForm">
+    <ng-template matStepLabel>Applied Questions</ng-template>
 
-        <button mat-button color="primary" type="button" (click)="addQuestion()">Add Question</button>
-        <br />
-        <mat-divider></mat-divider>
-        <br />
+    <button mat-button color="primary" type="button" (click)="addQuestion()">Add Question</button>
+    <br />
+    <mat-divider></mat-divider>
+    <br />
 
-        <div formArrayName="questions">
-          <div *ngIf="questions.length === 0" class="no-questions">No questions added yet.</div>
+    <div formArrayName="questions">
+      <div *ngIf="questions.length === 0" class="no-questions">No questions added yet.</div>
 
-          <div *ngFor="let question of questions.controls; let i = index" [formGroupName]="i" class="question-item">
-            <div class="form-row">
-              <mat-form-field class="form-field2" appearance="standard">
-                <mat-label>{{ 'Question ' + (i + 1) }}</mat-label>
-                <input matInput placeholder="Enter question" formControlName="question_text" required />
-              </mat-form-field>
+      <div *ngFor="let question of questions.controls; let i = index" [formGroupName]="i" class="question-item">
+        <div class="form-row">
+          <mat-form-field class="form-field2" appearance="standard">
+            <mat-label>{{ 'Question ' + (i + 1) }}</mat-label>
+            <input matInput placeholder="Enter question" formControlName="question_text" required />
+          </mat-form-field>
 
-              <button mat-icon-button color="warn" type="button" (click)="removeQuestion(i)">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-          </div>
+          <button mat-icon-button color="warn" type="button" (click)="removeQuestion(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
         </div>
-      </form>
-
-      <div class="button-end">
-        <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="loading">
-          {{ btnSave }}
-        </button>
       </div>
-    </mat-step> -->
+    </div>
+  </form>
+
+  <div class="button-end">
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="loading">
+      {{ btnSave }}
+    </button>
+  </div>
+</mat-step> -->
   </mat-horizontal-stepper>
 </div>

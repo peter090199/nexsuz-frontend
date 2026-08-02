@@ -10,6 +10,12 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { ProfileService } from '../Profile/profile.service';
 
+export interface Currency {
+  code: string;
+  symbol: string;
+  country: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -99,7 +105,7 @@ export class SharedRoutinesService {
           return;
           // Show warning if connection limit is reached
           if (!res.status) {
-               this.alert.toastrWarning(res.message || 'Connection limit reached. Cannot follow more users.');
+            this.alert.toastrWarning(res.message || 'Connection limit reached. Cannot follow more users.');
             return;
           }
 
@@ -265,6 +271,11 @@ export class SharedRoutinesService {
   getsettingsRoute(): any[] {
     const role = this.getRole();
     return [`/${role}/settings`];
+  }
+
+  getApplyJobRoute(): any[] {
+    const role = this.getRole();
+    return [`/${role}/apply-job`];
   }
 
 
@@ -454,6 +465,39 @@ export class SharedRoutinesService {
     if (this.router.url !== route) {
       this.router.navigate([route]);
     }
+  }
+  private currencies: Currency[] = [
+    { code: 'PHP', symbol: '₱', country: 'Philippines' },
+    { code: 'USD', symbol: '$', country: 'United States' },
+    { code: 'EUR', symbol: '€', country: 'European Union' },
+    { code: 'GBP', symbol: '£', country: 'United Kingdom' },
+    { code: 'JPY', symbol: '¥', country: 'Japan' },
+    { code: 'AUD', symbol: 'A$', country: 'Australia' },
+    { code: 'CAD', symbol: 'C$', country: 'Canada' },
+    { code: 'SGD', symbol: 'S$', country: 'Singapore' },
+    { code: 'INR', symbol: '₹', country: 'India' },
+    { code: 'CNY', symbol: '¥', country: 'China' },
+  ];
+
+
+  /** Return the full list of supported currencies */
+  getCurrencies(): Currency[] {
+    return this.currencies;
+  }
+
+  /** Look up a single currency by its code (e.g. 'PHP') */
+  getCurrencyByCode(code: string): Currency | undefined {
+    return this.currencies.find(c => c.code === code);
+  }
+
+  /** Convenience helper to get just the symbol */
+  getCurrencySymbol(code: string): string {
+    return this.getCurrencyByCode(code)?.symbol ?? '';
+  }
+
+  /** Default currency for new forms */
+  getDefaultCurrency(): Currency {
+    return this.currencies[0]; // PHP
   }
 
 }

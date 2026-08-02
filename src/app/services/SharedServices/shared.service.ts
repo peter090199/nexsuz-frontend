@@ -103,7 +103,7 @@ export class SharedService {
     }
     let cleanPath = path.replace('/storage/app/public/', '/storage/');
     cleanPath = cleanPath.replace(/^\/+/, ''); // remove leading slash
-    return `https://api.nexsuz.com/${cleanPath}`;
+    return `http://127.0.0.1:8000/${cleanPath}`;
   }
 
 

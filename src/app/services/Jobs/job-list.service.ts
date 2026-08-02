@@ -57,6 +57,9 @@ export class JobListService {
     );
   }
 
+  getActiveJobsByPublic(page: number = 1) {
+    return this.http.get<any>(`${_url}getActiveJobsByPublic?page=${page}`);
+  }
 
   getActiveJobsByCode(code: any): Observable<any> {
     const headers = this.createHeaders();
@@ -83,7 +86,7 @@ export class JobListService {
     );
   }
 
-   getHired(): Observable<any> {
+  getHired(): Observable<any> {
     const headers = this.createHeaders();
     return this.http.get(`${_url}getHired`, { headers }).pipe(
       catchError(error => this.handleAuthError(error))
