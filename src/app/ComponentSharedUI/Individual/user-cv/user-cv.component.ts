@@ -30,6 +30,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PrintCVComponent } from '../print-cv/print-cv.component';
 import { AuthService } from 'src/app/services/auth.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { ImagesService } from 'src/app/services/images/images.service';
 
 
 
@@ -144,7 +145,7 @@ export class UserCVComponent implements AfterViewInit {
     private notificationService: NotificationsService, private router: Router, private datePipe: DatePipe,
     private dialog: MatDialog, private passDataServices: ProfessionalService, private alert: NotificationsService,
     private profileService: ProfessionalService, private educacationServices: CurriculumVitaeService,
-    private authServiceCode: AuthService
+    private authServiceCode: AuthService,private imageService:ImagesService
   ) {
     this.countryControl1.valueChanges.subscribe(value => {
       this.filteredCountries1 = this.filterCountries(value);
@@ -763,13 +764,10 @@ export class UserCVComponent implements AfterViewInit {
           const profile = res.data;
           const rawPath = res.data.photo_pic;
 
-          this.previewUrl = profile.photo_pic;
-          console.log(this.previewUrl)
-          // Try to extract valid image URL if path is malformed
-          const urlMatch = rawPath.match(/https?:\/\/[^\s]+/);
-          this.previewUrl = urlMatch ? urlMatch[0] : null;
-          this.filename = this.getFilenameFromPath(this.previewUrl);
+          this.previewUrl = this.imageService.cleanImageUrl(rawPath);
+          console.log(this.previewUrl);
 
+          this.filename = this.getFilenameFromPath(this.previewUrl);
 
           this.firstFormGroup.patchValue({
             contact_visibility: profile.contact_visibility,
@@ -777,7 +775,7 @@ export class UserCVComponent implements AfterViewInit {
             date_birth: new Date(profile.date_birth),
           });
 
-          //HOME LOCATION
+          // HOME LOCATION
           this.countryControl1.setValue(profile.home_country);
           this.countryControl2.setValue(profile.current_location);
 
@@ -788,7 +786,6 @@ export class UserCVComponent implements AfterViewInit {
           this.summaryFormGroup.patchValue({
             summary: profile.summary || '',
           });
-
         }
       },
       error: (err) => {
@@ -796,6 +793,8 @@ export class UserCVComponent implements AfterViewInit {
       }
     });
   }
+
+
 
   autoTicks = false;
   disabled = false;

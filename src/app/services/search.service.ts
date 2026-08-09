@@ -12,11 +12,11 @@ export class SearchService {
 
   constructor(private http: HttpClient) {
     this.socket$ = webSocket('wss://ws-ap1.pusher.com/app/e0cd7653f3ae9bbbd459?protocol=7&client=js&version=8.4.0&flash=false');
-   }
+  }
   private storageKey = 'loggedInUser';
   private user = { code: 702, fullname: "Pedro Yorpo" }; // Example
 
-  
+
   private getAuthToken(): string {
     return sessionStorage.getItem('token') || ''; // Fetch the token from localStorage or other storage
   }
@@ -47,8 +47,8 @@ export class SearchService {
     const user = localStorage.getItem(this.storageKey);
     return user ? JSON.parse(user) : null;
   }
- 
-  
+
+
 
   getSecurityRoles(): Observable<any> {
     const headers = this.createHeaders();
@@ -56,7 +56,7 @@ export class SearchService {
       catchError(error => this.handleAuthError(error))
     );
   }
-  
+
   private handleAuthError(error: any): Observable<any> {
     if (error.status === 401) {
       console.error('Unauthorized: Please log in.');
@@ -88,10 +88,20 @@ export class SearchService {
       'Authorization': `Bearer ${this.getAuthToken()}`, // Attach token dynamically
       'Content-Type': 'application/json'
     });
-  
+
     return this.http.get<{ online: any[]; offline: any[] }>(
-      `${_url}searchUsers?search=${query}`, 
+      `${_url}searchUsers?search=${query}`,
       { headers } // Pass headers here
+    );
+  }
+  searchUsersBypublic(query: string = ''): Observable<{ online: any[]; offline: any[] }> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.get<{ online: any[]; offline: any[] }>(
+      `${_url}searchUsersBypublic?search=${query}`,
+      { headers }
     );
   }
 

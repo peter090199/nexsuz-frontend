@@ -3,8 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { JobListService } from 'src/app/services/Jobs/job-list.service';
-import { SharedService } from 'src/app/services/SharedServices/shared.service';
 import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
+import { ImagesService } from 'src/app/services/images/images.service';
+import { SearchService } from 'src/app/services/search.service';
 
 interface Job {
   transNo: string;
@@ -19,31 +20,58 @@ interface Job {
   image: string;
 }
 
+interface Person {
+  code: number;
+  role_code: string;
+  status: string;
+  fullname: string;
+  skills: string;
+  image: string;
+  isOnline: boolean;
+}
+
+type SearchType = 'jobs' | 'people';
+
 @Component({
   selector: 'app-jobsection',
   templateUrl: './jobsection.component.html',
   styleUrls: ['./jobsection.component.scss']
 })
 export class JobsectionComponent implements OnInit {
+  // --- shared search state ---
   searchText = '';
-  jobs: Job[] = [];
-  filteredJobs: Job[] = [];
+  searchType: SearchType = 'jobs';
+  searchPlaceholder = 'Search jobs, positions, locations...';
   isLoading = false;
   isLoadingMore = false;
-  code: any;
-  currentUserCode: any;
-  placeholderImg = 'assets/images/logo2.png';
 
+  // --- jobs state ---
+  jobs: Job[] = [];
+  filteredJobs: Job[] = [];
   currentPage = 1;
   lastPage = 1;
   hasMore = false;
 
+  // --- people state ---
+  onlinePeople: any[] = [];
+  offlinePeople: any[] = [];
+  filteredOnlinePeople: any[] = [];
+  filteredOfflinePeople: any[] = [];
+  peopleDisplayLimit = 10;
+  readonly peopleChunkSize = 10;
+
+  // --- misc ---
+  code: any;
+  currentUserCode: any;
+  placeholderImg = 'assets/images/logo2.png';
+
   constructor(
     private jobService: JobListService,
+    private peopleService: SearchService,
     private route: ActivatedRoute,
     private authService: AuthService,
     private router: Router,
-    private sharedService: SharedService,
+    private sharedService: ImagesService,
     private sharedRoutineService: SharedRoutinesService
   ) { }
 
@@ -53,22 +81,45 @@ export class JobsectionComponent implements OnInit {
     this.getActiveJobsByCode();
   }
 
+  // ============================================================
+  // Search type switching
+  // ============================================================
+
+  setSearchType(type: SearchType): void {
+    this.searchType = type;
+    this.searchText = '';
+    this.peopleDisplayLimit = this.peopleChunkSize;
+
+    if (type === 'people') {
+      this.searchPlaceholder = 'Search people, names, skills...';
+      if (this.onlinePeople.length === 0 && this.offlinePeople.length === 0) {
+        this.getActivePeopleByCode();
+      } else {
+        this.filteredOnlinePeople = [...this.onlinePeople];
+        this.filteredOfflinePeople = [...this.offlinePeople];
+      }
+    } else {
+      this.searchPlaceholder = 'Search jobs, positions, locations...';
+      this.filteredJobs = [...this.jobs];
+    }
+  }
+
+  // ============================================================
+  // Data fetching
+  // ============================================================
+
   async getActiveJobsByCode(page: number = 1): Promise<void> {
     try {
       page === 1 ? (this.isLoading = true) : (this.isLoadingMore = true);
-
       const res = await firstValueFrom(this.jobService.getActiveJobsByPublic(page));
 
       if (res?.success) {
-        const mapped: Job[] = res.data.data.map((job: any) => this.mapJob(job));
-
+        const mapped = res.data.data.map((job: any) => this.mapJob(job));
         this.jobs = page === 1 ? mapped : [...this.jobs, ...mapped];
         this.filteredJobs = [...this.jobs];
-
         this.currentPage = res.data.current_page;
         this.lastPage = res.data.last_page;
         this.hasMore = !!res.data.next_page_url;
-        console.log('hasMore:', this.hasMore, 'next_page_url:', res.data.next_page_url, 'total:', res.data.total);
       }
     } catch (error) {
       console.error('Error fetching jobs:', error);
@@ -78,10 +129,157 @@ export class JobsectionComponent implements OnInit {
     }
   }
 
-  loadMore(): void {
-    if (this.hasMore && !this.isLoadingMore) {
-      this.getActiveJobsByCode(this.currentPage + 1);
+  
+  async getActivePeopleByCode(query: string = ''): Promise<void> {
+    try {
+      this.isLoading = true;
+
+      const res = this.authService.isLoggedIn()
+        ? await firstValueFrom(this.peopleService.searchUsers(query))
+        : await firstValueFrom(this.peopleService.searchUsersBypublic(query));
+
+      if (res?.online || res?.offline) {
+        this.onlinePeople = (res.online ?? []).map((p: any) => this.mapPerson(p));
+        this.offlinePeople = (res.offline ?? []).map((p: any) => this.mapPerson(p));
+        this.filteredOnlinePeople = [...this.onlinePeople];
+        this.filteredOfflinePeople = [...this.offlinePeople];
+        this.peopleDisplayLimit = this.peopleChunkSize;
+      }
+    } catch (error) {
+      console.error('Error fetching people:', error);
+    } finally {
+      this.isLoading = false;
     }
+  }
+
+  // ============================================================
+  // Load more (jobs = server pagination, people = client-side reveal)
+  // ============================================================
+
+  loadMore(): void {
+    if (this.searchType === 'jobs') {
+      if (!this.hasMore || this.isLoadingMore) return;
+      this.getActiveJobsByCode(this.currentPage + 1);
+    } else {
+      this.peopleDisplayLimit += this.peopleChunkSize;
+    }
+  }
+
+  get visibleOnlinePeople(): Person[] {
+    return this.filteredOnlinePeople.slice(0, this.peopleDisplayLimit);
+  }
+
+  get visibleOfflinePeople(): Person[] {
+    return this.filteredOfflinePeople.slice(0, this.peopleDisplayLimit);
+  }
+
+  get peopleHasMore(): boolean {
+    return this.filteredOnlinePeople.length > this.peopleDisplayLimit
+      || this.filteredOfflinePeople.length > this.peopleDisplayLimit;
+  }
+
+  // ============================================================
+  // Search / filter
+  // ============================================================
+
+  onSearch(): void {
+    const keyword = (this.searchText ?? '').trim().toLowerCase();
+
+    if (this.searchType === 'jobs') {
+      this.filteredJobs = !keyword
+        ? [...this.jobs]
+        : this.jobs.filter(job =>
+          job.job_name?.toLowerCase().includes(keyword) ||
+          job.job_position?.toLowerCase().includes(keyword) ||
+          job.location?.toLowerCase().includes(keyword) ||
+          job.work_type?.toLowerCase().includes(keyword)
+        );
+      return;
+    }
+
+    this.filteredOnlinePeople = !keyword
+      ? [...this.onlinePeople]
+      : this.onlinePeople.filter(p =>
+        p.fullname?.toLowerCase().includes(keyword) ||
+        p.skills?.toLowerCase().includes(keyword)
+      );
+
+    this.filteredOfflinePeople = !keyword
+      ? [...this.offlinePeople]
+      : this.offlinePeople.filter(p =>
+        p.fullname?.toLowerCase().includes(keyword) ||
+        p.skills?.toLowerCase().includes(keyword)
+      );
+
+    this.peopleDisplayLimit = this.peopleChunkSize;
+  }
+
+  onEnter(): void {
+    if (this.searchType === 'people') {
+      this.getActivePeopleByCode(this.searchText.trim());
+    } else {
+      this.onSearch();
+    }
+  }
+
+  clearSearch(): void {
+    this.searchText = '';
+    this.peopleDisplayLimit = this.peopleChunkSize;
+
+    if (this.searchType === 'jobs') {
+      this.filteredJobs = [...this.jobs];
+    } else {
+      this.filteredOnlinePeople = [...this.onlinePeople];
+      this.filteredOfflinePeople = [...this.offlinePeople];
+    }
+  }
+
+  // ============================================================
+  // Navigation
+  // ============================================================
+
+  selectJob(job: Job): void {
+    const role = this.authService.isLoggedIn() ? sessionStorage.getItem('role') : null;
+    if (!role) return;
+
+    this.router.navigate([`${role}/recommended-jobs`, job.transNo], {
+      queryParams: { jobName: job.job_name ?? '' }
+    });
+  }
+
+  selectPerson(person: Person): void {
+    const role = this.authService.isLoggedIn() ? sessionStorage.getItem('role') : null;
+    if (!role) return;
+
+    this.router.navigate([`${role}/profile`, person.code]);
+  }
+
+  openJobApply(job: Job): void {
+    const transNo = job.transNo;
+
+    if (this.authService.isLoggedIn()) {
+      const role = sessionStorage.getItem('role');
+      this.router.navigate([`/${role}/apply-job`, transNo]);
+    } else {
+      this.router.navigate(['/signin'], { queryParams: { applyTransNo: transNo } });
+    }
+  }
+
+  openJobApplyxx(job: Job): void {
+    this.router.navigate(
+      [...this.sharedRoutineService.getApplyJobRoute(), job.transNo],
+      { queryParams: { code: this.currentUserCode } }
+    );
+  }
+
+  // ============================================================
+  // Formatting / mapping helpers
+  // ============================================================
+
+  formatSalary(job: Job): string {
+    if (job.min_salary == null && job.max_salary == null) return 'Salary not specified';
+    const symbol = this.getCurrencySymbol(job.currency);
+    return `${symbol}${job.min_salary ?? ''} - ${symbol}${job.max_salary ?? ''}`;
   }
 
   private mapJob(job: any): Job {
@@ -95,56 +293,16 @@ export class JobsectionComponent implements OnInit {
     };
   }
 
-  onSearch(): void {
-    const keyword = (this.searchText ?? '').trim().toLowerCase();
-    this.filteredJobs = !keyword
-      ? [...this.jobs]
-      : this.jobs.filter(job =>
-        job.job_name?.toLowerCase().includes(keyword) ||
-        job.job_position?.toLowerCase().includes(keyword) ||
-        job.location?.toLowerCase().includes(keyword) ||
-        job.work_type?.toLowerCase().includes(keyword)
-      );
-  }
-
-  onEnter(): void {
-    this.onSearch();
-  }
-
-  clearSearch(): void {
-    this.searchText = '';
-    this.filteredJobs = [...this.jobs];
-  }
-
-  selectJob(job: Job): void {
-    this.searchText = job.job_name ?? '';
-    this.onSearch();
-  }
-
-  formatSalary(job: Job): string {
-    if (job.min_salary == null && job.max_salary == null) return 'Salary not specified';
-    const symbol = this.getCurrencySymbol(job.currency);
-    return `${symbol}${job.min_salary ?? ''} - ${symbol}${job.max_salary ?? ''}`;
-  }
-
-  openJobApply(job: any) {
-    const transNo = job.transNo;
-    if (this.authService.isLoggedIn()) {
-      const role = sessionStorage.getItem('role'); // already logged in, role is known
-      this.router.navigate([`/${role}/apply-job`, transNo]);
-    } else {
-      // Don't guess the role yet — just pass the transNo
-      this.router.navigate(['/signin'], {
-        queryParams: { applyTransNo: transNo }
-      });
-    }
-  }
-
-  openJobApplyxx(job: Job): void {
-    this.router.navigate(
-      [...this.sharedRoutineService.getApplyJobRoute(), job.transNo],
-      { queryParams: { code: this.currentUserCode } }
-    );
+  private mapPerson(p: any): Person {
+    return {
+      code: p.code,
+      role_code: p.role_code ?? '',
+      status: p.status ?? '',
+      fullname: p.fullname ?? 'Unknown',
+      skills: p.skills ?? 'No skills listed',
+      image: p.photo_pic ? this.sharedService.cleanImageUrl(p.photo_pic) : this.placeholderImg,
+      isOnline: !!p.is_online
+    };
   }
 
   private getTypeClass(type?: string): string {

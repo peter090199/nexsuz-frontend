@@ -3,8 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { JobListService } from 'src/app/services/Jobs/job-list.service';
-import { SharedService } from 'src/app/services/SharedServices/shared.service';
 import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
+import { ImagesService } from 'src/app/services/images/images.service';
 
 interface Job {
   job_name: string;
@@ -37,7 +37,7 @@ export class JobsClientComponent implements OnInit {
     private route: ActivatedRoute,
     private authService: AuthService,
     private router: Router,
-    private sharedService: SharedService,
+    private sharedService: ImagesService,
     private sharedRoutineService: SharedRoutinesService
   ) { }
 

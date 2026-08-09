@@ -6,10 +6,10 @@ import { firstValueFrom } from 'rxjs';
 import { JobListService } from 'src/app/services/Jobs/job-list.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { NotificationsService } from 'src/app/services/Global/notifications.service';
-import { SharedService } from 'src/app/services/SharedServices/shared.service';
 import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
 import { AppliedStatusDialogComponent } from '../jobs/applied-status-dialog/applied-status-dialog.component';
 import { FeatureService } from 'src/app/services/AccountPlan/feature.service';
+import { ImagesService } from 'src/app/services/images/images.service';
 
 @Component({
   selector: 'app-jobs-profile',
@@ -36,7 +36,7 @@ export class JobsProfileComponent implements OnInit {
     private authService: AuthService,
     private dialog: MatDialog,
     private alert: NotificationsService,
-    private sharedService: SharedService,
+    private sharedService: ImagesService,
     public sharedRoutines: SharedRoutinesService
   ) { }
 

@@ -217,3 +217,31 @@
     p  { font-size: 12px; }
   }
 }
+
+.people-section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 10px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+
+  &.online { background-color: #2ecc71; }
+  &.offline { background-color: #b0b0b0; }
+}
+
+.job-logo {
+  position: relative;
+}
+
+.avatar-dot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  border: 2px solid #fff;
+}

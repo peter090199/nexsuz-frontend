@@ -87,7 +87,7 @@ const routes: Routes = [
       { path: 'message', component: MessagesComponent },
       { path: 'network', component: NetworkingComponent },
       { path: 'settings', component: SettingsComponent },
-       { path: 'search', component: JobsectionComponent },
+      { path: 'search', component: JobsectionComponent },
       // { path: 'search', component: UserListComponent },
       { path: 'user-cv', component: UserCVComponent },
       { path: 'jobs', component: JobsComponent },
@@ -115,6 +115,8 @@ const routes: Routes = [
       { path: 'candidates', component: CandidatesComponent },
       { path: 'interviews', component: InterviewsComponent },
       { path: 'user-cv', component: UserCVComponent },
+      { path: 'search', component: JobsectionComponent },
+      { path: 'recommended-jobs/:transNo', component: JobsProfileComponent },
       // ✅ FIXED PROFILE ROUTE
       { path: 'profile/:code', component: ProfileUIComponent },
       { path: 'client_profile/:code', component: CompanyProfileUIComponent },
@@ -135,6 +137,7 @@ const routes: Routes = [
       { path: 'user', component: UsersComponent },
       { path: 'client_profile/:code', component: CompanyProfileUIComponent },
       { path: 'profile/:code', component: ProfileUIComponent },
+      { path: 'recommended-jobs/:transNo', component: JobsProfileComponent },
       // ACCOUNTPLAN
       { path: 'userplan', component: UserPlanComponent },
       { path: 'clientplan', component: ClientPlanComponent },
@@ -165,12 +168,12 @@ const routes: Routes = [
       { path: 'client_profile/:code', component: CompanyProfileUIComponent },
 
       /* ADMIN */
-      { path: 'search', component: UserListComponent },
+      // { path: 'search', component: UserListComponent },
+      { path: 'search', component: JobsectionComponent },
       { path: 'security', component: SecurityRolesComponent },
       { path: 'user', component: UsersComponent },
       { path: 'menu', component: MenuComponent },
       { path: 'role', component: RoleComponent },
-
       /* JOBS */
       { path: 'user-cv', component: UserCVComponent },
       { path: 'recommended-jobs/:transNo', component: JobsProfileComponent },

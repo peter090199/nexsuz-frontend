@@ -11,7 +11,6 @@ import { Router } from '@angular/router';
 import { AppliedStatusService } from 'src/app/services/NotificationsApp/applied-status.service';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { UserResumeUIComponent } from 'src/app/ComponentSharedUI/Resume/user-resume-ui/user-resume-ui.component';
-import { SharedService } from 'src/app/services/SharedServices/shared.service';
 import { ProfileService } from 'src/app/services/Profile/profile.service';
 import { SharedRoutinesService } from 'src/app/services/Function/shared-routines.service';
 

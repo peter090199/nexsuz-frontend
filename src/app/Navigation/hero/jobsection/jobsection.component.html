@@ -1,23 +1,40 @@
 <section class="section">
+
+    <!-- SEARCH BAR -->
     <div class="search-container">
         <mat-form-field appearance="outline" class="premium-search">
             <mat-icon matPrefix>search</mat-icon>
-            <input matInput placeholder="Search jobs..." [(ngModel)]="searchText" (keyup)="onSearch()"
+            <input matInput [placeholder]="searchPlaceholder" [(ngModel)]="searchText" (keyup)="onSearch()"
                 (keyup.enter)="onEnter()">
             <button *ngIf="searchText" matSuffix mat-icon-button (click)="clearSearch()">
                 <mat-icon>close</mat-icon>
             </button>
+            <button matSuffix mat-icon-button [matMenuTriggerFor]="searchSettingsMenu" aria-label="Search settings">
+                <mat-icon>tune</mat-icon>
+            </button>
         </mat-form-field>
+
+        <mat-menu #searchSettingsMenu="matMenu">
+            <button mat-menu-item (click)="setSearchType('people')">
+                <mat-icon [color]="searchType === 'people' ? 'primary' : ''">person</mat-icon>
+                <span>People</span>
+            </button>
+            <button mat-menu-item (click)="setSearchType('jobs')">
+                <mat-icon [color]="searchType === 'jobs' ? 'primary' : ''">work</mat-icon>
+                <span>Jobs</span>
+            </button>
+        </mat-menu>
     </div>
 
+    <!-- LOADING -->
     <div class="text-center mt-5" *ngIf="isLoading">
-        <p style="text-align: center;">Loading jobs...</p>
+        <p style="text-align: center;">Loading {{ searchType === 'jobs' ? 'jobs' : 'people' }}...</p>
     </div>
 
-    <div class="jobs-grid" *ngIf="!isLoading">
+    <!-- JOBS VIEW -->
+    <div class="jobs-grid" *ngIf="!isLoading && searchType === 'jobs'">
         <div class="job-card" *ngFor="let job of filteredJobs" (click)="selectJob(job)">
             <div class="card-top-bar"></div>
-
             <div class="card-body">
                 <div class="job-header">
                     <div class="job-logo">
@@ -27,7 +44,6 @@
                 </div>
 
                 <h3 class="job-name">{{ job.job_name }}</h3>
-
                 <p class="job-position"><i class="fas fa-building"></i> {{ job.job_position }}</p>
                 <p class="location"><i class="fas fa-map-marker-alt"></i> {{ job.location }}</p>
                 <p class="salary"><i class="fas fa-money-bill-wave"></i> {{ formatSalary(job) }}</p>
@@ -41,14 +57,77 @@
         </div>
     </div>
 
-    <div class="text-center mt-5" *ngIf="!isLoading && filteredJobs.length === 0">
+    <!-- PEOPLE VIEW -->
+    <ng-container *ngIf="!isLoading && searchType === 'people'">
+
+        <div *ngIf="visibleOnlinePeople.length > 0">
+            <h4 class="people-section-title">
+                <span class="status-dot online"></span> Online ({{ filteredOnlinePeople.length }})
+            </h4>
+            <div class="jobs-grid">
+                <div class="job-card person-card" *ngFor="let person of visibleOnlinePeople"
+                    (click)="selectPerson(person)">
+                    <div class="card-top-bar"></div>
+                    <div class="card-body">
+                        <div class="job-header">
+                            <div class="job-logo">
+                                <img [src]="person.image" [alt]="person.fullname"
+                                    (error)="person.image = placeholderImg">
+                                <span class="status-dot online avatar-dot"></span>
+                            </div>
+                            <span class="work-type-badge default">{{ person.role_code }}</span>
+                        </div>
+                        <h3 class="job-name">{{ person.fullname }}</h3>
+                        <p class="job-position"><i class="fas fa-tools"></i> {{ person.skills }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="visibleOfflinePeople.length > 0">
+            <h4 class="people-section-title">
+                <span class="status-dot offline"></span> Offline ({{ filteredOfflinePeople.length }})
+            </h4>
+            <div class="jobs-grid">
+                <div class="job-card person-card" *ngFor="let person of visibleOfflinePeople"
+                    (click)="selectPerson(person)">
+                    <div class="card-top-bar"></div>
+                    <div class="card-body">
+                        <div class="job-header">
+                            <div class="job-logo">
+                                <img [src]="person.image" [alt]="person.fullname"
+                                    (error)="person.image = placeholderImg">
+                                <span class="status-dot offline avatar-dot"></span>
+                            </div>
+                            <span class="work-type-badge default">{{ person.role_code }}</span>
+                        </div>
+                        <h3 class="job-name">{{ person.fullname }}</h3>
+                        <p class="job-position"><i class="fas fa-tools"></i> {{ person.skills }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </ng-container>
+
+    <!-- EMPTY STATES -->
+    <div class="text-center mt-5" *ngIf="!isLoading && searchType === 'jobs' && filteredJobs.length === 0">
         <h3>No jobs found.</h3>
-        <p>Try searching with another keyword.</p>
+        <p style="text-align: center;">Try searching with another keyword.</p>
     </div>
 
-    <div class="text-center mt-5" *ngIf="!isLoading && hasMore && !searchText">
+    <div class="text-center mt-5"
+        *ngIf="!isLoading && searchType === 'people' && filteredOnlinePeople.length === 0 && filteredOfflinePeople.length === 0">
+        <h3>No people found.</h3>
+        <p style="text-align: center;">Try searching with another keyword.</p>
+    </div>
+
+    <!-- LOAD MORE -->
+    <div class="text-center mt-5"
+        *ngIf="!isLoading && !searchText && ((searchType === 'jobs' && hasMore) || (searchType === 'people' && peopleHasMore))">
         <button class="browse-btn" (click)="loadMore()" [disabled]="isLoadingMore">
-            {{ isLoadingMore ? 'Loading...' : 'Load More Jobs' }}
+            {{ isLoadingMore ? 'Loading...' : 'Load More' }}
         </button>
     </div>
+
 </section>

@@ -68,19 +68,18 @@
       <!-- RIGHT SIDE -->
       <div class="toolbar-right">
         <!-- SEARCH -->
-        <button mat-icon-button class="toolbar-icon" (click)="searchSidenav.open()">
+        <button mat-icon-button (click)="toggleSearch()">
           <mat-icon>search</mat-icon>
         </button>
 
         <!-- NOTIFICATIONS -->
-        <button mat-icon-button class="toolbar-icon" matTooltip="Notifications" (click)="openNotifications()"
+        <button mat-icon-button  matTooltip="Notifications" (click)="openNotifications()"
           [matBadge]="unreadCount" [matBadgeHidden]="!unreadCount" matBadgeColor="warn">
           <mat-icon>notifications</mat-icon>
         </button>
 
         <!-- PROFILE -->
         <button mat-button class="profile-btn" [matMenuTriggerFor]="userMenu">
-
           <ng-container *ngIf="profile?.photo_pic; else defaultProfile">
             <img [src]="profile?.photo_pic" alt="Profile Picture" class="profile-pic" />
           </ng-container>

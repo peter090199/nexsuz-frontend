@@ -307,7 +307,7 @@ export class SideBarPanelComponent implements OnInit, OnDestroy {
     private location: Location,
     private cvService: CurriculumVitaeService,
   ) { }
-@ViewChild('searchSidenav') searchSidenav: any;
+  @ViewChild('searchSidenav') searchSidenav: any;
 
   ngOnInit(): void {
 
@@ -361,14 +361,12 @@ export class SideBarPanelComponent implements OnInit, OnDestroy {
       console.error('Error fetching modules:', error);
     }
   }
-
+  isSearchOpen = false;
   // ================= SEARCH =================
+  
   toggleSearch(): void {
-    this.showSearch = !this.showSearch;
-
-    if (!this.showSearch) {
-      this.clearSearch();
-    }
+    const role = this.sharedService.getRole();
+    this.router.navigate([`${role}/search`]);
   }
 
 

@@ -10,28 +10,29 @@
     </div>
 
     <div class="sidebar-content">
-      <a class="sidebar-link" href="#home-section" (click)="scrollToSection($event,'home-section'); drawer.close()">
+      <a class="sidebar-link" href="#home-section" (click)="scrollToSection($event, 'home-section'); drawer.close()">
         <mat-icon>home</mat-icon>
         <span>Home</span>
       </a>
 
-      <a class="sidebar-link" href="#about-section" (click)="scrollToSection($event,'about-section'); drawer.close()">
+      <a class="sidebar-link" href="#about-section" (click)="scrollToSection($event, 'about-section'); drawer.close()">
         <mat-icon>info</mat-icon>
         <span>About</span>
       </a>
 
       <a class="sidebar-link" href="#pricing-section"
-        (click)="scrollToSection($event,'pricing-section'); drawer.close()">
+        (click)="scrollToSection($event, 'pricing-section'); drawer.close()">
         <mat-icon>payments</mat-icon>
         <span>Pricing</span>
       </a>
 
-      <a class="sidebar-link" href="#jobs-section" (click)="scrollToSection($event,'jobs-section'); drawer.close()">
+      <a class="sidebar-link" href="#jobs-section" (click)="scrollToSection($event, 'jobs-section'); drawer.close()">
         <mat-icon>work</mat-icon>
         <span>Jobs</span>
       </a>
 
-      <a class="sidebar-link" href="#client-section" (click)="scrollToSection($event,'client-section'); drawer.close()">
+      <a class="sidebar-link" href="#client-section"
+        (click)="scrollToSection($event, 'client-section'); drawer.close()">
         <mat-icon>groups</mat-icon>
         <span>Clients</span>
       </a>
@@ -57,27 +58,33 @@
     <header class="fixed-header">
       <mat-toolbar class="premium-toolbar">
         <app-app-logo></app-app-logo>
+
         <!-- Desktop -->
         <nav class="desktop-nav" *ngIf="!isMobile">
           <span class="example-spacer"></span>
 
-          <a href="#home-section" (click)="scrollToSection($event,'home-section')">
+          <a href="#home-section" [class.active]="activeSection === 'home-section'"
+            (click)="scrollToSection($event, 'home-section')">
             Home
           </a>
 
-          <a href="#about-section" (click)="scrollToSection($event,'about-section')">
+          <a href="#about-section" [class.active]="activeSection === 'about-section'"
+            (click)="scrollToSection($event, 'about-section')">
             About
           </a>
 
-          <a href="#pricing-section" (click)="scrollToSection($event,'pricing-section')">
+          <a href="#pricing-section" [class.active]="activeSection === 'pricing-section'"
+            (click)="scrollToSection($event, 'pricing-section')">
             Pricing
           </a>
 
-          <a href="#jobs-section" (click)="scrollToSection($event,'jobs-section')">
+          <a href="#jobs-section" [class.active]="activeSection === 'jobs-section'"
+            (click)="scrollToSection($event, 'jobs-section')">
             Jobs
           </a>
 
-          <a href="#client-section" (click)="scrollToSection($event,'client-section')">
+          <a href="#client-section" [class.active]="activeSection === 'client-section'"
+            (click)="scrollToSection($event, 'client-section')">
             Clients
           </a>
 
@@ -92,16 +99,13 @@
           </button>
 
           <app-translate></app-translate>
-
         </nav>
 
         <!-- Mobile -->
         <button *ngIf="isMobile" mat-icon-button (click)="drawer.toggle()">
           <mat-icon>menu</mat-icon>
         </button>
-
       </mat-toolbar>
-
     </header>
 
     <!-- Page Content -->
@@ -112,7 +116,5 @@
       <app-jobsection id="jobs-section"></app-jobsection>
       <app-clients id="client-section"></app-clients>
     </main>
-
-    
   </mat-sidenav-content>
 </mat-sidenav-container>

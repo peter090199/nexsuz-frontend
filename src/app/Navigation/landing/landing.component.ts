@@ -1,10 +1,8 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { slideUp, slideFade } from 'src/app/animations';
 import { map, startWith } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { ChatPopupComponent } from 'src/app/ComponentUI/messages/chat-popup/chat-popup.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ChatWebsitePopUPComponent } from 'src/app/ComponentUI/messages/chat-website-pop-up/chat-website-pop-up.component';
 
@@ -18,91 +16,32 @@ export interface User {
   styleUrls: ['./landing.component.css']
 })
 export class LandingComponent implements OnInit {
-  fadeIn: boolean = false;
-  isSidebarOpen = false; // Sidebar state
-  isDesktop: boolean = true;
-  value = '';
-  isMobile: boolean = false; // Mobile detection state
-  isHeaderVisible = true;
-  private lastScrollTop = 0;
+  private readonly sectionIds = [
+    'home-section',
+    'about-section',
+    'pricing-section',
+    'jobs-section',
+    'client-section'
+  ];
+  private readonly chatStorageKey = 'chatOpened';
+  private readonly mobileBreakpoint = 768;
 
-
+  fadeIn = false;
+  isSidebarOpen = false;
+  isMobile = false;
   activeSection = 'home-section';
-  @HostListener('window:scroll', [])
-  onWindowScroll() {
-
-    const sections = [
-      'home-section',
-      'about-section',
-      'pricing-section',
-      'jobs-section',
-      'client-section'
-    ];
-
-    const scrollPosition = window.pageYOffset + 120;
-
-    for (const id of sections) {
-
-      const section = document.getElementById(id);
-
-      if (!section) {
-        continue;
-      }
-
-      if (
-        scrollPosition >= section.offsetTop &&
-        scrollPosition < section.offsetTop + section.offsetHeight
-      ) {
-        this.activeSection = id;
-      }
-    }
-  }
-
-  scrollToSection(event: Event, sectionId: string): void {
-    event.preventDefault(); // stops the href from navigating
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }
-
-  constructor(private router: Router, private dialog: MatDialog
-  ) {
-    this.updateMobileState(); // Set initial state
-  }
+  chatOpened = false;
 
   myControl = new FormControl();
-  options: User[] = [{ name: 'UX Designer' }, { name: 'Software Engineer' }, { name: 'Data Scientist' }];
-  filteredOptions: Observable<User[]>;
+  options: User[] = [
+    { name: 'UX Designer' },
+    { name: 'Software Engineer' },
+    { name: 'Data Scientist' }
+  ];
+  filteredOptions!: Observable<User[]>;
 
-  ngOnInit(): void {
-    this.fadeIn = true;
-    this.filteredOptions = this.myControl.valueChanges.pipe(
-      startWith(''),
-      map(value => (typeof value === 'string' ? value : value.name)),
-      map(name => (name ? this._filter(name) : this.options.slice())),
-    );
-
-
-    const storedState = localStorage.getItem('showWebsiteChat');
-    this.chatOpened = storedState ? JSON.parse(storedState) : false;
-  }
-
-
-
-  displayFn(user: User): string {
-    return user && user.name ? user.name : '';
-  }
-
-  private _filter(name: string): User[] {
-    const filterValue = name.toLowerCase();
-
-    return this.options.filter(option => option.name.toLowerCase().includes(filterValue));
-  }
-  searchQuery: string = ''; // The input model for the search query
-  filteredData: string[] = []; // The array of filtered results
-
-  // Sample data to be filtered
+  searchQuery = '';
+  filteredData: string[] = [];
   data: string[] = [
     'Software Engineer',
     'Frontend Developer',
@@ -131,59 +70,124 @@ export class LandingComponent implements OnInit {
     'Game Developer'
   ];
 
+  constructor(
+    private router: Router,
+    private dialog: MatDialog
+  ) {
+    this.updateMobileState();
+  }
 
-  // Method to filter data based on the search query
+  ngOnInit(): void {
+    this.fadeIn = true;
+
+    this.filteredOptions = this.myControl.valueChanges.pipe(
+      startWith(''),
+      map(value => (typeof value === 'string' ? value : value.name)),
+      map(name => (name ? this._filter(name) : this.options.slice()))
+    );
+
+    const storedState = localStorage.getItem(this.chatStorageKey);
+    this.chatOpened = storedState ? JSON.parse(storedState) : false;
+  }
+
+  // ============================================================
+  // Scroll handling
+  // ============================================================
+
+  @HostListener('window:scroll', [])
+  onWindowScroll(): void {
+    const scrollPosition = window.pageYOffset + 120;
+
+    for (const id of this.sectionIds) {
+      const section = document.getElementById(id);
+      if (!section) continue;
+
+      if (
+        scrollPosition >= section.offsetTop &&
+        scrollPosition < section.offsetTop + section.offsetHeight
+      ) {
+        this.activeSection = id;
+      }
+    }
+  }
+
+  scrollToSection(event: Event, sectionId: string): void {
+    event.preventDefault();
+
+    const el = document.getElementById(sectionId);
+    if (!el) return;
+
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // reflect the anchor in the address bar without triggering navigation or scroll jump
+    const basePath = window.location.pathname + window.location.search;
+    history.replaceState(null, '', `${basePath}#${sectionId}`);
+  }
+
+  @HostListener('window:resize', [])
+  onResize(): void {
+    this.updateMobileState();
+  }
+
+  private updateMobileState(): void {
+    this.isMobile = window.innerWidth <= this.mobileBreakpoint;
+  }
+
+  // ============================================================
+  // Autocomplete
+  // ============================================================
+
+  displayFn(user: User): string {
+    return user?.name ?? '';
+  }
+
+  private _filter(name: string): User[] {
+    const filterValue = name.toLowerCase();
+    return this.options.filter(option => option.name.toLowerCase().includes(filterValue));
+  }
+
   filterData(): void {
     this.filteredData = this.data.filter(item =>
       item.toLowerCase().includes(this.searchQuery.toLowerCase())
     );
   }
 
-  toggleSidebar() {
-    this.isSidebarOpen = !this.isSidebarOpen; // Toggle sidebar visibility
+  // ============================================================
+  // Sidebar / navigation
+  // ============================================================
+
+  toggleSidebar(): void {
+    this.isSidebarOpen = !this.isSidebarOpen;
   }
 
-  refreshHomePage() {
+  refreshHomePage(): void {
     this.router.navigate(['/homepage']).then(() => {
       window.location.reload();
     });
   }
 
-  // Update the mobile state based on window width
-  @HostListener('window:resize', ['$event'])
-  onResize(event: Event) {
-    this.updateMobileState();
-  }
+  // ============================================================
+  // Chat popup
+  // ============================================================
 
-  updateMobileState() {
-    this.isMobile = window.innerWidth <= 768; // Adjust this breakpoint as needed
-  }
-
-
-  chatOpened: boolean = false; // Initially hidden
-
-  openChat() {
+  openChat(): void {
     const dialogRef = this.dialog.open(ChatWebsitePopUPComponent, {
       width: '450px',
       position: { bottom: '20px', right: '20px' },
-      panelClass: 'custom-chat-popup',
+      panelClass: 'custom-chat-popup'
     });
 
-    // Set chat state to open
     this.chatOpened = true;
-    localStorage.setItem('chatOpened', JSON.stringify(false));
+    localStorage.setItem(this.chatStorageKey, JSON.stringify(true));
 
-    // Listen for close event to reset state
     dialogRef.afterClosed().subscribe(() => {
       this.chatOpened = false;
-      localStorage.setItem('chatOpened', JSON.stringify(false));
+      localStorage.setItem(this.chatStorageKey, JSON.stringify(false));
     });
   }
 
-  closeChat() {
+  closeChat(): void {
     this.chatOpened = false;
+    localStorage.setItem(this.chatStorageKey, JSON.stringify(false));
   }
-
 }
-
-

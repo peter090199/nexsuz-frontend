@@ -248,12 +248,9 @@ app-app-logo:hover {
 }
 
 .sidebar-content {
-
   display: flex;
-
   flex-direction: column;
-
-  padding: 20px;
+  margin:auto;
 }
 
 .sidebar-link {

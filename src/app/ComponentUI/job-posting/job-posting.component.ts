@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 import { JobViewDetailsComponent } from './job-view-details/job-view-details.component';
 import { PostingJobComponent } from 'src/app/ComponentSharedUI/posting-job/posting-job.component';
 import { ListAppliedJobsComponent } from '../jobs/list-applied-jobs/list-applied-jobs.component';
-import { SharedService } from 'src/app/services/SharedServices/shared.service';
+import { ImagesService } from 'src/app/services/images/images.service';
 
 @Component({
   selector: 'app-job-posting',
@@ -66,7 +66,7 @@ export class JobPostingComponent implements OnInit {
     private jobServices: JobPostingService, private router: Router,
     public dialog: MatDialog,
     private notificationsService: NotificationsService,
-    private sharedService: SharedService
+    private sharedService: ImagesService
   ) { }
 
   ngOnInit(): void {
