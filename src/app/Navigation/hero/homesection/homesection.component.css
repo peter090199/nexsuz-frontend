@@ -2,11 +2,10 @@
   background: linear-gradient(to right,
       rgba(10, 182, 156, 0.95),
       rgba(47, 44, 225, 0.90));
-  min-height: 100vh;
+  min-height: 90vh;
   color: #fff;
   display: flex;
   align-items: center;
-  padding: 100px 20px 60px;
   font-family: Verdana, sans-serif;
 }
 

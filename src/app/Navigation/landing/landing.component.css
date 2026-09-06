@@ -1,463 +1,274 @@
-html {
-  scroll-behavior: smooth;
-}
-
-
-/* Container */
-
-.landing-container {
+/* ===== Base / Container ===== */
+mat-sidenav-container {
   height: 100vh;
-  background: #fff;
+  background: linear-gradient(to right,
+      rgba(10, 182, 156, 0.95),
+      rgba(47, 44, 225, 0.90));
 }
-
-/* ======================================================
-   FIXED HEADER
-====================================================== */
 
 .fixed-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  z-index: 9999;
-
   display: flex;
-  justify-content: center;
-
-  box-sizing: border-box;
-
-  transition: all 0.3s ease;
+  flex-direction: column;
+  background: linear-gradient(to right,
+      rgba(10, 182, 156, 0.95),
+      rgba(47, 44, 225, 0.90));
 }
 
-/* Toolbar */
-
-.premium-toolbar {
-  width: 100%;
-  background: linear-gradient(to right, rgba(11, 203, 174, 0.852), rgba(47, 44, 225, 0.748));
+/* ===== Toolbar ===== */
+mat-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  color: #ffffff;
+  background: linear-gradient(to right,
+      rgba(10, 182, 156, 0.95),
+      rgba(47, 44, 225, 0.90));
 }
 
-/* ======================================================
-   LOGO
-====================================================== */
-
-app-app-logo {
-  cursor: pointer;
-  transition: .3s;
-}
-
-app-app-logo:hover {
-  transform: scale(1.05);
-}
-
-/* ======================================================
-   DESKTOP NAV
-====================================================== */
-
+/* ===== Desktop Nav ===== */
 .desktop-nav {
   display: flex;
   align-items: center;
-  width: 100%;
-  margin-left: 70px;
+  flex: 1;
+  gap: 24px;
+}
+
+.nav-spacer {
+  flex: 1 1 auto;
 }
 
 .desktop-nav a {
   position: relative;
   text-decoration: none;
-  color: #f0eded;
-  font-size: 15px;
-  font-weight: 600;
-  margin: 0 18px;
-  transition: .35s;
+  color: inherit;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 8px 12px;
+  border-radius: 6px;
+  opacity: 0.85;
+  transition: opacity 0.2s ease, color 0.2s ease, background-color 0.2s ease, transform 0.1s ease;
 }
 
 .desktop-nav a:hover {
-  color: #2962ff;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
 }
 
-/* Animated underline */
-
-.desktop-nav a::after {
-
-  content: "";
-
-  position: absolute;
-
-  left: 0;
-
-  bottom: -8px;
-
-  width: 0;
-
-  height: 3px;
-
-  border-radius: 20px;
-
-  background: linear-gradient(90deg, #2962ff, #00d4ff);
-
-  transition: .35s;
+.desktop-nav a:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
 }
 
-.desktop-nav a:hover::after {
-  width: 100%;
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-right: 8px;
 }
-
-/* Spacer */
-
-.example-spacer {
-  flex: 1;
-}
-
-/* ======================================================
-   BUTTONS
-====================================================== */
-
-.desktop-nav button {
-
-  margin-left: 12px;
-
-  border-radius: 30px !important;
-
-  padding: 0 28px !important;
-
-  height: 46px;
-
-  font-weight: 600;
-
-  transition: .3s;
-}
-
-.desktop-nav button:hover {
-
-  transform: translateY(-3px);
-
-  box-shadow: 0 10px 25px rgba(41, 98, 255, .25);
-}
-
-/* ===========================
-   Header Buttons
-=========================== */
 
 .btn-signin,
 .btn-signup {
-  min-width: 80px;
-  height: 46px;
-  margin-left: 12px !important;
-  border-radius: 50px !important;
-
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: .4px;
+  white-space: nowrap;
+  border-radius: 8px !important;
   text-transform: none !important;
-
-  transition: all .3s ease;
 }
 
-/* Sign In */
-
-.btn-signin {
-  color: #ffffff !important;
-  background: transparent;
-  box-shadow: 0 10px 25px rgba(37, 99, 235, .25);
+/* ===== Mobile Menu Toggle ===== */
+.menu-toggle {
+  margin-left: auto;
+  color: #ffffff;
 }
 
-.btn-signin:hover {
-  background: rgba(37, 99, 235, .08);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(37, 99, 235, .18);
-}
-
-/* Sign Up */
-
-.btn-signup {
-  color: #ffffff !important;
-  background: linear-gradient(135deg, #2563eb, #4f46e5) !important;
-  box-shadow: 0 10px 25px rgba(37, 99, 235, .25);
-}
-
-.btn-signup:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 30px rgba(37, 99, 235, .35);
-}
-
-/* Click Effect */
-
-.btn-signin:active,
-.btn-signup:active {
-  transform: scale(.96);
-}
-
-/* Focus */
-
-.btn-signin:focus,
-.btn-signup:focus {
-  outline: none;
-}
-
-/* ===========================
-   Responsive
-=========================== */
-
-@media (max-width: 992px) {
-
-  .btn-signin,
-  .btn-signup {
-    min-width: 105px;
-    height: 42px;
-    font-size: 14px;
-  }
-
-}
-
-@media (max-width: 768px) {
-
-  .btn-signin,
-  .btn-signup {
-    width: 100%;
-    margin: 8px 0 !important;
-  }
-
-}
-
-
-/* ======================================================
-   MOBILE SIDEBAR
-====================================================== */
-
+/* ===== Mobile Sidebar (mat-sidenav) ===== */
 .mobile-sidebar {
-
-  width: 300px;
-
-  background: #fff;
-
-  border-radius: 0;
-
+  width: min(320px, 85vw);
+  display: flex;
+  flex-direction: column;
+  background-color: #00bcd4;
+  color: #ffffff;
 }
 
 .sidebar-header {
-
   display: flex;
-
-  justify-content: space-between;
-
   align-items: center;
-
-  padding: 18px;
-
-  border-bottom: 1px solid #eee;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .sidebar-content {
   display: flex;
   flex-direction: column;
-  margin:auto;
+  padding: 12px;
+  gap: 4px;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .sidebar-link {
-
   display: flex;
-
   align-items: center;
-
-  gap: 65px;
-
-  padding: 15px;
-
-  border-radius: 12px;
-
+  gap: 16px;
+  padding: 12px 16px;
+  border-radius: 10px;
   text-decoration: none;
-
-  color: #444;
-
-  font-weight: 600;
-
-  transition: .3s;
+  color: #ffffff;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
 }
 
 .sidebar-link:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
 
-  background: #2962ff;
-
-  color: #fff;
-
-  transform: translateX(6px);
+.sidebar-link.active {
+  background-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
 }
 
 .sidebar-link mat-icon {
-  transition: .3s;
-}
-
-.sidebar-link:hover mat-icon {
-  transform: rotate(-10deg);
+  flex-shrink: 0;
 }
 
 .sidebar-divider {
-
   height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 12px 4px;
+}
 
-  background: #ececec;
+.sidebar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 12px;
+}
 
-  margin: 25px 0;
+.sidebar-actions button {
+  width: 100%;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  font-family: Verdana, Geneva, sans-serif !important;
 }
 
 .sidebar-language {
-  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  padding: 16px 12px 8px;
 }
 
-/* ======================================================
-   MOBILE MENU ICON
-====================================================== */
-
-button[mat-icon-button] {
-
-  border-radius: 50%;
-
-  transition: .3s;
+/* ===== Page Content ===== */
+.page-content {
+  flex: 1;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  background-color: #00bcd4;
 }
 
-button[mat-icon-button]:hover {
-
-  background: #f1f5ff;
-
-  transform: rotate(90deg);
+/* Anchor offset so scrolled sections aren't hidden under the sticky toolbar */
+main>* {
+  scroll-margin-top: 72px;
 }
 
-/* ======================================================
-   SECTION SPACING
-====================================================== */
+/* ===== Responsive Breakpoints ===== */
 
-section,
-app-homesection,
-app-about,
-app-pricing,
-app-jobsection,
-app-clients {
+/* Mobile & tablet: hide desktop nav, show toggle */
+@media (max-width: 959px) {
+  .desktop-nav {
+    display: none;
+  }
 
-  display: block;
-
-  scroll-margin-top: 110px;
+  mat-toolbar {
+    padding: 0 12px;
+  }
 }
 
-/* ======================================================
-   TABLET
-====================================================== */
-
-@media (max-width:991px) {
-
-  .fixed-header {
-
-    width: calc(100% - 20px);
-
-    top: 10px;
+/* Desktop: hide mobile toggle */
+@media (min-width: 960px) {
+  .menu-toggle {
+    display: none;
   }
 
-  .premium-toolbar {
-
-    height: 68px !important;
-
-    padding: 0 18px;
-
-    border-radius: 15px;
+  mat-toolbar {
+    padding: 0 32px;
   }
-
-  .page-content {
-    padding-top: 95px;
-  }
-
 }
 
-/* ======================================================
-   MOBILE
-====================================================== */
-
-@media (max-width:768px) {
-
-  .fixed-header {
-
-    width: calc(100% - 12px);
-
-    top: 6px;
-  }
-
-  .premium-toolbar {
-
-    height: 64px !important;
-
-    padding: 0 14px;
-
-    border-radius: 14px;
-  }
-
-  .page-content {
-
-    padding-top: 84px;
+/* Small phones: tighten spacing further */
+@media (max-width: 480px) {
+  mat-toolbar {
+    padding: 0 8px;
   }
 
   .mobile-sidebar {
-
-    width: 280px;
+    width: 100vw;
   }
-
 }
 
-/* ======================================================
-   SMALL MOBILE
-====================================================== */
+/* ===== Scroll to Top Button ===== */
+.scroll-top-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background-color: #00bcd4 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 
-@media (max-width:480px) {
-
-  .premium-toolbar {
-
-    height: 60px !important;
-
-    padding: 0 12px;
-  }
-
-  .page-content {
-
-    padding-top: 78px;
-  }
-
-  .sidebar-link {
-    font-size: 14px;
-    padding: 13px;
-    gap: 65px;
-  }
-
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px) scale(0.9);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+  pointer-events: none;
 }
 
-/* ======================================================
-   HEADER ANIMATION
-====================================================== */
-
-.fixed-header {
-
-  animation: headerFade .7s ease;
+.scroll-top-btn.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
 }
 
-@keyframes headerFade {
-
-  from {
-
-    opacity: 0;
-
-    transform: translate(-50%, -30px);
-  }
-
-  to {
-
-    opacity: 1;
-
-    transform: translate(-50%, 0);
-  }
-
+.scroll-top-btn:hover {
+  background-color: #0097a7 !important;
+  transform: translateY(-3px) scale(1.05);
 }
 
-/* Floating Effect */
+.scroll-top-btn:active {
+  transform: translateY(0) scale(0.95);
+}
 
-.premium-toolbar:hover {
+.scroll-top-btn mat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
 
+.scroll-top-btn:hover mat-icon {
   transform: translateY(-2px);
+}
 
-  transition: .35s;
+/* Keyboard focus */
+.scroll-top-btn:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+
+/* Mobile: sit above content, slightly smaller offset */
+@media (max-width: 480px) {
+  .scroll-top-btn {
+    bottom: 16px;
+    right: 16px;
+  }
 }

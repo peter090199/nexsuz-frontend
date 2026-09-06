@@ -9,6 +9,7 @@ import { FeatureService } from '../AccountPlan/feature.service';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { ProfileService } from '../Profile/profile.service';
+import { SigInService } from '../signIn/sig-in.service';
 
 export interface Currency {
   code: string;
@@ -23,7 +24,7 @@ export class SharedRoutinesService {
   currentUserCode: any;
 
   constructor(
-    private postDataservices: PostUploadImagesService, private location: Location,
+    private postDataservices: PostUploadImagesService, private location: Location, private logoutService: SigInService,
     private alert: NotificationsService, private router: Router,
     private comment: CommentService, private profile: ProfileService,
     private authService: AuthService,
@@ -499,5 +500,24 @@ export class SharedRoutinesService {
   getDefaultCurrency(): Currency {
     return this.currencies[0]; // PHP
   }
+
+onLogout(): void {
+    this.logoutService.logout().subscribe({
+      next: () => this.resetLocalState(),
+      error: (err) => {
+        console.error('Logout failed:', err);
+        this.resetLocalState(); // still clear client state even if the API call fails
+      }
+    });
+  }
+
+  private resetLocalState(): void {
+    sessionStorage.clear();
+    localStorage.clear();
+    localStorage.setItem('showWebsiteChat', 'false');
+   // localStorage.setItem('cookiesAccepted', 'true');
+    this.router.navigateByUrl('/'); // SPA nav, avoids a full asset re-download
+  }
+
 
 }

@@ -152,6 +152,7 @@ import { HomesectionComponent } from './Navigation/hero/homesection/homesection.
 import { PricingComponent } from './Navigation/hero/pricing/pricing.component';
 import { JobsectionComponent } from './Navigation/hero/jobsection/jobsection.component';
 import { MatChipsModule } from '@angular/material/chips';
+import { ContactsectionComponent } from './Navigation/hero/contactsection/contactsection.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -293,7 +294,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ClientsComponent,
     HomesectionComponent,
     PricingComponent,
-    JobsectionComponent
+    JobsectionComponent,
+    ContactsectionComponent
   ],
   imports: [
     BrowserModule,

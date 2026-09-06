@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, Observable, of } from 'rxjs';
 import { _url } from 'src/global-variables';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { AnyForUntypedForms } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -83,27 +84,52 @@ export class SearchService {
     return this.http.get<any>(url, { headers });
   }
 
-  searchUsers(query: string = ''): Observable<{ online: any[]; offline: any[] }> {
+  // searchUsers(query: string = ''): Observable<{ online: any[]; offline: any[] }> {
+  //   const headers = new HttpHeaders({
+  //     'Authorization': `Bearer ${this.getAuthToken()}`, // Attach token dynamically
+  //     'Content-Type': 'application/json'
+  //   });
+
+  //   return this.http.get<{ online: any[]; offline: any[] }>(
+  //     `${_url}searchUsers?search=${query}`,
+  //     { headers } // Pass headers here
+  //   );
+  // }
+  // searchUsersBypublic(query: string = ''): Observable<{ online: any[]; offline: any[] }> {
+  //   const headers = new HttpHeaders({
+  //     'Content-Type': 'application/json'
+  //   });
+
+  //   return this.http.get<{ online: any[]; offline: any[] }>(
+  //     `${_url}searchUsersBypublic?search=${query}`,
+  //     { headers }
+  //   );
+  // }
+
+
+  searchUsersBypublic(query: string = '', page: number = 1, perPage: number = 10): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.get<any>(
+      `${_url}searchUsersBypublic?search=${query}&page=${page}&per_page=${perPage}`,
+      { headers }
+    );
+  }
+
+  searchUsers(query: string = '', page: number = 1, perPage: number = 10): Observable<any> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.getAuthToken()}`, // Attach token dynamically
       'Content-Type': 'application/json'
     });
 
-    return this.http.get<{ online: any[]; offline: any[] }>(
-      `${_url}searchUsers?search=${query}`,
+    return this.http.get<any>(
+      `${_url}searchUsers?search=${query}&page=${page}&per_page=${perPage}`,
       { headers } // Pass headers here
     );
   }
-  searchUsersBypublic(query: string = ''): Observable<{ online: any[]; offline: any[] }> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
-    });
 
-    return this.http.get<{ online: any[]; offline: any[] }>(
-      `${_url}searchUsersBypublic?search=${query}`,
-      { headers }
-    );
-  }
 
   receiveMessages(): Observable<any> {
     return this.socket$;

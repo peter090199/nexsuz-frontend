@@ -26,6 +26,7 @@ interface Person {
   status: string;
   fullname: string;
   skills: string;
+  profession: string;
   image: string;
   isOnline: boolean;
 }
@@ -53,12 +54,18 @@ export class JobsectionComponent implements OnInit {
   hasMore = false;
 
   // --- people state ---
-  onlinePeople: any[] = [];
-  offlinePeople: any[] = [];
-  filteredOnlinePeople: any[] = [];
-  filteredOfflinePeople: any[] = [];
-  peopleDisplayLimit = 10;
-  readonly peopleChunkSize = 10;
+  // searchUsers / searchUsersBypublic now paginate the online/offline lists
+  // server-side (see updated SearchController), so "load more" fetches the
+  // next page and appends, same pattern as jobs.
+  onlinePeople: Person[] = [];
+  offlinePeople: Person[] = [];
+  filteredOnlinePeople: Person[] = [];
+  filteredOfflinePeople: Person[] = [];
+
+  readonly peoplePerPage = 10;
+  peoplePage = 1;
+  peopleOnlineHasMore = false;
+  peopleOfflineHasMore = false;
 
   // --- misc ---
   code: any;
@@ -88,12 +95,12 @@ export class JobsectionComponent implements OnInit {
   setSearchType(type: SearchType): void {
     this.searchType = type;
     this.searchText = '';
-    this.peopleDisplayLimit = this.peopleChunkSize;
 
     if (type === 'people') {
       this.searchPlaceholder = 'Search people, names, skills...';
       if (this.onlinePeople.length === 0 && this.offlinePeople.length === 0) {
-        this.getActivePeopleByCode();
+        this.peoplePage = 1;
+        this.getActivePeopleByCode('', 1);
       } else {
         this.filteredOnlinePeople = [...this.onlinePeople];
         this.filteredOfflinePeople = [...this.offlinePeople];
@@ -129,53 +136,64 @@ export class JobsectionComponent implements OnInit {
     }
   }
 
-  
-  async getActivePeopleByCode(query: string = ''): Promise<void> {
+  /**
+   * Fetches one page of online/offline people from the server and appends
+   * it to the existing lists (page 1 replaces instead of appending).
+   *
+   * IMPORTANT: pagination info comes back nested under `res.meta`, e.g.
+   * { success, online, offline, meta: { current_page, online_has_more, offline_has_more, ... } }
+   * - it is NOT on the response root. Reading res.current_page or
+   * res.online_next_page_url (as an earlier version of this file did)
+   * will always be undefined and silently break "Load more" for people.
+   */
+  async getActivePeopleByCode(query: string = '', page: number = 1): Promise<void> {
     try {
-      this.isLoading = true;
+      page === 1 ? (this.isLoading = true) : (this.isLoadingMore = true);
 
       const res = this.authService.isLoggedIn()
-        ? await firstValueFrom(this.peopleService.searchUsers(query))
-        : await firstValueFrom(this.peopleService.searchUsersBypublic(query));
+        ? await firstValueFrom(this.peopleService.searchUsers(query, page, this.peoplePerPage))
+        : await firstValueFrom(this.peopleService.searchUsersBypublic(query, page, this.peoplePerPage));
 
-      if (res?.online || res?.offline) {
-        this.onlinePeople = (res.online ?? []).map((p: any) => this.mapPerson(p));
-        this.offlinePeople = (res.offline ?? []).map((p: any) => this.mapPerson(p));
+      if (res?.success) {
+        const mappedOnline = (res.online ?? []).map((p: any) => this.mapPerson(p));
+        const mappedOffline = (res.offline ?? []).map((p: any) => this.mapPerson(p));
+
+        this.onlinePeople = page === 1 ? mappedOnline : [...this.onlinePeople, ...mappedOnline];
+        this.offlinePeople = page === 1 ? mappedOffline : [...this.offlinePeople, ...mappedOffline];
+
         this.filteredOnlinePeople = [...this.onlinePeople];
         this.filteredOfflinePeople = [...this.offlinePeople];
-        this.peopleDisplayLimit = this.peopleChunkSize;
+
+        this.peoplePage = res.meta?.current_page ?? page;
+        this.peopleOnlineHasMore = !!res.meta?.online_has_more;
+        this.peopleOfflineHasMore = !!res.meta?.offline_has_more;
       }
     } catch (error) {
       console.error('Error fetching people:', error);
     } finally {
       this.isLoading = false;
+      this.isLoadingMore = false;
     }
   }
 
   // ============================================================
-  // Load more (jobs = server pagination, people = client-side reveal)
+  // Load more (both jobs and people use server pagination)
   // ============================================================
 
   loadMore(): void {
+    if (this.isLoadingMore) return;
+
     if (this.searchType === 'jobs') {
-      if (!this.hasMore || this.isLoadingMore) return;
+      if (!this.hasMore) return;
       this.getActiveJobsByCode(this.currentPage + 1);
     } else {
-      this.peopleDisplayLimit += this.peopleChunkSize;
+      if (!this.peopleHasMore) return;
+      this.getActivePeopleByCode(this.searchText.trim(), this.peoplePage + 1);
     }
   }
 
-  get visibleOnlinePeople(): Person[] {
-    return this.filteredOnlinePeople.slice(0, this.peopleDisplayLimit);
-  }
-
-  get visibleOfflinePeople(): Person[] {
-    return this.filteredOfflinePeople.slice(0, this.peopleDisplayLimit);
-  }
-
   get peopleHasMore(): boolean {
-    return this.filteredOnlinePeople.length > this.peopleDisplayLimit
-      || this.filteredOfflinePeople.length > this.peopleDisplayLimit;
+    return this.peopleOnlineHasMore || this.peopleOfflineHasMore;
   }
 
   // ============================================================
@@ -197,6 +215,8 @@ export class JobsectionComponent implements OnInit {
       return;
     }
 
+    // Local filter of what's currently loaded (client-side, instant feedback
+    // while typing). Pressing Enter re-queries the server from page 1.
     this.filteredOnlinePeople = !keyword
       ? [...this.onlinePeople]
       : this.onlinePeople.filter(p =>
@@ -210,13 +230,12 @@ export class JobsectionComponent implements OnInit {
         p.fullname?.toLowerCase().includes(keyword) ||
         p.skills?.toLowerCase().includes(keyword)
       );
-
-    this.peopleDisplayLimit = this.peopleChunkSize;
   }
 
   onEnter(): void {
     if (this.searchType === 'people') {
-      this.getActivePeopleByCode(this.searchText.trim());
+      this.peoplePage = 1;
+      this.getActivePeopleByCode(this.searchText.trim(), 1);
     } else {
       this.onSearch();
     }
@@ -224,13 +243,12 @@ export class JobsectionComponent implements OnInit {
 
   clearSearch(): void {
     this.searchText = '';
-    this.peopleDisplayLimit = this.peopleChunkSize;
 
     if (this.searchType === 'jobs') {
       this.filteredJobs = [...this.jobs];
     } else {
-      this.filteredOnlinePeople = [...this.onlinePeople];
-      this.filteredOfflinePeople = [...this.offlinePeople];
+      this.peoplePage = 1;
+      this.getActivePeopleByCode('', 1);
     }
   }
 
@@ -300,6 +318,7 @@ export class JobsectionComponent implements OnInit {
       status: p.status ?? '',
       fullname: p.fullname ?? 'Unknown',
       skills: p.skills ?? 'No skills listed',
+      profession: p.profession ?? '',
       image: p.photo_pic ? this.sharedService.cleanImageUrl(p.photo_pic) : this.placeholderImg,
       isOnline: !!p.is_online
     };

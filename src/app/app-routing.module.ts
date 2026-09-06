@@ -56,9 +56,9 @@ import { JobsectionComponent } from './Navigation/hero/jobsection/jobsection.com
 
 const routes: Routes = [
   // Public routes
-  { path: '', redirectTo: '/homepage', pathMatch: 'full' }, // Default redirect
+  { path: '', redirectTo: '/', pathMatch: 'full' }, // Default redirect
   // { path: 'homepage', component: UserhomepageComponent },
-  { path: 'homepage', component: LandingComponent },
+  { path: '', component: LandingComponent },
   { path: 'signup', component: SignUpUIComponent },
   { path: 'clientsignup', component: ClientUIComponent },
   { path: 'signin', component: SignInUIComponent },

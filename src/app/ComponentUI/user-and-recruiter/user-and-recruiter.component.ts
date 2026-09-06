@@ -179,7 +179,7 @@ import { ProfileService } from 'src/app/services/Profile/profile.service';
 @Component({
   selector: 'app-user-and-recruiter',
   templateUrl: './user-and-recruiter.component.html',
-  styleUrls: ['./user-and-recruiter.component.css']
+  styleUrls: ['./user-and-recruiter.component.scss']
 })
 export class UserAndRecruiterComponent implements OnInit {
 

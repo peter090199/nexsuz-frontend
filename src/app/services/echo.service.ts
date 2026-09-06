@@ -169,7 +169,7 @@ export class EchoService {
     // Get user ID from session
       (window as any).Pusher = Pusher;
     this.userId = parseInt(sessionStorage.getItem('userId') || '0', 10);
-    console.log('🔑 User ID:', this.userId);
+    //console.log('🔑 User ID:', this.userId);
 
     // Configure notification audio
     this.notificationAudio.volume = 0.8;
@@ -185,12 +185,12 @@ export class EchoService {
 
     // Pusher connection events
     const pusher = this.echo.connector.pusher as Pusher;
-    pusher.connection.bind('connected', () => console.log('✅ Connected to Pusher'));
-    pusher.connection.bind('error', (err: any) => console.error('❌ Pusher error:', err));
+   // pusher.connection.bind('connected', () => console.log('✅ Connected to Pusher'));
+    // pusher.connection.bind('error', (err: any) => console.error('❌ Pusher error:', err));
   
     // Listen to notifications
-    this.listenToNotificationCount();
-    this.listenToPosts();
+    //this.listenToNotificationCount();
+   // this.listenToPosts();
   }
 
 
@@ -211,7 +211,7 @@ export class EchoService {
         this.notificationCountSubject.next(res.unreadCount);
         this.previousUnreadCount = res.unreadCount;
       },
-      error: (err) => console.error('❌ Error fetching count:', err)
+     // error: (err) => console.error('❌ Error fetching count:', err)
     });
   }
 

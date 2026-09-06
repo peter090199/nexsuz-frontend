@@ -60,12 +60,12 @@
     <!-- PEOPLE VIEW -->
     <ng-container *ngIf="!isLoading && searchType === 'people'">
 
-        <div *ngIf="visibleOnlinePeople.length > 0">
+        <div *ngIf="filteredOnlinePeople.length > 0">
             <h4 class="people-section-title">
                 <span class="status-dot online"></span> Online ({{ filteredOnlinePeople.length }})
             </h4>
             <div class="jobs-grid">
-                <div class="job-card person-card" *ngFor="let person of visibleOnlinePeople"
+                <div class="job-card person-card" *ngFor="let person of filteredOnlinePeople"
                     (click)="selectPerson(person)">
                     <div class="card-top-bar"></div>
                     <div class="card-body">
@@ -75,7 +75,7 @@
                                     (error)="person.image = placeholderImg">
                                 <span class="status-dot online avatar-dot"></span>
                             </div>
-                            <span class="work-type-badge default">{{ person.role_code }}</span>
+                            <span class="work-type-badge default">{{ person.profession }}</span>
                         </div>
                         <h3 class="job-name">{{ person.fullname }}</h3>
                         <p class="job-position"><i class="fas fa-tools"></i> {{ person.skills }}</p>
@@ -84,12 +84,12 @@
             </div>
         </div>
 
-        <div *ngIf="visibleOfflinePeople.length > 0">
+        <div *ngIf="filteredOfflinePeople.length > 0">
             <h4 class="people-section-title">
                 <span class="status-dot offline"></span> Offline ({{ filteredOfflinePeople.length }})
             </h4>
             <div class="jobs-grid">
-                <div class="job-card person-card" *ngFor="let person of visibleOfflinePeople"
+                <div class="job-card person-card" *ngFor="let person of filteredOfflinePeople"
                     (click)="selectPerson(person)">
                     <div class="card-top-bar"></div>
                     <div class="card-body">
@@ -99,9 +99,10 @@
                                     (error)="person.image = placeholderImg">
                                 <span class="status-dot offline avatar-dot"></span>
                             </div>
-                            <span class="work-type-badge default">{{ person.role_code }}</span>
+                            <span class="work-type-badge default">{{ person.profession }}</span>
                         </div>
                         <h3 class="job-name">{{ person.fullname }}</h3>
+                        <!-- <p class="job-position" *ngIf="person.profession"><i class="fas fa-user-tie"></i> {{ person.profession }}</p> -->
                         <p class="job-position"><i class="fas fa-tools"></i> {{ person.skills }}</p>
                     </div>
                 </div>

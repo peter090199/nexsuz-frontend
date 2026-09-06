@@ -1,120 +1,142 @@
-<mat-sidenav-container class="landing-container">
+<mat-sidenav-container>
   <!-- Mobile Sidebar -->
-  <mat-sidenav #drawer mode="over" position="end" class="mobile-sidebar">
+  <mat-sidenav #drawer mode="over" position="end" class="mobile-sidebar" [fixedInViewport]="true" [autoFocus]="false">
     <div class="sidebar-header">
       <app-app-logo></app-app-logo>
-      <div class="spacer"></div>
-      <button mat-icon-button (click)="drawer.close()">
-        <mat-icon>close</mat-icon>
+      <button *ngIf="isMobile" mat-icon-button type="button" class="menu-toggle" (click)="drawer.toggle()"
+        [attr.aria-expanded]="drawer.opened" aria-controls="mobile-drawer"
+        [attr.aria-label]="drawer.opened ? 'Close menu' : 'Open menu'">
+        <mat-icon aria-hidden="true">{{ drawer.opened ? 'close' : 'menu' }}</mat-icon>
       </button>
+
+      <app-translate></app-translate>
     </div>
 
-    <div class="sidebar-content">
-      <a class="sidebar-link" href="#home-section" (click)="scrollToSection($event, 'home-section'); drawer.close()">
-        <mat-icon>home</mat-icon>
+    <nav class="sidebar-content" aria-label="Mobile navigation">
+      <a class="sidebar-link" href="#home-section" [class.active]="activeSection === 'home-section'"
+        [attr.aria-current]="activeSection === 'home-section' ? 'page' : null"
+        (click)="scrollToSection($event, 'home-section'); drawer.close()">
+        <mat-icon aria-hidden="true">home</mat-icon>
         <span>Home</span>
       </a>
 
-      <a class="sidebar-link" href="#about-section" (click)="scrollToSection($event, 'about-section'); drawer.close()">
-        <mat-icon>info</mat-icon>
+      <a class="sidebar-link" href="#about-section" [class.active]="activeSection === 'about-section'"
+        [attr.aria-current]="activeSection === 'about-section' ? 'page' : null"
+        (click)="scrollToSection($event, 'about-section'); drawer.close()">
+        <mat-icon aria-hidden="true">info</mat-icon>
         <span>About</span>
       </a>
 
-      <a class="sidebar-link" href="#pricing-section"
+      <a class="sidebar-link" href="#pricing-section" [class.active]="activeSection === 'pricing-section'"
+        [attr.aria-current]="activeSection === 'pricing-section' ? 'page' : null"
         (click)="scrollToSection($event, 'pricing-section'); drawer.close()">
-        <mat-icon>payments</mat-icon>
+        <mat-icon aria-hidden="true">payments</mat-icon>
         <span>Pricing</span>
       </a>
 
-      <a class="sidebar-link" href="#jobs-section" (click)="scrollToSection($event, 'jobs-section'); drawer.close()">
-        <mat-icon>work</mat-icon>
+      <a class="sidebar-link" href="#jobs-section" [class.active]="activeSection === 'jobs-section'"
+        [attr.aria-current]="activeSection === 'jobs-section' ? 'page' : null"
+        (click)="scrollToSection($event, 'jobs-section'); drawer.close()">
+        <mat-icon aria-hidden="true">work</mat-icon>
         <span>Jobs</span>
       </a>
 
-      <a class="sidebar-link" href="#client-section"
+      <a class="sidebar-link" href="#client-section" [class.active]="activeSection === 'client-section'"
+        [attr.aria-current]="activeSection === 'client-section' ? 'page' : null"
         (click)="scrollToSection($event, 'client-section'); drawer.close()">
-        <mat-icon>groups</mat-icon>
+        <mat-icon aria-hidden="true">groups</mat-icon>
         <span>Clients</span>
+      </a>
+
+      <a class="sidebar-link" href="#contact-section" [class.active]="activeSection === 'contact-section'"
+        [attr.aria-current]="activeSection === 'contact-section' ? 'page' : null"
+        (click)="scrollToSection($event, 'contact-section'); drawer.close()">
+        <mat-icon aria-hidden="true">contacts</mat-icon>
+        <span>Contact</span>
       </a>
 
       <div class="sidebar-divider"></div>
 
-      <button mat-raised-button color="primary" routerLink="/signin" (click)="drawer.close()">
-        Sign In
-      </button>
-
-      <button mat-raised-button routerLink="/signup" (click)="drawer.close()">
-        Sign Up
-      </button>
-
-      <div class="sidebar-language">
-        <app-translate></app-translate>
+      <div class="sidebar-actions">
+        <button mat-stroked-button type="button" class="btn-signin" routerLink="/signin" (click)="drawer.close()">
+          {{ 'SIGN_IN' | translate }}
+        </button>
+        <button mat-raised-button type="button" class="btn-signup" routerLink="/signup" (click)="drawer.close()">
+          {{ 'SIGN_UP' | translate }}
+        </button>
       </div>
-    </div>
+
+
+    </nav>
   </mat-sidenav>
 
   <!-- Main -->
-  <mat-sidenav-content>
-    <header class="fixed-header">
-      <mat-toolbar class="premium-toolbar">
+  <mat-sidenav-content class="fixed-header">
+    <header>
+      <mat-toolbar>
         <app-app-logo></app-app-logo>
 
         <!-- Desktop -->
-        <nav class="desktop-nav" *ngIf="!isMobile">
-          <span class="example-spacer"></span>
+        <nav class="desktop-nav" *ngIf="!isMobile" aria-label="Primary">
+          <span class="nav-spacer"></span>
 
           <a href="#home-section" [class.active]="activeSection === 'home-section'"
-            (click)="scrollToSection($event, 'home-section')">
-            Home
-          </a>
-
+            [attr.aria-current]="activeSection === 'home-section' ? 'page' : null"
+            (click)="scrollToSection($event, 'home-section')">Home</a>
           <a href="#about-section" [class.active]="activeSection === 'about-section'"
-            (click)="scrollToSection($event, 'about-section')">
-            About
-          </a>
-
+            [attr.aria-current]="activeSection === 'about-section' ? 'page' : null"
+            (click)="scrollToSection($event, 'about-section')">About</a>
           <a href="#pricing-section" [class.active]="activeSection === 'pricing-section'"
-            (click)="scrollToSection($event, 'pricing-section')">
-            Pricing
-          </a>
-
+            [attr.aria-current]="activeSection === 'pricing-section' ? 'page' : null"
+            (click)="scrollToSection($event, 'pricing-section')">Pricing</a>
           <a href="#jobs-section" [class.active]="activeSection === 'jobs-section'"
-            (click)="scrollToSection($event, 'jobs-section')">
-            Jobs
-          </a>
-
+            [attr.aria-current]="activeSection === 'jobs-section' ? 'page' : null"
+            (click)="scrollToSection($event, 'jobs-section')">Jobs</a>
           <a href="#client-section" [class.active]="activeSection === 'client-section'"
-            (click)="scrollToSection($event, 'client-section')">
-            Clients
-          </a>
+            [attr.aria-current]="activeSection === 'client-section' ? 'page' : null"
+            (click)="scrollToSection($event, 'client-section')">Clients</a>
 
-          <span class="example-spacer"></span>
+          <a href="#contact-section" [class.active]="activeSection === 'contact-section'"
+            [attr.aria-current]="activeSection === 'contact-section' ? 'page' : null"
+            (click)="scrollToSection($event, 'contact-section')">Contact Us</a>
 
-          <button mat-button class="btn-signin" routerLink="/signin">
-            {{ 'SIGN_IN' | translate }}
-          </button>
 
-          <button mat-button class="btn-signin" routerLink="/signup">
-            {{ 'SIGN_UP' | translate }}
-          </button>
+          <span class="nav-spacer"></span>
+
+          <div class="nav-actions">
+            <button mat-button type="button" class="btn-signin" routerLink="/signin">{{ 'SIGN_IN' | translate
+              }}</button>
+            <button mat-button type="button" class="btn-signup" routerLink="/signup">{{ 'SIGN_UP' | translate
+              }}</button>
+          </div>
 
           <app-translate></app-translate>
         </nav>
 
         <!-- Mobile -->
-        <button *ngIf="isMobile" mat-icon-button (click)="drawer.toggle()">
-          <mat-icon>menu</mat-icon>
+        <button *ngIf="isMobile" mat-icon-button type="button" class="menu-toggle" (click)="drawer.toggle()"
+          [attr.aria-expanded]="drawer.opened" aria-controls="mobile-drawer"
+          [attr.aria-label]="drawer.opened ? 'Close menu' : 'Open menu'">
+          <mat-icon aria-hidden="true">{{ drawer.opened ? 'close' : 'menu' }}</mat-icon>
         </button>
+
       </mat-toolbar>
     </header>
 
     <!-- Page Content -->
-    <main class="page-content">
+    <main class="page-content" (scroll)="onPageScroll($event)">
       <app-homesection id="home-section"></app-homesection>
       <app-about id="about-section"></app-about>
       <app-pricing id="pricing-section"></app-pricing>
       <app-jobsection id="jobs-section"></app-jobsection>
       <app-clients id="client-section"></app-clients>
+      <app-contactsection id="contact-section"></app-contactsection>
     </main>
+
+    <!-- Scroll to Top Button -->
+    <button mat-fab type="button" class="scroll-top-btn" [class.show]="showScrollTop"
+      [attr.tabindex]="showScrollTop ? 0 : -1" (click)="scrollToTop()" aria-label="Back to top">
+      <mat-icon aria-hidden="true">arrow_upward</mat-icon>
+    </button>
   </mat-sidenav-content>
 </mat-sidenav-container>

@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -15,7 +15,7 @@ export interface User {
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.css']
 })
-export class LandingComponent implements OnInit {
+export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly sectionIds = [
     'home-section',
     'about-section',
@@ -25,12 +25,19 @@ export class LandingComponent implements OnInit {
   ];
   private readonly chatStorageKey = 'chatOpened';
   private readonly mobileBreakpoint = 768;
+  private readonly scrollTopThreshold = 300;
+  private readonly sectionOffset = 120;
+
+  @ViewChild('pageContent') pageContentRef?: ElementRef<HTMLElement>;
+  private scrollContainer: HTMLElement | null = null;
+  private scrollTicking = false;
 
   fadeIn = false;
   isSidebarOpen = false;
   isMobile = false;
   activeSection = 'home-section';
   chatOpened = false;
+  showScrollTop = false;
 
   myControl = new FormControl();
   options: User[] = [
@@ -90,23 +97,51 @@ export class LandingComponent implements OnInit {
     this.chatOpened = storedState ? JSON.parse(storedState) : false;
   }
 
+  ngAfterViewInit(): void {
+    // .page-content is the actual scrolling element (mat-sidenav-content),
+    // not window — grab a direct reference instead of relying on the template event.
+    this.scrollContainer = this.pageContentRef?.nativeElement
+      ?? document.querySelector('.page-content');
+  }
+
+  ngOnDestroy(): void {
+    // no manual subscriptions to tear down; kept for future use (e.g. if a
+    // fromEvent/RxJS scroll stream is introduced later)
+  }
+
   // ============================================================
   // Scroll handling
   // ============================================================
 
-  @HostListener('window:scroll', [])
-  onWindowScroll(): void {
-    const scrollPosition = window.pageYOffset + 120;
+  onPageScroll(event: Event): void {
+    // rAF-throttle so we update state at most once per frame, regardless of
+    // how many scroll events fire.
+    if (this.scrollTicking) return;
+    this.scrollTicking = true;
+
+    requestAnimationFrame(() => {
+      const target = (event.target as HTMLElement) ?? this.scrollContainer;
+      if (target) {
+        this.showScrollTop = target.scrollTop > this.scrollTopThreshold;
+        this.updateActiveSection(target.scrollTop);
+      }
+      this.scrollTicking = false;
+    });
+  }
+
+  private updateActiveSection(scrollTop: number): void {
+    const scrollPosition = scrollTop + this.sectionOffset;
 
     for (const id of this.sectionIds) {
       const section = document.getElementById(id);
       if (!section) continue;
 
-      if (
-        scrollPosition >= section.offsetTop &&
-        scrollPosition < section.offsetTop + section.offsetHeight
-      ) {
+      const top = section.offsetTop;
+      const bottom = top + section.offsetHeight;
+
+      if (scrollPosition >= top && scrollPosition < bottom) {
         this.activeSection = id;
+        break;
       }
     }
   }
@@ -118,10 +153,15 @@ export class LandingComponent implements OnInit {
     if (!el) return;
 
     el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    this.activeSection = sectionId;
 
     // reflect the anchor in the address bar without triggering navigation or scroll jump
     const basePath = window.location.pathname + window.location.search;
     history.replaceState(null, '', `${basePath}#${sectionId}`);
+  }
+
+  scrollToTop(): void {
+    this.scrollContainer?.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   @HostListener('window:resize', [])

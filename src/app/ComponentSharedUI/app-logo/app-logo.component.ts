@@ -14,7 +14,7 @@ export class AppLogoComponent implements OnInit {
   }
 
   refreshHomePage() {
-    this.router.navigate(['/DEF-USERS/home']).then(() => {
+    this.router.navigate(['/']).then(() => {
       window.location.reload();
     });
   }

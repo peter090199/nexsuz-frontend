@@ -481,7 +481,7 @@ export class SideBarPanelComponent implements OnInit, OnDestroy {
       next: () => {
         sessionStorage.clear();
         localStorage.clear();
-        window.location.href = '/homepage';
+        window.location.href = '/';
       },
       error: err => console.error('Logout failed:', err)
     });
