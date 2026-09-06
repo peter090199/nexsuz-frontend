@@ -39,24 +39,18 @@ type SearchType = 'jobs' | 'people';
   styleUrls: ['./jobsection.component.scss']
 })
 export class JobsectionComponent implements OnInit {
-  // --- shared search state ---
   searchText = '';
   searchType: SearchType = 'jobs';
   searchPlaceholder = 'Search jobs, positions, locations...';
   isLoading = false;
   isLoadingMore = false;
 
-  // --- jobs state ---
   jobs: Job[] = [];
   filteredJobs: Job[] = [];
   currentPage = 1;
   lastPage = 1;
   hasMore = false;
 
-  // --- people state ---
-  // searchUsers / searchUsersBypublic now paginate the online/offline lists
-  // server-side (see updated SearchController), so "load more" fetches the
-  // next page and appends, same pattern as jobs.
   onlinePeople: Person[] = [];
   offlinePeople: Person[] = [];
   filteredOnlinePeople: Person[] = [];
@@ -67,19 +61,19 @@ export class JobsectionComponent implements OnInit {
   peopleOnlineHasMore = false;
   peopleOfflineHasMore = false;
 
-  // --- misc ---
   code: any;
   currentUserCode: any;
   placeholderImg = 'assets/images/logo2.png';
 
   constructor(
-    private jobService: JobListService,
+   
     private peopleService: SearchService,
     private route: ActivatedRoute,
     private authService: AuthService,
     private router: Router,
     private sharedService: ImagesService,
-    private sharedRoutineService: SharedRoutinesService
+    private sharedRoutineService: SharedRoutinesService,
+     private jobServices: JobListService,
   ) { }
 
   ngOnInit(): void {
@@ -87,10 +81,6 @@ export class JobsectionComponent implements OnInit {
     this.code = this.route.snapshot.paramMap.get('code') || window.location.href.split('/').pop() || '';
     this.getActiveJobsByCode();
   }
-
-  // ============================================================
-  // Search type switching
-  // ============================================================
 
   setSearchType(type: SearchType): void {
     this.searchType = type;
@@ -111,14 +101,10 @@ export class JobsectionComponent implements OnInit {
     }
   }
 
-  // ============================================================
-  // Data fetching
-  // ============================================================
-
   async getActiveJobsByCode(page: number = 1): Promise<void> {
     try {
       page === 1 ? (this.isLoading = true) : (this.isLoadingMore = true);
-      const res = await firstValueFrom(this.jobService.getActiveJobsByPublic(page));
+      const res = await firstValueFrom(this.jobServices.getActiveJobsByPublic(page));
 
       if (res?.success) {
         const mapped = res.data.data.map((job: any) => this.mapJob(job));
@@ -136,16 +122,6 @@ export class JobsectionComponent implements OnInit {
     }
   }
 
-  /**
-   * Fetches one page of online/offline people from the server and appends
-   * it to the existing lists (page 1 replaces instead of appending).
-   *
-   * IMPORTANT: pagination info comes back nested under `res.meta`, e.g.
-   * { success, online, offline, meta: { current_page, online_has_more, offline_has_more, ... } }
-   * - it is NOT on the response root. Reading res.current_page or
-   * res.online_next_page_url (as an earlier version of this file did)
-   * will always be undefined and silently break "Load more" for people.
-   */
   async getActivePeopleByCode(query: string = '', page: number = 1): Promise<void> {
     try {
       page === 1 ? (this.isLoading = true) : (this.isLoadingMore = true);
@@ -176,10 +152,6 @@ export class JobsectionComponent implements OnInit {
     }
   }
 
-  // ============================================================
-  // Load more (both jobs and people use server pagination)
-  // ============================================================
-
   loadMore(): void {
     if (this.isLoadingMore) return;
 
@@ -196,10 +168,6 @@ export class JobsectionComponent implements OnInit {
     return this.peopleOnlineHasMore || this.peopleOfflineHasMore;
   }
 
-  // ============================================================
-  // Search / filter
-  // ============================================================
-
   onSearch(): void {
     const keyword = (this.searchText ?? '').trim().toLowerCase();
 
@@ -215,8 +183,6 @@ export class JobsectionComponent implements OnInit {
       return;
     }
 
-    // Local filter of what's currently loaded (client-side, instant feedback
-    // while typing). Pressing Enter re-queries the server from page 1.
     this.filteredOnlinePeople = !keyword
       ? [...this.onlinePeople]
       : this.onlinePeople.filter(p =>
@@ -252,10 +218,6 @@ export class JobsectionComponent implements OnInit {
     }
   }
 
-  // ============================================================
-  // Navigation
-  // ============================================================
-
   selectJob(job: Job): void {
     const role = this.authService.isLoggedIn() ? sessionStorage.getItem('role') : null;
     if (!role) return;
@@ -289,10 +251,6 @@ export class JobsectionComponent implements OnInit {
       { queryParams: { code: this.currentUserCode } }
     );
   }
-
-  // ============================================================
-  // Formatting / mapping helpers
-  // ============================================================
 
   formatSalary(job: Job): string {
     if (job.min_salary == null && job.max_salary == null) return 'Salary not specified';

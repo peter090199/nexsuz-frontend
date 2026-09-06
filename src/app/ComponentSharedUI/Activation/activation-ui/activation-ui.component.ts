@@ -12,10 +12,9 @@ import { ActivationService } from 'src/app/services/Activation/activation.servic
 export class ActivationUIComponent implements OnInit {
 
   isLoading: boolean= false;
-  activationForm: FormGroup; // Define the form group properly
-  email: string;
-  code: string;
-
+  activationForm!: FormGroup; // Define the form group properly
+  email: string = '';
+  code: string = '';
   constructor(private fb: FormBuilder,private notificationsService:NotificationsService,
     private router:Router,  private route: ActivatedRoute,private activation:ActivationService
 

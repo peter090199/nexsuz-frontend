@@ -1,0 +1,32 @@
+<footer class="site-footer">
+    <div class="footer-content">
+        <div class="footer-brand">
+            <!-- <app-app-logo></app-app-logo> -->
+        </div>
+
+        <nav class="footer-links" aria-label="Footer navigation">
+            <a href="#home-section" (click)="scrollToSection($event, 'home-section')">Home</a>
+            <a href="#about-section" (click)="scrollToSection($event, 'about-section')">About</a>
+            <a href="#pricing-section" (click)="scrollToSection($event, 'pricing-section')">Pricing</a>
+            <a href="#jobs-section" (click)="scrollToSection($event, 'jobs-section')">Jobs</a>
+            <a href="#client-section" (click)="scrollToSection($event, 'client-section')">Clients</a>
+            <a href="#contact-section" (click)="scrollToSection($event, 'contact-section')">Contact Us</a>
+        </nav>
+
+        <div class="footer-social">
+            <a href="#" mat-icon-button aria-label="Facebook">
+                <mat-icon aria-hidden="true">facebook</mat-icon>
+            </a>
+            <a href="#" mat-icon-button aria-label="LinkedIn">
+                <mat-icon aria-hidden="true">business</mat-icon>
+            </a>
+            <a href="#" mat-icon-button aria-label="Twitter / X">
+                <mat-icon aria-hidden="true">alternate_email</mat-icon>
+            </a>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; {{ currentYear }} Nexsuz. All rights reserved.</p>
+    </div>
+</footer>

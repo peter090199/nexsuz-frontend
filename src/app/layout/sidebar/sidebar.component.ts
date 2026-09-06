@@ -12,10 +12,10 @@ import { TNavigationService } from 'src/app/services/TNavigation/tnavigation.ser
 export class SidebarComponent implements OnInit {
   fadeIn: boolean = false;
   isSidebarOpen = false; // Sidebar state
-  isDesktop: true;
+  isDesktop: boolean = true;
   isMobile: boolean = false; // Mobile detection state
   nav_module: any=[]; // Store user data fetched from API
-  submenuMenu: MatMenuPanel<any>;
+  submenuMenu!: MatMenuPanel<any>;
   searchValue = '';
   isLoading:boolean = false;
   success:boolean = false;

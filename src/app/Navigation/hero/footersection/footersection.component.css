@@ -1,0 +1,175 @@
+.site-footer {
+  --ink: #2855d2;
+  --ink-soft: #2d4c95;
+  --paper: #f5f3ee;
+  --signal: #e8a33d;
+  --slate: #8a90a3;
+  --hairline: #2a2e3a;
+
+  background: var(--ink);
+  color: var(--paper);
+  padding: 4rem 2rem 0;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.footer-content {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr 2fr auto;
+  gap: 3rem;
+  align-items: start;
+  padding-bottom: 3rem;
+}
+
+/* Brand — set apart with a distinct display face */
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.footer-brand app-app-logo {
+  display: block;
+}
+
+.footer-tagline {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--paper);
+  position: relative;
+  padding-left: 0.9rem;
+}
+
+/* small signal mark instead of a generic eyebrow label */
+.footer-tagline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.35em;
+  width: 6px;
+  height: 6px;
+  background: var(--signal);
+  border-radius: 50%;
+}
+
+/* Nav — two-line wrap, connected by a hairline rule underneath each link */
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  padding-top: 0.4rem;
+}
+
+.footer-links a {
+  color: var(--slate);
+  text-decoration: none;
+  font-size: 0.95rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.footer-links a:hover,
+.footer-links a:focus-visible {
+  color: var(--paper);
+  border-bottom-color: var(--signal);
+}
+
+.footer-links a:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Social — vertical stack instead of the usual icon row */
+.footer-social {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-left: 1px solid var(--hairline);
+  padding-left: 1.5rem;
+}
+
+.footer-social a {
+  color: var(--slate);
+  display: inline-flex;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.footer-social a:hover,
+.footer-social a:focus-visible {
+  color: var(--signal);
+  transform: translateX(3px);
+}
+
+.footer-social mat-icon {
+  font-size: 1.3rem;
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+/* Bottom bar — connector-dot rule instead of a plain border */
+.footer-bottom {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 1.5rem 0 2rem;
+  background-image: radial-gradient(circle, var(--hairline) 1px, transparent 1px);
+  background-position: top;
+  background-size: 10px 1px;
+  background-repeat: repeat-x;
+}
+
+.footer-bottom p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--slate);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 860px) {
+  .footer-content {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "brand social"
+      "links links";
+    row-gap: 2rem;
+  }
+  .footer-brand { grid-area: brand; }
+  .footer-social {
+    grid-area: social;
+    flex-direction: row;
+    justify-self: end;
+    border-left: none;
+    border-bottom: 1px solid var(--hairline);
+    padding-left: 0;
+    padding-bottom: 0.5rem;
+  }
+  .footer-links { grid-area: links; }
+}
+
+@media (max-width: 520px) {
+  .site-footer { padding: 3rem 1.25rem 0; }
+  .footer-content {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "brand"
+      "links"
+      "social";
+  }
+  .footer-social {
+    flex-direction: row;
+    justify-self: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-links a,
+  .footer-social a {
+    transition: none;
+  }
+}

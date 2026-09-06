@@ -77,6 +77,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     'Game Developer'
   ];
 
+
   constructor(
     private router: Router,
     private dialog: MatDialog

@@ -153,6 +153,7 @@ import { PricingComponent } from './Navigation/hero/pricing/pricing.component';
 import { JobsectionComponent } from './Navigation/hero/jobsection/jobsection.component';
 import { MatChipsModule } from '@angular/material/chips';
 import { ContactsectionComponent } from './Navigation/hero/contactsection/contactsection.component';
+import { FootersectionComponent } from './Navigation/hero/footersection/footersection.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -295,7 +296,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     HomesectionComponent,
     PricingComponent,
     JobsectionComponent,
-    ContactsectionComponent
+    ContactsectionComponent,
+    FootersectionComponent
   ],
   imports: [
     BrowserModule,
@@ -309,10 +311,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatTabsModule,
     MatIconModule,
     MatDialogModule,
-    MatIconModule,
     MatChipsModule,
     ToastrModule.forRoot(), // Correctly placed ToastrModule
-    TranslateModule.forRoot({
+     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
         useFactory: HttpLoaderFactory,
@@ -320,15 +321,9 @@ export function HttpLoaderFactory(http: HttpClient) {
       }
     }),
   ],
-  providers: [
+ providers: [
     CookieService,
-    DatePipe,
-    // {
-    //   // provide: APP_INITIALIZER,
-    //   // // useFactory: preloadNavigationData,
-    //   // deps: [TNavigationService],
-    //   // multi: true
-    // }
+    DatePipe
   ],
   bootstrap: [AppComponent]
 })

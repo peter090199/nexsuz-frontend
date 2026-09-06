@@ -14,7 +14,7 @@ import { inject } from '@angular/core/testing';
 })
 export class AddEmploymentUiComponent implements OnInit {
   dataList: any[] = [];
-  employmentForm: FormGroup;
+  employmentForm!: FormGroup;
   btnSave: string = "Save";
   loading: boolean = false;
   workList: any[] = [];

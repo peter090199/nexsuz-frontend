@@ -125,11 +125,6 @@ mat-toolbar {
   background-color: rgba(255, 255, 255, 0.15);
 }
 
-.sidebar-link.active {
-  background-color: rgba(255, 255, 255, 0.25);
-  color: #ffffff;
-}
-
 .sidebar-link mat-icon {
   flex-shrink: 0;
 }

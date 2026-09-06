@@ -53,14 +53,14 @@ export interface User2 {
 })
 export class UserCVComponent implements AfterViewInit {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
-  @ViewChild(MatAccordion) accordion: MatAccordion;
-  @ViewChild('stepper') stepper: MatHorizontalStepper;
+  @ViewChild(MatAccordion) accordion!: MatAccordion;
+  @ViewChild('stepper') stepper!: MatHorizontalStepper;
   progressValue: number = 0;
 
-  firstFormGroup: FormGroup;
-  secondFormGroup: FormGroup;
-  summaryFormGroup: FormGroup;
-  thirdFormGroup: FormGroup;
+  firstFormGroup!: FormGroup;
+  secondFormGroup!: FormGroup;
+  summaryFormGroup!: FormGroup;
+  thirdFormGroup!: FormGroup;
 
   formEducation: any[] = [];
   formSeminar: any[] = [];
@@ -589,9 +589,7 @@ export class UserCVComponent implements AfterViewInit {
   formData: any = [];
 
   country: any[] = [];
-  selectedCountry: string;
-
-
+  selectedCountry: string='';
   selectedValue: string = '';
   countries: { name: string }[] = [
     { name: 'USA' }, { name: 'Canada' }, { name: 'Russia' }, { name: 'Kazakhstan' }, { name: 'Egypt' },
@@ -616,8 +614,8 @@ export class UserCVComponent implements AfterViewInit {
     { name: 'Azerbaijan' }, { name: 'Georgia' }, { name: 'Kyrgyzstan' }, { name: 'Uzbekistan' }
   ];
 
-  homeFilteredOptions: Observable<{ name: string }[]>;
-  currentFilteredOptions: Observable<{ name: string }[]>;
+  homeFilteredOptions!: Observable<{ name: string }[]>;
+  currentFilteredOptions!: Observable<{ name: string }[]>;
 
   countryControl1 = new FormControl();
   countryControl2 = new FormControl();

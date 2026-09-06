@@ -9,9 +9,9 @@ import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 export class PrintReceiptsComponent implements OnInit {
 
   printResult: string | null = null;
-  headers:any[];
-  Title:any;
-  Transaction:any;
+  headers!:any[];
+  Title!:any;
+  Transaction!  :any;
   @ViewChild('tableToExport') table: any;
   constructor(
   ) { }
@@ -43,7 +43,7 @@ export class PrintReceiptsComponent implements OnInit {
   }
 
 
-  @HostListener('window:beforeunload', ['$event'])
+  // @HostListener('window:beforeunload', ['$event'])
   // beforeunloadHandler(event) {
   //   localStorage.clear();
   // }

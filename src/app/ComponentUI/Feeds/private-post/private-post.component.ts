@@ -33,7 +33,7 @@ interface Reaction { emoji: string; label: string }
   styleUrls: ['./private-post.component.css']
 })
 export class PrivatePostComponent implements OnInit, AfterViewInit, OnDestroy {
-  error: string;
+  error!: string;
   deletePost(_t30: any) {
     throw new Error('Method not implemented.');
   }
@@ -74,7 +74,7 @@ export class PrivatePostComponent implements OnInit, AfterViewInit, OnDestroy {
   // constants
   private baseUrl = 'https://exploredition.com/';
   private defaultProfile = `${this.baseUrl}storage/app/public/uploads/DEFAULTPROFILE/DEFAULTPROFILE.png`;
-  menu_: MatMenuPanel<any>;
+  menu!: MatMenuPanel<any>;
   code:any; 
 
   hoveredReactions: { [postId: number]: Reaction | null } = {};
