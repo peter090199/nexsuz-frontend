@@ -20,9 +20,12 @@ export class JobsProfileComponent implements OnInit {
 
   jobs: any[] = [];
   savedJobs: any[] = [];
+
   selectedJob: any = null;
 
   isLoading = false;
+  isSavedLoading = false;
+
   saved = false;
 
   currentUserCode: string | null = null;
@@ -30,7 +33,8 @@ export class JobsProfileComponent implements OnInit {
   skeletonRows = Array.from({ length: 5 });
 
   constructor(
-    private jobListServices: JobListService, public feature: FeatureService,
+    private jobListServices: JobListService,
+    public feature: FeatureService,
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
@@ -40,59 +44,153 @@ export class JobsProfileComponent implements OnInit {
     public sharedRoutines: SharedRoutinesService
   ) { }
 
-  /* =========================
-     INIT
-  ========================= */
+  // =========================================================
+  // INIT
+  // =========================================================
+
   async ngOnInit(): Promise<void> {
+
     this.currentUserCode = this.authService.getAuthCode();
 
     await this.getJobPosting();
+    await this.getSavedJobs();
 
     this.route.paramMap.subscribe(async params => {
+
       const transNo = params.get('transNo');
 
-      if (!transNo) return;
+      if (!transNo) {
+        return;
+      }
 
-      this.selectedJob =
-        this.jobs.find(j => String(j.transNo) === String(transNo)) || null;
+      const job = this.jobs.find(
+        j => String(j.transNo) === String(transNo)
+      );
 
-      if (this.selectedJob) {
+      if (job) {
+        this.selectedJob = { ...job };
+
+        this.updateSavedState();
+
         await this.loadAppliedStatus(this.selectedJob);
       }
     });
   }
 
-  /* =========================
-     FETCH JOBS
-  ========================= */
+  // =========================================================
+  // GET ACTIVE JOBS
+  // =========================================================
+
   async getJobPosting(): Promise<void> {
+
     try {
+
       this.isLoading = true;
 
-      const res = await firstValueFrom(this.jobListServices.getActiveJobs());
+      const res = await firstValueFrom(
+        this.jobListServices.getActiveJobs()
+      );
 
       if (res?.success) {
-        this.jobs = res.data.map((job: any) => ({
+
+        this.jobs = (res.data || []).map((job: any) => ({
           ...job,
           applied_status: 'default',
-          job_image: this.sharedService.cleanImageUrl(job.job_image)
+          job_image: this.sharedService.cleanImageUrl(
+            job.job_image
+          )
         }));
+
+      } else {
+
+        this.jobs = [];
+
       }
 
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+
+      console.error('Get active jobs error:', error);
+
+      this.jobs = [];
+
     } finally {
+
       this.isLoading = false;
+
     }
   }
 
-  /* =========================
-     STATUS LOAD
-  ========================= */
+  // =========================================================
+  // GET SAVED JOBS
+  // =========================================================
+  async getSavedJobs(): Promise<void> {
+    try {
+      this.isSavedLoading = true;
+      const res = await firstValueFrom(
+        this.jobListServices.getSaveJobs()
+      );
+
+      if (res?.success) {
+        this.savedJobs = (res.data || []).map((job: any) => ({
+          ...job,
+          job_image: this.sharedService.cleanImageUrl(
+            job.job_image
+          )
+        }));
+
+      } else {
+
+        this.savedJobs = [];
+
+      }
+
+      this.updateSavedState();
+
+    } catch (error) {
+
+      console.error('Get saved jobs error:', error);
+
+      this.savedJobs = [];
+
+      this.saved = false;
+
+    } finally {
+
+      this.isSavedLoading = false;
+
+    }
+  }
+
+  // =========================================================
+  // CHECK IF SELECTED JOB IS SAVED
+  // =========================================================
+
+  updateSavedState(): void {
+
+    if (!this.selectedJob) {
+      this.saved = false;
+      return;
+    }
+
+    this.saved = this.savedJobs.some(
+      savedJob =>
+        Number(savedJob.job_id) ===
+        Number(this.selectedJob.job_id)
+    );
+  }
+
+  // =========================================================
+  // LOAD APPLICATION STATUS
+  // =========================================================
+
   async loadAppliedStatus(job: any): Promise<void> {
-    if (!job?.transNo) return;
+
+    if (!job?.transNo) {
+      return;
+    }
 
     try {
+
       const res = await firstValueFrom(
         this.jobListServices.getAppliedStatus(job.transNo)
       );
@@ -104,14 +202,14 @@ export class JobsProfileComponent implements OnInit {
 
       job.applied_status = status;
 
-      // Force Angular change detection
       this.selectedJob = {
         ...job,
         applied_status: status
       };
 
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+
+      console.error('Load applied status error:', error);
 
       this.selectedJob = {
         ...job,
@@ -120,11 +218,15 @@ export class JobsProfileComponent implements OnInit {
     }
   }
 
-  /* =========================
-     BUTTON STATUS
-  ========================= */
+  // =========================================================
+  // BUTTON STATUS
+  // =========================================================
+
   getButtonStatus(job: any): string {
-    if (!job) return 'default';
+
+    if (!job) {
+      return 'default';
+    }
 
     if (job.code === this.currentUserCode) {
       return 'applied_active';
@@ -134,7 +236,9 @@ export class JobsProfileComponent implements OnInit {
   }
 
   getStatusIcon(status: string): string {
+
     switch (status) {
+
       case 'applied_active':
         return 'hourglass_top';
 
@@ -156,7 +260,9 @@ export class JobsProfileComponent implements OnInit {
   }
 
   getStatusText(status: string): string {
+
     switch (status) {
+
       case 'applied_active':
         return 'Applied';
 
@@ -178,7 +284,9 @@ export class JobsProfileComponent implements OnInit {
   }
 
   getStatusColor(status: string): string {
+
     switch (status) {
+
       case 'applied_active':
         return '#f4895e';
 
@@ -186,7 +294,7 @@ export class JobsProfileComponent implements OnInit {
         return '#ffb300';
 
       case 'interview':
-        return '#6a5acd'; // purple (interview)
+        return '#6a5acd';
 
       case 'approved':
         return '#388e3c';
@@ -198,74 +306,170 @@ export class JobsProfileComponent implements OnInit {
         return '#3071e0';
     }
   }
-  /* =========================
-     APPLY CLICK
-  ========================= */
+
+  // =========================================================
+  // APPLY
+  // =========================================================
+
   onApplyClick(job: any): void {
-    // ❌ FEATURE CHECK (PLAN RESTRICTION)
+
     if (!this.feature.can('APPLY_JOBS')) {
+
       this.sharedRoutines.openUpgradeModal();
+
       return;
     }
 
     const status = this.getButtonStatus(job);
 
     if (status === 'default') {
+
       this.router.navigate([
         '/' + this.sharedRoutines.getRole() + '/apply-job',
         job.transNo
       ]);
+
       return;
     }
 
     this.openAppliedStatusDialog(job);
   }
 
-  openAppliedStatusDialog(job: any): void {
-    const dialogRef = this.dialog.open(AppliedStatusDialogComponent, {
-      width: '460px',
-      data: job
-    });
+  // =========================================================
+  // APPLICATION STATUS DIALOG
+  // =========================================================
 
-    dialogRef.afterClosed().subscribe(async (res) => {
+  openAppliedStatusDialog(job: any): void {
+
+    const dialogRef = this.dialog.open(
+      AppliedStatusDialogComponent,
+      {
+        width: '460px',
+        data: job
+      }
+    );
+
+    dialogRef.afterClosed().subscribe(async res => {
+
       if (res) {
+
         await this.getJobPosting();
 
         const updated = this.jobs.find(
-          x => x.transNo === this.selectedJob?.transNo
+          x =>
+            String(x.transNo) ===
+            String(this.selectedJob?.transNo)
         );
 
         if (updated) {
-          await this.loadAppliedStatus(updated);
+
+          this.selectedJob = {
+            ...updated
+          };
+
+          this.updateSavedState();
+
+          await this.loadAppliedStatus(
+            this.selectedJob
+          );
         }
       }
     });
   }
 
-  /* =========================
-     SELECT JOB
-  ========================= */
+  // =========================================================
+  // SELECT JOB
+  // =========================================================
+
   async selectJob(job: any): Promise<void> {
 
-    this.router.navigate([
-      '/' + this.sharedRoutines.getRole() + '/recommended-jobs',
-      job.transNo
-    ]);
+    if (!job) {
+      return;
+    }
 
-    // Copy the object so Angular detects the change
-    this.selectedJob = { ...job };
+    this.selectedJob = {
+      ...job
+    };
 
-    // Load the latest application status
-    await this.loadAppliedStatus(this.selectedJob);
+    this.updateSavedState();
+
+    // Navigate only when the job has transNo
+    if (job.transNo) {
+
+      this.router.navigate([
+        '/' + this.sharedRoutines.getRole() +
+        '/recommended-jobs',
+        job.transNo
+      ]);
+    }
+
+    await this.loadAppliedStatus(
+      this.selectedJob
+    );
   }
-  /* =========================
-     UI ACTIONS
-  ========================= */
+
+  // =========================================================
+  // SAVE / UNSAVE JOB
+  // =========================================================
+
+  async saveJobs(job: any): Promise<void> {
+
+    if (!job?.job_id) {
+
+      console.error('Job ID is missing:', job);
+
+      return;
+    }
+
+    try {
+
+      const res = await firstValueFrom(
+        this.jobListServices.saveJob(
+          Number(job.job_id)
+        )
+      );
+
+      if (res?.saved === true) {
+
+        this.saved = true;
+
+        this.alert.toastrSuccess(
+          'Job saved successfully'
+        );
+
+      } else if (res?.saved === false) {
+
+        this.saved = false;
+
+        this.alert.toastrWarning(
+          'Job removed from saved jobs'
+        );
+      }
+
+      // Reload saved jobs from database
+      await this.getSavedJobs();
+
+    } catch (error) {
+
+      console.error(
+        'Save job error:',
+        error
+      );
+
+      this.alert.toastrError(
+        'Unable to save job'
+      );
+    }
+  }
+
+  // =========================================================
+  // CLOSE SIDEBAR
+  // =========================================================
+
   closeSidebar(): void {
-    this.selectedJob = null;
-  }
 
-  toggleHeart(): void {
-    this.saved = !this.saved;
+    this.selectedJob = null;
+
+    this.saved = false;
   }
 }

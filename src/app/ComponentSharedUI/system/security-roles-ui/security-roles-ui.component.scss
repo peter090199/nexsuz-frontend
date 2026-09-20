@@ -3,6 +3,8 @@
   --accent-light: #f0edff;
   padding: 4px 2px;
   font-family: inherit;
+  max-height: 620px;      /* limits overall panel height */
+  overflow-y: auto;       /* scrolls internally instead of pushing page down */
 }
 
 .state-msg {
@@ -73,6 +75,8 @@
   margin: 0;
   padding: 4px 14px 12px 34px;
   border-top: 1px dashed #eee;
+  max-height: 220px;        /* limits height of long sub-item lists */
+  overflow-y: auto;         /* scrolls within the expanded card */
 }
 .sub-list li { padding: 4px 0; }
 
@@ -80,4 +84,8 @@
   display: flex;
   justify-content: flex-end;
   margin-top: 16px;
+  position: sticky;   /* keeps actions visible while panel scrolls */
+  bottom: 0;
+  background: #fff;
+  padding-top: 8px;
 }

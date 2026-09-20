@@ -501,7 +501,7 @@ export class SharedRoutinesService {
     return this.currencies[0]; // PHP
   }
 
-onLogout(): void {
+  onLogout(): void {
     this.logoutService.logout().subscribe({
       next: () => this.resetLocalState(),
       error: (err) => {
@@ -515,9 +515,26 @@ onLogout(): void {
     sessionStorage.clear();
     localStorage.clear();
     localStorage.setItem('showWebsiteChat', 'false');
-   // localStorage.setItem('cookiesAccepted', 'true');
-    this.router.navigateByUrl('/'); // SPA nav, avoids a full asset re-download
+    localStorage.setItem('cookiesAccepted', 'true');
+    window.location.href = '/'; // full reload, re-fetches all assets
   }
 
+
+  getInitials(name: string): string {
+    if (!name) {
+      return '';
+    }
+
+    const parts = name.trim().split(/\s+/);
+
+    if (parts.length === 1) {
+      return parts[0].substring(0, 2).toUpperCase();
+    }
+
+    return (
+      parts[0].charAt(0) +
+      parts[parts.length - 1].charAt(0)
+    ).toUpperCase();
+  }
 
 }

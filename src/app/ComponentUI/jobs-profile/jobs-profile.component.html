@@ -1,14 +1,13 @@
 <div class="jobs-container">
-
-  <!-- ================= LEFT SIDEBAR ================= -->
-  <mat-card class="sidebar">
+  <!-- ================= LEFT: JOBS FOR YOU ================= -->
+  <aside class="jobs-sidebar">
     <h3>Jobs for you</h3>
 
-    <ng-container *ngIf="isLoading; else jobsList">
+    <!-- Loading -->
+    <ng-container *ngIf="isLoading; else jobsContent">
       <mat-list>
-        <div mat-subheader>Hiring Jobs</div>
-
         <mat-list-item *ngFor="let _ of skeletonRows">
+
           <div class="skeleton skeleton-avatar" matListAvatar></div>
 
           <div class="job-details w-full">
@@ -16,55 +15,61 @@
             <div class="skeleton skeleton-line w-40 mt-6px"></div>
           </div>
 
-          <button mat-icon-button disabled>
-            <div class="skeleton skeleton-icon"></div>
-          </button>
         </mat-list-item>
       </mat-list>
     </ng-container>
 
-    <!-- JOB LIST -->
-    <ng-template #jobsList>
+    <!-- Jobs -->
+    <ng-template #jobsContent>
       <div class="jobs-list">
-
-        <div mat-subheader>Hiring Jobs</div>
         <mat-divider></mat-divider>
-
         <div class="job-item" *ngFor="let job of jobs" (click)="selectJob(job)">
-          <img [src]="job.job_image" class="job-logo" alt="Company Logo" />
-
+          <img [src]="job.job_image" class="job-logo" alt="Company Logo">
           <div class="job-details">
-            <span class="job-name">{{ job.job_name }}</span>
+            <span class="job-name">
+              {{ job.job_name }}
+            </span>
+
             <small>
               {{ job.comp_name }} · {{ job.work_type }}
             </small>
+
           </div>
+
+        </div>
+
+        <!-- Empty -->
+        <div class="empty-state" *ngIf="jobs.length === 0">
+          <p>No jobs available.</p>
         </div>
 
       </div>
+
     </ng-template>
-  </mat-card>
 
-  <!-- ================= OVERLAY ================= -->
-  <div class="sidebar-overlay" [class.active]="selectedJob" (click)="closeSidebar()"></div>
+  </aside>
 
-  <!-- ================= RIGHT DETAIL PANEL ================= -->
-  <mat-card class="leftsidebar" [class.active]="selectedJob">
 
-    <!-- BACK BUTTON -->
-    <button class="responsive-back-btn" mat-button [routerLink]="['/' + sharedRoutines.getRole() + '/jobs']">
+  <!-- ================= MOBILE OVERLAY ================= -->
+  <div class="sidebar-overlay" [class.active]="selectedJob" (click)="closeSidebar()">
+  </div>
+  <!-- ================= JOB DETAILS ================= -->
+  <main class="sidebar job-details-sidebar">
+    <!-- Mobile Back -->
+    <!-- <button class="responsive-back-btn" mat-button [routerLink]="['/' + sharedRoutines.getRole() + '/jobs']">
+
       <mat-icon>arrow_back</mat-icon>
-    </button>
 
-    <!-- ================= JOB DETAILS ================= -->
-    <ng-container *ngIf="selectedJob; else defaultSidebar">
+    </button> -->
 
-      <!-- HEADER -->
+
+    <!-- Selected Job -->
+    <ng-container *ngIf="selectedJob; else noJobSelected">
+      <!-- Header -->
       <div class="job-header">
+        <img [src]="selectedJob.job_image" class="company-logo" alt="Company Logo">
+        <div class="job-header-info">
 
-        <img [src]="selectedJob.job_image" class="company-logo" alt="Company Logo" />
-
-        <div>
           <h3 class="job-title">
             {{ selectedJob.job_name }}
           </h3>
@@ -76,89 +81,183 @@
           <p class="job-meta">
             {{ selectedJob.location }} · Posted {{ selectedJob.created_at }}
           </p>
+
         </div>
 
       </div>
 
-      <!-- ACTION BUTTONS -->
-      <div class="sidebar-actions sticky-actions">
 
-        <!-- APPLY / STATUS BUTTON -->
+      <!-- Actions -->
+      <div class="sidebar-actions">
         <button mat-raised-button class="apply-btn" (click)="onApplyClick(selectedJob)"
           [ngStyle]="sharedRoutines.getApplyButtonStyle(selectedJob)">
+
           <mat-icon>
             {{ sharedRoutines.getApplyIcon(selectedJob) }}
           </mat-icon>
+
           {{ sharedRoutines.getApplyText(selectedJob) }}
+
         </button>
 
-        <!-- SAVE BUTTON -->
-        <button mat-stroked-button color="warn" (click)="toggleHeart()">
+
+        <button mat-stroked-button [color]="saved ? 'accent' : 'warn'" [class.is-saved]="saved"
+          [disabled]="!selectedJob" (click)="saveJobs(selectedJob)">
+
           <mat-icon>
             {{ saved ? 'favorite' : 'favorite_border' }}
           </mat-icon>
-          Save
+
+          {{ saved ? 'Saved' : 'Save' }}
+
         </button>
 
       </div>
 
+
       <mat-divider></mat-divider>
 
-      <!-- JOB INFO -->
-      <div class="job-details-section">
+
+      <!-- Job Information -->
+      <section class="job-details-section">
 
         <h4>About the Job</h4>
+
         <p class="job-description">
           {{ selectedJob.job_description }}
         </p>
 
+
         <h4>More About This Role</h4>
+
         <p class="job-description">
           {{ selectedJob.job_about }}
         </p>
 
+
         <mat-divider></mat-divider>
 
-        <!-- RECRUITER -->
-        <h4>About the recruiter</h4>
+
+        <!-- Recruiter -->
+        <h4>About the Recruiter</h4>
 
         <div class="avatar-wrapper">
 
           <div class="company-details">
 
-            <a class="custom-title"
-              [routerLink]="['/' + sharedRoutines.getRole() + '/client_profile', selectedJob.code]">
+            <a class="custom-title" [routerLink]="[
+                '/' + sharedRoutines.getRole() + '/client_profile',
+                selectedJob.code
+              ]">
+
               {{ selectedJob.fullname }}
+
             </a>
 
-            <button mat-raised-button color="primary">
-              + Connect
-            </button>
-
           </div>
+
         </div>
 
-        <div class="job-description-wrapper">
-          <a routerLink="/showMore" class="show-all">
-            Show more →
-          </a>
+      </section>
+
+    </ng-container>
+
+
+    <!-- No Selected Job -->
+    <ng-template #noJobSelected>
+
+      <div class="empty-state">
+        <mat-icon>work_outline</mat-icon>
+        <p>Select a job to see the details.</p>
+      </div>
+
+    </ng-template>
+
+  </main>
+
+
+  <!-- ================= RIGHT: SAVED JOBS ================= -->
+  <aside class="sidebar saved-jobs-sidebar">
+
+    <div class="saved-header">
+      <span>Saved Jobs</span>
+    </div>
+
+    <mat-divider></mat-divider>
+
+
+    <!-- Loading -->
+    <ng-container *ngIf="isSavedLoading; else savedContent">
+
+      <mat-list>
+
+        <mat-list-item *ngFor="let _ of skeletonRows">
+
+          <div class="skeleton skeleton-avatar" matListAvatar></div>
+
+          <div class="job-details w-full">
+            <div class="skeleton skeleton-line w-56"></div>
+            <div class="skeleton skeleton-line w-40 mt-6px"></div>
+          </div>
+
+        </mat-list-item>
+
+      </mat-list>
+
+    </ng-container>
+
+
+    <!-- Saved Jobs -->
+    <ng-template #savedContent>
+
+      <div class="jobs-list" *ngIf="savedJobs.length; else noSavedJobs">
+
+        <div class="job-item" *ngFor="let job of savedJobs">
+
+          <img [src]="job.job_image" class="job-logo" alt="Company Logo">
+
+          <div class="job-details">
+            <span class="job-name">
+              {{ job.job_name }}
+            </span>
+
+            <small>
+              {{ job.comp_name }} · {{ job.work_type }}
+            </small>
+
+            <small>
+              {{ job.location }}
+            </small>
+          </div>
+
+          <!-- Save Button Right -->
+          <button mat-stroked-button class="save-btn" [color]="saved ? 'accent' : 'warn'" [class.is-saved]="saved"
+            [disabled]="!job" (click)="saveJobs(job)">
+
+            <mat-icon>
+              {{ saved ? 'favorite' : 'favorite_border' }}
+            </mat-icon>
+
+            {{ saved ? 'Saved' : 'Save' }}
+
+          </button>
+
         </div>
 
       </div>
 
-    </ng-container>
+      <ng-template #noSavedJobs>
 
-    <!-- DEFAULT STATE -->
-    <ng-template #defaultSidebar>
-      <p>Please select a job to see the details.</p>
+        <div class="empty-state">
+          <mat-icon>favorite_border</mat-icon>
+          <p>No saved jobs yet.</p>
+          <small>Jobs you save will appear here.</small>
+        </div>
+
+      </ng-template>
+
     </ng-template>
 
-  </mat-card>
-
-  <!-- ================= RIGHT SAVED SIDEBAR ================= -->
-  <mat-card class="sidebar">
-    <div mat-subheader>Saved Jobs</div>
-    <mat-divider></mat-divider>
-  </mat-card>
+  </aside>
 
 </div>

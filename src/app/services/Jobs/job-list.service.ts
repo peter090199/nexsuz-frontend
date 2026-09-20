@@ -102,5 +102,14 @@ export class JobListService {
     return this.http.get<any>(`${_url}getAppliedJobByUsers/${transNo}`, { headers });
   }
 
+  saveJob(jobId: number) {
+    const headers = this.createHeaders();
+    return this.http.post<any>(`${_url}saveJobs`,{job_id: jobId}, { headers });
+  }
+
+  getSaveJobs(): Observable<any> {
+    const headers = this.createHeaders();
+    return this.http.get<any>(`${_url}getSaveJobs`, { headers });
+  }
 
 }
